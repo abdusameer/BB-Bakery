@@ -3,6 +3,7 @@ import { images } from '../generated/images';
 import { IconCamera, IconGallery } from './Icons';
 import { CropMarks } from './Pencil';
 import { SplitHeading } from './SplitHeading';
+import { asset } from '../lib/asset';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -30,10 +31,10 @@ export function Media() {
                     {slot.kind === 'concept' && d ? (
                       <>
                         <picture>
-                          <source type="image/avif" srcSet={d.widths.map((w) => `/img/${slot.img}-photo-${w}.avif ${w}w`).join(', ')} sizes="(max-width: 767px) 92vw, 40vw" />
+                          <source type="image/avif" srcSet={d.widths.map((w) => `${asset(`img/${slot.img}-photo-${w}.avif`)} ${w}w`).join(', ')} sizes="(max-width: 767px) 92vw, 40vw" />
                           <img
-                            src={`/img/${slot.img}-photo-${d.widths[0]}.webp`}
-                            srcSet={d.widths.map((w) => `/img/${slot.img}-photo-${w}.webp ${w}w`).join(', ')}
+                            src={asset(`img/${slot.img}-photo-${d.widths[0]}.webp`)}
+                            srcSet={d.widths.map((w) => `${asset(`img/${slot.img}-photo-${w}.webp`)} ${w}w`).join(', ')}
                             sizes="(max-width: 767px) 92vw, 40vw"
                             alt={slot.alt}
                             loading="lazy"

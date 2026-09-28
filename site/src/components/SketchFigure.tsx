@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent as RPointerEvent, ReactNode } from 'react';
 import { IconPencil, IconPhoto } from './Icons';
 import { images } from '../generated/images';
+import { asset } from '../lib/asset';
 
 type Props = {
   img: string;                 // key in generated/images.ts
@@ -43,7 +44,7 @@ export function SketchFigure({ img, alt, sizes, eager, chip = 'Concept image', m
   const onUp = () => { window.clearTimeout(holdT.current); if (holding) { fade(); setHolding(false); } };
   const d = images[img];
   const [aw, ah] = d.ar;
-  const src = (kind: string, w: number, ext: string) => `/img/${img}-${kind}-${w}.${ext}`;
+  const src = (kind: string, w: number, ext: string) => asset(`img/${img}-${kind}-${w}.${ext}`);
   const set = (kind: string, ws: number[], ext: string) => ws.map((w) => `${src(kind, w, ext)} ${w}w`).join(', ');
   const style = {
     '--ar': `${aw} / ${ah}`,

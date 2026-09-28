@@ -1,5 +1,6 @@
 import { business, story } from '../content';
 import { SplitHeading } from './SplitHeading';
+import { asset } from '../lib/asset';
 
 export function Story() {
   return (
@@ -35,7 +36,7 @@ export function Story() {
 
         <figure className="story-figure">
           <div className="frame">
-            <img src="/img/story-sketch-800.webp" srcSet="/img/story-sketch-480.webp 480w, /img/story-sketch-800.webp 800w" sizes="(max-width: 1023px) 45vw, 22vw" alt="" loading="lazy" decoding="async" width={800} height={800} />
+            <img src={asset('img/story-sketch-800.webp')} srcSet={`${asset('img/story-sketch-480.webp')} 480w, ${asset('img/story-sketch-800.webp')} 800w`} sizes="(max-width: 1023px) 45vw, 22vw" alt="" loading="lazy" decoding="async" width={800} height={800} />
             <span className="chip">Concept sketch</span>
           </div>
           <figcaption>A pencil study of a round loaf, drawn for this concept.</figcaption>
