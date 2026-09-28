@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>Guide character poses</title>
+<link rel="stylesheet" href="board.css">
+<style>
+  body { width: 1600px; padding: 56px 64px 48px; }
+  header { display: flex; justify-content: space-between; align-items: end; border-bottom: 1.5px solid var(--g800); padding-bottom: 18px; margin-bottom: 36px; }
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px 24px; }
+  .cell { border: 1px solid var(--g300); background: rgba(244,239,230,.6); padding: 14px 16px 16px; }
+  .cell svg { width: 100%; height: 250px; display: block; }
+  .cell h3 { font: 400 20px/1.1 var(--serif); margin: 10px 0 4px; }
+  .cell p { font: 400 13px/1.45 var(--sans); color: var(--g600); margin: 0; }
+  .num { font: 600 11px/1 var(--sans); letter-spacing: .12em; color: var(--g500); }
+  .scale { display: flex; gap: 28px; align-items: end; }
+  .scale div { text-align: center; }
+  .scale svg { display: block; margin: 0 auto 6px; }
+  footer { margin-top: 30px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="label">Phase 0 · Character behavior</div>
+    <h1 class="sheet-title">Guide character: pose sheet</h1>
+  </div>
+  <div class="sheet-meta" style="text-align:right">Editable SVG, one rig, pose parameters only<br>Unofficial BB's Bakery website concept · not affiliated</div>
+</header>
+<div class="grid" id="grid"></div>
+<footer>
+  <div class="scale" id="scale"></div>
+  <p class="sheet-meta" style="max-width:520px;margin:0">Nothing is ever generated as a raster. Every pose is the same SVG rig with different transforms and arm variants. Pencil wobble is a static filter and never animates, so there is no jitter. Reduced motion shows pose 01, and the section poses become instant swaps with no travel.</p>
+</footer>
+<script src="sogeum.js"></script>
+<script>
+  const { sogeum, POSES } = window.Sogeum;
+  const grid = document.getElementById('grid');
+  let i = 1;
+  for (const [key, p] of Object.entries(POSES)) {
+    const cell = document.createElement('div'); cell.className = 'cell';
+    cell.innerHTML = `<span class="num">${String(i++).padStart(2,'0')} · ${key}</span>${sogeum({ ...p, viewBox: p.viewBox || '-6 -6 132 124' })}<h3>${p.label}</h3><p>${p.note}</p>`;
+    grid.appendChild(cell);
+  }
+  // Mobile peek: head peeks over the header rule, beside the Index toggle
+  const peek = document.createElement('div'); peek.className = 'cell';
+  const head = sogeum({ eyes: [-1.8, 1.4], head: -4, line: false, noArms: true, viewBox: '0 0 120 112' });
+  peek.innerHTML = `<span class="num">${String(i++).padStart(2,'0')} · mobilePeek</span>
+  <svg viewBox="0 0 220 180" aria-hidden="true">
+    <rect x="0" y="0" width="220" height="180" fill="none"/>
+    <text x="14" y="36" font-family="Young Serif" font-size="20" fill="#1E1C19">BB’s</text>
+    <rect x="150" y="14" width="48" height="48" fill="none" stroke="#2B2825" stroke-width="1.5"/>
+    <path d="M162 31 h24 M162 38 h24 M162 45 h24" stroke="#2B2825" stroke-width="1.6" stroke-linecap="round"/>
+    <clipPath id="peekclip"><rect x="0" y="-40" width="220" height="112"/></clipPath>
+    <g clip-path="url(#peekclip)"><g transform="translate(70 14) scale(.8)">${head.replace(/^<svg[^>]*>|<\/svg>$/g,'')}</g></g>
+    <path d="M0 72 C 70 71, 150 73, 220 71.6" stroke="#2B2825" stroke-width="1.6" fill="none"/>
+    <g fill="#F4EFE6" stroke="#2B2825" stroke-width="1.2"><path d="M92.6 73.8 C 92.2 70.2, 93.8 68.2, 96 68.2 C 98.2 68.2, 99.8 70.2, 99.4 73.8 C 98 75, 94 75, 92.6 73.8 Z"/><path d="M136.6 73.8 C 136.2 70.2, 137.8 68.2, 140 68.2 C 142.2 68.2, 143.8 70.2, 143.4 73.8 C 142 75, 138 75, 136.6 73.8 Z"/></g>
+    <path d="M14 96 h120 M14 110 h92 M14 124 h108" stroke="#B3ADA3" stroke-width="6" stroke-linecap="round"/>
+    <path d="M150 88 l0 -8 m0 8 l-6 -4 m6 4 l6 -4" stroke="#8A847B" stroke-width="1"/>
+    <text x="160" y="92" font-family="Hanken Grotesk" font-size="9" fill="#57524B">48×48 kept</text>
+  </svg>
+  <h3>Mobile peek</h3><p>Hides behind the header rule next to the Index toggle and never overlaps content or the 48 px target. Glances toward the last tap for 900 ms.</p>`;
+  grid.appendChild(peek);
+  // actual-size strip
+  const scale = document.getElementById('scale');
+  for (const [px, lab] of [[64, 'Desktop 64 px'], [52, 'Tablet 52 px'], [40, 'Mobile peek 40 px']]) {
+    const d = document.createElement('div');
+    d.innerHTML = sogeum({ viewBox: '0 0 120 112' }).replace('<svg ', `<svg width="${px*120/112}" height="${px}" `) + `<span class="sheet-meta">${lab}</span>`;
+    scale.appendChild(d);
+  }
+</script>
+</body>
+</html>

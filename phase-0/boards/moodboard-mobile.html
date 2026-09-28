@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>Mobile moodboard</title>
+<link rel="stylesheet" href="board.css">
+<style>
+  body { width: 1800px; padding: 56px 64px 64px; }
+  header { display: flex; justify-content: space-between; align-items: end; border-bottom: 1.5px solid var(--g800); padding-bottom: 16px; margin-bottom: 30px; }
+  .wrap { display: grid; grid-template-columns: 1.55fr 1fr; gap: 40px; }
+  .phones { display: flex; gap: 22px; }
+  .phone { width: 250px; }
+  .phone .scr { width: 250px; height: 541px; border: 1px solid var(--g400); border-radius: 26px; overflow: hidden; background: var(--paper); box-shadow: 0 1px 0 var(--g300); }
+  .phone .scr img { width: 100%; }
+  .phone .cap { margin-top: 10px; }
+  .cap { font: 500 12.5px/1.4 var(--sans); color: var(--g600); }
+  .rules { display: grid; gap: 22px; }
+  .rule { border-top: 1px solid var(--g400); padding-top: 12px; }
+  .rule h3 { font: 400 22px/1.15 var(--serif); margin: 0 0 6px; }
+  .rule p { margin: 0; font: 400 15px/1.5 var(--sans); }
+  .zoom { width: 100%; height: 150px; border: 1px solid var(--g300); overflow: hidden; position: relative; background: var(--paper) url('../assets/generated/web/p0-04-paper-texture.jpg') 0 0 / 700px; }
+  .zoom img { position: absolute; width: 1170px; left: -640px; top: -62px; max-width: none; }
+  .tgt { display: flex; gap: 14px; align-items: end; }
+  .tgt div { border: 1.5px dashed var(--g600); display: grid; place-items: center; font: 600 11px/1 var(--sans); color: var(--g600); }
+  .strip { display: flex; gap: 16px; margin-top: 28px; }
+  .strip .img { position: relative; height: 230px; overflow: hidden; }
+  .strip .img img { width: 100%; height: 100%; object-fit: cover; }
+  .strip .chip { left: 10px; bottom: 10px; }
+</style>
+</head>
+<body>
+<header>
+  <div><div class="label">Phase 0 · Mobile moodboard</div><h1 class="sheet-title">The sketchbook in one hand</h1></div>
+  <div class="sheet-meta" style="text-align:right">Composed for touch first, not shrunk from desktop<br>Unofficial BB’s Bakery website concept · generated media labeled</div>
+</header>
+<div class="wrap">
+  <div>
+    <div class="phones">
+      <div class="phone"><div class="scr"><img src="../storyboards/mobile/m1.png" alt=""></div><p class="cap">Facts in the first ~370 px. Both actions within thumb reach.</p></div>
+      <div class="phone"><div class="scr"><img src="../storyboards/mobile/m3.png" alt=""></div><p class="cap">One bread at a time, no pin. Scrub from 85% to 35% of the viewport.</p></div>
+      <div class="phone"><div class="scr"><img src="../storyboards/mobile/m7.png" alt=""></div><p class="cap">Index sheet: 48 px+ targets, hours and directions included.</p></div>
+    </div>
+    <div class="strip">
+      <div class="img" style="flex:0 0 150px"><img src="../assets/generated/web/p0-02-hero-mobile-plate.jpg" alt=""><span class="chip">Concept image</span></div>
+      <div class="img" style="flex:1"><img src="../assets/generated/web/p0-10-saltbread-shaded.jpg" alt="" style="object-position:50% 52%"><span class="chip">Concept sketch</span></div>
+      <div class="img" style="flex:1"><img src="../assets/generated/web/p0-03-saltbread-photo.jpg" alt="" style="object-position:50% 52%"><span class="chip">Concept image</span></div>
+    </div>
+    <p class="cap" style="margin-top:8px">Mobile hero crop keeps the loaf fully inside the frame · sketch-to-photo layers capped at 900 px · AVIF/WebP · lazy below the fold.</p>
+  </div>
+  <div class="rules">
+    <div class="rule"><h3>The peek</h3><div class="zoom"><img src="../storyboards/mobile/m2.png" alt=""></div><p class="cap" style="margin-top:8px">The roll looks over the header rule in its own 38 px slot. It never sits inside the toggle or over content. It glances at the last tap for 900 ms.</p></div>
+    <div class="rule"><h3>Targets</h3>
+      <div class="tgt"><div style="width:56px;height:44px">Menu</div><div style="width:48px;height:44px">Visit</div><div style="width:48px;height:48px">☰ 48</div><div style="width:164px;height:52px">See the menu · 52</div></div>
+      <p style="margin-top:10px">44 px minimum, 48 for the toggle and sheet links, 8 px between neighbors. Nothing depends on hover or swipe.</p></div>
+    <div class="rule"><h3>Motion budget</h3><p>No Lenis, no pins, no pointer tracking. The character has two moving parts (eyes, a 3 px bob). One scrubbed transition per menu item. Everything else plays once.</p></div>
+    <div class="rule"><h3>Reduced motion</h3><p>Final photos shown immediately with a small "Pencil study" thumbnail beside each. Static peek. The route and margin line are pre-drawn.</p></div>
+    <div class="rule"><h3>Type at 390</h3><p><span style="font:400 40px/1 var(--serif)">Aa</span> &nbsp;H1 75 · H2 36–40 · H3 30 · body 16/1.6 · labels 13 · notes 22</p></div>
+  </div>
+</div>
+</body>
+</html>

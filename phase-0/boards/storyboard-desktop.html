@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>Desktop storyboard</title>
+<link rel="stylesheet" href="board.css">
+<style>
+  body { padding: 40px; display: grid; gap: 40px; justify-content: start; }
+  body.single { padding: 0; }
+  body.single .frame:not(.on) { display: none; }
+  .frame { position: relative; width: 1440px; height: 900px; overflow: hidden; background: var(--paper) url('../assets/generated/web/p0-04-paper-texture.jpg') 0 0 / 1024px; outline: 1px solid var(--g300); }
+  body.single .frame { outline: 0; }
+
+  /* header + nav line */
+  .hd { position: absolute; inset: 0 0 auto 0; height: 72px; display: flex; align-items: end; padding: 0 72px; z-index: 5; background: var(--paper) url('../assets/generated/web/p0-04-paper-texture.jpg') 0 0 / 1024px; }
+  .hd::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 60px; background: linear-gradient(rgba(244,239,230,.96), rgba(244,239,230,0)); pointer-events: none; }
+  .hd .wm { font: 400 26px/1 var(--serif); padding-bottom: 16px; }
+  .hd nav { margin-left: auto; display: flex; gap: 34px; align-items: end; padding-bottom: 16px; }
+  .hd nav a { font: 600 15px/1 var(--sans); color: var(--g900); text-decoration: none; position: relative; }
+  .hd nav a.on::after { content: ''; position: absolute; left: -2px; right: -2px; bottom: -7px; height: 6px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 6' preserveAspectRatio='none'%3E%3Cpath d='M1 4 C 16 2.4, 38 2.2, 59 3.4' fill='none' stroke='%232B2825' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat; }
+  .hd .dir { margin-left: 34px; margin-bottom: 8px; height: 40px; padding: 0 16px; display: inline-flex; align-items: center; gap: 8px; background: var(--g900); color: var(--paper); font: 600 14px/1 var(--sans); border-radius: 2px; }
+  .navline { position: absolute; left: 56px; right: 56px; top: 71px; height: 4px; z-index: 6; }
+  .char { position: absolute; top: 62px; width: 69px; height: 64px; z-index: 7; }
+  .char svg { width: 100%; height: 100%; overflow: visible; }
+
+  .eyebrow { font: 600 13px/1.2 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--g600); }
+  .h1 { font: 400 164px/.9 var(--serif); letter-spacing: -.02em; margin: 0; }
+  .h2 { font: 400 72px/1 var(--serif); letter-spacing: -.015em; margin: 0; }
+  .h3 { font: 400 52px/1.02 var(--serif); letter-spacing: -.01em; margin: 0; }
+  .lead { font: 400 21px/1.5 var(--sans); color: var(--g900); max-width: 30ch; }
+  .body { font: 400 17px/1.62 var(--sans); color: var(--g900); max-width: 34rem; }
+  .muted { color: var(--g600); }
+  .hours { display: inline-flex; gap: 10px; align-items: center; font: 500 16px/1 var(--sans); padding: 12px 0; border-top: 1px solid var(--g400); border-bottom: 1px solid var(--g400); }
+  .btns { display: flex; gap: 14px; }
+  .pbox { position: relative; border: 0; }
+  .pbox svg.box { position: absolute; inset: -2px; width: calc(100% + 4px); height: calc(100% + 4px); }
+  .tag.sample { background: rgba(244,239,230,.9); }
+  .note { font: 400 27px/1 var(--pen); color: var(--g600); position: absolute; }
+  .annot { position: absolute; pointer-events: none; }
+  .ph { position: absolute; background: var(--paper-2); display: grid; place-items: center; text-align: center; }
+  .ph span { font: 500 14px/1.4 var(--sans); color: var(--g600); }
+  .ph em { font-style: normal; font-weight: 600; color: var(--g900); }
+  .ph svg { width: 28px; height: 28px; margin: 0 auto 8px; display: block; }
+  .cropm { position: absolute; inset: -10px; pointer-events: none; }
+  .fig { position: absolute; overflow: visible; }
+  .fig { overflow: visible; } .fig .clip { position:absolute; inset:0; overflow:hidden; }
+  .fig img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; filter: brightness(1.09); }
+  .hero-img { mix-blend-mode: multiply; filter: brightness(1.1); -webkit-mask-image: linear-gradient(#000,#000); mask-image: linear-gradient(#000,#000); }
+  .fig .chip { left: 12px; bottom: 12px; }
+  .cap { position: absolute; left: 0; right: 0; bottom: -30px; font: 500 13px/1.3 var(--sans); color: var(--g600); }
+  .index { list-style: none; margin: 0; padding: 0; counter-reset: i; }
+  .index li { counter-increment: i; display: flex; gap: 14px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--g300); font: 500 16px/1.2 var(--sans); color: var(--g600); }
+  .index li::before { content: counter(i, decimal-leading-zero); font: 600 12px/1 var(--sans); letter-spacing: .08em; color: var(--g500); width: 22px; }
+  .index li.on { color: var(--g900); font-weight: 600; }
+  .index li.on::after { content: ''; flex: 1; height: 1.5px; background: var(--g800); align-self: center; margin-left: 8px; }
+  .fnote { position: absolute; bottom: 0; left: 0; right: 0; height: 64px; border-top: 1px solid var(--g400); display: flex; align-items: center; justify-content: space-between; padding: 0 72px; font: 500 13px/1.3 var(--sans); color: var(--g600); }
+  .irow { display: grid; grid-template-columns: 26px 1fr; gap: 12px; padding: 16px 0; border-top: 1px solid var(--g400); }
+  .irow h4 { margin: 0 0 4px; font: 400 21px/1.2 var(--serif); }
+  .irow p { margin: 0; font: 400 17px/1.5 var(--sans); }
+  .irow svg { width: 22px; height: 22px; margin-top: 2px; }
+  .frame-tag { position: absolute; right: 16px; bottom: 12px; z-index: 20; font: 600 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--g500); }
+</style>
+</head>
+<body>
+
+<!-- D1 — Opening, first paint (t = 0) -->
+<section class="frame" id="d1">
+  <div class="hd"><div class="wm">BB’s Bakery</div><nav><a>Menu</a><a>Story</a><a>Media</a><a>Visit</a></nav><span class="dir">Directions ↗</span></div>
+  <svg class="navline" viewBox="0 0 1328 4" preserveAspectRatio="none"><path d="M0 2.2 C 400 1.2, 900 3.2, 1328 1.8" stroke="#2B2825" stroke-width="1.6" fill="none"/></svg>
+  <div class="char" data-pose="neutral" style="left:250px"></div>
+  <div style="position:absolute;left:72px;top:176px;width:640px">
+    <div class="eyebrow">Bakery · Coffee &amp; Tea · Los Angeles</div>
+    <h1 class="h1" style="margin:22px 0 26px">BB’s<br>Bakery</h1>
+    <svg width="300" height="14" viewBox="0 0 300 14" style="display:block;margin:-16px 0 24px"><path d="M2 9 C 80 4, 190 3.4, 296 7.4" stroke="#2B2825" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="300" stroke-dashoffset="300"/></svg>
+    <p class="lead" style="margin:0 0 22px">Handcrafted bread, baked fresh every day.</p>
+    <div class="hours"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2825" stroke-width="1.5"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/></svg>Open daily · 8:00 AM – 7:00 PM</div>
+    <div class="btns" style="margin-top:28px"><span class="btn btn-primary">See the menu ↓</span><span class="btn btn-secondary">Plan a visit</span></div>
+  </div>
+  <!-- loaf: first contour strokes only -->
+  <svg style="position:absolute;left:760px;top:130px" width="520" height="560" viewBox="0 0 520 560" fill="none" stroke="#2B2825" stroke-linecap="round">
+    <path d="M262 96 C 150 92, 72 170, 70 282 C 68 380, 140 462, 250 470" stroke-width="1.8" opacity=".9"/>
+    <path d="M250 470 C 360 474, 446 392, 448 290" stroke-width="1.8" opacity=".9" stroke-dasharray="340" stroke-dashoffset="190"/>
+    <ellipse cx="258" cy="284" rx="196" ry="192" stroke="#8A847B" stroke-width="1" opacity=".7" stroke-dasharray="4 6"/>
+    <path d="M150 262 C 210 280, 300 284, 372 258" stroke-width="1.4" opacity=".7" stroke-dasharray="240" stroke-dashoffset="150"/>
+  </svg>
+  <div class="note" style="left:1080px;top:600px;transform:rotate(-4deg)">fresh today</div>
+  <span class="frame-tag">D1 · Opening · first paint (t = 0 ms)</span>
+</section>
+
+<!-- D2 — Opening, drawing resolving (t ≈ 1.1 s) -->
+<section class="frame" id="d2">
+  <img class="hero-img" src="../assets/generated/web/p0-01-hero-desktop-plate.jpg" alt="" style="position:absolute;left:-20px;top:-20px;width:1640px;max-width:none;height:auto">
+  <div class="hd"><div class="wm">BB’s Bakery</div><nav><a>Menu</a><a>Story</a><a>Media</a><a>Visit</a></nav><span class="dir">Directions ↗</span></div>
+  <svg class="navline" viewBox="0 0 1328 4" preserveAspectRatio="none"><path d="M0 2.2 C 400 1.2, 900 3.2, 1328 1.8" stroke="#2B2825" stroke-width="1.6" fill="none"/></svg>
+  <div class="char" data-pose="lookUpRight" style="left:250px"></div>
+  <div style="position:absolute;left:72px;top:176px;width:640px">
+    <div class="eyebrow">Bakery · Coffee &amp; Tea · Los Angeles</div>
+    <h1 class="h1" style="margin:22px 0 26px">BB’s<br>Bakery</h1>
+    <svg width="300" height="14" viewBox="0 0 300 14" style="display:block;margin:-16px 0 24px"><path d="M2 9 C 80 4, 190 3.4, 296 7.4" stroke="#2B2825" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    <p class="lead" style="margin:0 0 22px">Handcrafted bread, baked fresh every day.</p>
+    <div class="hours"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2825" stroke-width="1.5"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/></svg>Open daily · 8:00 AM – 7:00 PM</div>
+    <div class="btns" style="margin-top:28px"><span class="btn btn-primary">See the menu ↓</span><span class="btn btn-secondary">Plan a visit</span></div>
+  </div>
+  <span class="chip" style="left:1180px;right:auto;bottom:auto;top:700px;position:absolute">Concept image</span>
+  <span class="frame-tag" style="bottom:12px;right:auto;left:72px">D2 · Opening · eraser sweep mid-way (t ≈ 1.1 s)</span>
+</section>
+
+<!-- D3–D5 — Menu pinned stage, three scroll states of item 01 -->
+<template id="menu-stage">
+  <div class="hd"><div class="wm">BB’s Bakery</div><nav><a class="on">Menu</a><a>Story</a><a>Media</a><a>Visit</a></nav><span class="dir">Directions ↗</span></div>
+  <svg class="navline" viewBox="0 0 1328 4" preserveAspectRatio="none"><path d="M0 2.2 C 400 1.2, 900 3.2, 1328 1.8" stroke="#2B2825" stroke-width="1.6" fill="none"/></svg>
+  <div class="char" data-pose="menu" style="left:936px"></div>
+  <div style="position:absolute;left:72px;top:150px;width:430px">
+    <div class="eyebrow">Menu · Sample selection</div>
+    <h2 class="h2" style="font-size:58px;margin:16px 0 18px">Breads people talk about</h2>
+    <p class="body muted" style="font-size:16px;margin:0 0 30px">A few breads and one drink that customers have mentioned. It’s a sample, not the full menu. Ask in store for today’s bread.</p>
+    <ol class="index"><li class="on">Salt bread</li><li>Garlic cream cheese bread</li><li>Cranberry cream cheese bread</li><li>Cream-filled twisted doughnut</li><li>Croissant sandwich</li><li>Oat black sesame latte</li></ol>
+  </div>
+  <div class="fig crop" style="left:600px;top:128px;width:512px;height:640px"><img class="stage" alt=""><span class="chip">Concept image</span></div>
+  <div style="position:absolute;left:1160px;top:170px;width:220px">
+    <span class="tag sample">Sample selection</span>
+    <h3 class="h3" style="margin:22px 0 14px">Salt bread</h3>
+    <p class="body muted" style="font-size:15px;margin:0">Mentioned in customer reviews</p>
+  </div>
+  <div class="note" style="left:1170px;top:430px;transform:rotate(-3deg)">study no. 01</div>
+</template>
+<section class="frame" id="d3" data-stage="../assets/generated/web/p0-09-saltbread-outline.jpg" data-t="D3 · Menu · p = 0.25 · contour drawn"></section>
+<section class="frame" id="d4" data-stage="../assets/generated/web/p0-10-saltbread-shaded.jpg" data-t="D4 · Menu · p = 0.50 · graphite hatched in"></section>
+<section class="frame" id="d5" data-stage="../assets/generated/web/p0-03-saltbread-photo.jpg" data-t="D5 · Menu · p = 0.90 · photograph resolved, arrow drawn" data-arrow="1"></section>
+
+<!-- D6 — Story -->
+<section class="frame" id="d6">
+  <div class="hd"><div class="wm">BB’s Bakery</div><nav><a>Menu</a><a class="on">Story</a><a>Media</a><a>Visit</a></nav><span class="dir">Directions ↗</span></div>
+  <svg class="navline" viewBox="0 0 1328 4" preserveAspectRatio="none"><path d="M0 2.2 C 400 1.2, 900 3.2, 1328 1.8" stroke="#2B2825" stroke-width="1.6" fill="none"/></svg>
+  <div class="char" data-pose="storyA" style="left:1006px"></div>
+  <!-- margin column -->
+  <svg style="position:absolute;left:250px;top:150px" width="40" height="660" viewBox="0 0 40 660" fill="none" stroke="#2B2825" stroke-linecap="round"><path d="M20 0 C 16 120, 24 240, 19 360 C 15 460, 22 560, 20 660" stroke-width="1.5" stroke-dasharray="660" stroke-dashoffset="150"/></svg>
+  <div class="note" style="left:96px;top:250px;transform:rotate(-4deg)">by hand</div>
+  <div class="note" style="left:88px;top:370px;transform:rotate(3deg)">every day</div>
+  <div class="note" style="left:70px;top:490px;transform:rotate(-2deg)">good ingredients</div>
+  <svg class="annot" style="left:190px;top:255px" width="60" height="260" viewBox="0 0 60 260" fill="none" stroke="#57524B" stroke-width="1.2" stroke-linecap="round"><path d="M4 14 C 24 10, 40 12, 54 16 M46 10 L 54 16 L 46 21"/><path d="M4 132 C 24 130, 40 132, 54 136 M46 130 L 54 136 L 46 141"/></svg>
+  <div style="position:absolute;left:360px;top:190px;width:600px">
+    <div class="eyebrow">The notebook</div>
+    <h2 class="h2" style="margin:18px 0 28px">Baked fresh,<br>every day</h2>
+    <p class="body" style="font-size:20px;line-height:1.6">BB’s Bakery specializes in premium, handcrafted bread, baked fresh daily with high-quality ingredients, with the aim of an exceptional and authentic taste.</p>
+    <div style="margin-top:44px;padding:26px 28px;border:1px dashed var(--g600)">
+      <span class="tag confirm">Owner to confirm</span>
+      <h3 style="font:400 28px/1.15 var(--serif);margin:16px 0 8px">The people behind the bread</h3>
+      <p class="body muted" style="margin:0">This space is saved for the owners’ own story, in their words.</p>
+    </div>
+  </div>
+  <div class="fig crop" style="left:1030px;top:230px;width:330px;height:300px"><div class="clip"><img src="../assets/generated/web/p0-06-bread-sketch-sheet.jpg" alt="" style="object-position:48% 18%;transform:scale(1.9);transform-origin:50% 20%"></div><span class="chip">Concept sketch</span></div>
+  <span class="frame-tag">D6 · Story · margin line scrubbed to 75%</span>
+</section>
+
+<!-- D7 — Media -->
+<section class="frame" id="d7">
+  <div class="hd"><div class="wm">BB’s Bakery</div><nav><a>Menu</a><a>Story</a><a class="on">Media</a><a>Visit</a></nav><span class="dir">Directions ↗</span></div>
+  <svg class="navline" viewBox="0 0 1328 4" preserveAspectRatio="none"><path d="M0 2.2 C 400 1.2, 900 3.2, 1328 1.8" stroke="#2B2825" stroke-width="1.6" fill="none"/></svg>
+  <div class="char" data-pose="media" style="left:1076px"></div>
+  <div style="position:absolute;left:72px;top:132px;width:680px">
+    <div class="eyebrow">From the shop</div>
+    <h2 class="h2" style="margin:14px 0 0;white-space:nowrap">Around the shop</h2>
+  </div>
+  <p class="body muted" style="position:absolute;left:800px;top:196px;width:420px;margin:0;font-size:16px">Frames for the bakery’s own photos. Concept images are labeled; empty frames are waiting for real ones.</p>
+  <div class="ph crop" style="left:72px;top:300px;width:600px;height:420px"><div><svg viewBox="0 0 24 24" fill="none" stroke="#57524B" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="12" cy="12" r="3.2"/></svg><span>Owner photo: <em>Murals</em><br>mentioned by customers · to confirm</span></div></div>
+  <div class="fig crop" style="left:716px;top:300px;width:400px;height:250px"><img src="../assets/generated/web/p0-07-menu-frame-plate.jpg" alt="" style="object-position:78% 40%"><span class="chip">Concept image</span></div>
+  <div class="ph crop" style="left:1150px;top:300px;width:218px;height:250px"><span>Owner photo:<br><em>Patio</em><br>to confirm</span></div>
+  <div class="ph crop" style="left:716px;top:584px;width:200px;height:136px"><span>Owner photo:<br><em>Packaging</em></span></div>
+  <div class="ph crop" style="left:950px;top:584px;width:200px;height:136px"><span>Owner photo:<br><em>Interior</em></span></div>
+  <div class="ph crop" style="left:1184px;top:584px;width:184px;height:136px"><span>Owner photo:<br><em>Storefront</em></span></div>
+  <div class="cap" style="left:72px;top:736px;bottom:auto;width:600px">01 Murals · 02 Bread · 03 Patio · 04 Packaging · 05 Interior · 06 Storefront</div>
+  <div class="note" style="left:470px;top:780px;transform:rotate(-3deg)">real photos go here ↑</div>
+  <span class="frame-tag">D7 · Media · crop marks drawn, frames filled</span>
+</section>
+
+<!-- D8 — Visit + footer -->
+<section class="frame" id="d8">
+  <div class="hd"><div class="wm">BB’s Bakery</div><nav><a>Menu</a><a>Story</a><a>Media</a><a class="on">Visit</a></nav><span class="dir">Directions ↗</span></div>
+  <svg class="navline" viewBox="0 0 1328 4" preserveAspectRatio="none"><path d="M0 2.2 C 400 1.2, 900 3.2, 1328 1.8" stroke="#2B2825" stroke-width="1.6" fill="none"/></svg>
+  <div class="char" data-pose="visit" style="left:1140px"></div>
+  <div style="position:absolute;left:72px;top:140px;width:520px">
+    <div class="eyebrow">Visit</div>
+    <h2 class="h2" style="margin:16px 0 30px">Visit BB’s</h2>
+    <div class="irow"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2825" stroke-width="1.5"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><div><h4>Address</h4><p>BB’s Bakery<br>3130 W Olympic Blvd, Suite 100<br>Los Angeles, CA 90006</p></div></div>
+    <div class="irow"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2825" stroke-width="1.5"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/></svg><div><h4>Hours</h4><p>Every day · 8:00 AM – 7:00 PM</p></div></div>
+    <div class="irow" style="border-bottom:1px solid var(--g400)"><svg viewBox="0 0 24 24" fill="none" stroke="#2B2825" stroke-width="1.5"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><div><h4>Good to know</h4><p>Takeout available · Wheelchair accessible</p></div></div>
+    <div class="btns" style="margin-top:28px"><span class="btn btn-primary">Get directions ↗</span><span class="btn btn-secondary">Open in Apple Maps ↗</span></div>
+    <p style="margin:20px 0 0;font:500 14px/1.5 var(--sans);color:var(--g600)">Phone · social links: to be added <span class="tag confirm" style="margin-left:8px">Owner to confirm</span></p>
+  </div>
+  <!-- pencil map (authored SVG, not generated) -->
+  <svg style="position:absolute;left:700px;top:160px" width="668" height="560" viewBox="0 0 668 560" fill="none" stroke-linecap="round" role="img" aria-label="Pencil sketch of the street, not to scale">
+    <g stroke="#8A847B" stroke-width="1.1"><path d="M0 120 C 200 116, 460 124, 668 118"/><path d="M0 430 C 220 426, 450 434, 668 428"/><path d="M120 0 C 116 180, 124 380, 118 560"/><path d="M300 0 C 304 180, 296 380, 302 560"/><path d="M520 0 C 516 180, 524 380, 518 560"/></g>
+    <path d="M0 282 C 220 276, 460 288, 668 280" stroke="#2B2825" stroke-width="3"/>
+    <path d="M0 292 C 220 286, 460 298, 668 290" stroke="#2B2825" stroke-width="1" opacity=".6"/>
+    <defs><pattern id="mh" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="5" stroke="#8A847B" stroke-width=".8"/></pattern></defs><rect x="330" y="150" width="160" height="100" fill="url(#mh)" opacity=".55"/><rect x="140" y="320" width="140" height="80" fill="url(#mh)" opacity=".4"/><rect x="540" y="320" width="110" height="90" fill="url(#mh)" opacity=".4"/>
+    <path d="M40 520 C 110 470, 150 420, 210 380 C 260 346, 330 330, 392 300" stroke="#2B2825" stroke-width="1.8" stroke-dasharray="2 8"/>
+    <path d="M404 250 c -12 0 -20 9 -20 19 c 0 14 20 32 20 32 s 20 -18 20 -32 c 0 -10 -8 -19 -20 -19 z" stroke="#2B2825" stroke-width="1.8" fill="#F4EFE6"/><circle cx="404" cy="269" r="5.5" stroke="#2B2825" stroke-width="1.6"/>
+  </svg>
+  <div style="position:absolute;left:1180px;top:418px;font:600 13px/1.3 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--g800)">W Olympic Blvd</div>
+  <div style="position:absolute;left:1116px;top:392px;font:500 13px/1.3 var(--sans);color:var(--g900)"></div>
+  <div style="position:absolute;left:1128px;top:230px;font:600 13px/1.3 var(--sans);color:var(--g900);background:rgba(244,239,230,.9);padding:2px 4px">3130 W Olympic Blvd, Suite 100</div>
+  <div style="position:absolute;left:700px;top:732px;font:500 13px/1 var(--sans);color:var(--g600)">Pencil sketch, not to scale.</div>
+  <div class="fnote"><span>BB’s Bakery · 3130 W Olympic Blvd, Suite 100, Los Angeles, CA 90006 · Open daily 8:00 AM – 7:00 PM</span><span><strong style="color:var(--g900)">Unofficial website concept.</strong> Not affiliated with or approved by BB’s Bakery.</span></div>
+  <span class="frame-tag" style="bottom:72px">D8 · Visit · route drawn · character points at directions</span>
+</section>
+
+<script src="sogeum.js"></script>
+<script>
+  const { sogeum, POSES } = window.Sogeum;
+    // menu frames from template
+  const tpl = document.getElementById('menu-stage');
+  for (const id of ['d3', 'd4', 'd5']) {
+    const f = document.getElementById(id);
+    f.appendChild(tpl.content.cloneNode(true));
+    f.querySelector('img.stage').src = f.dataset.stage;
+    const t = document.createElement('span'); t.className = 'frame-tag'; t.textContent = f.dataset.t; f.appendChild(t);
+    if (f.dataset.arrow) {
+      f.insertAdjacentHTML('beforeend', `<svg class="annot" style="left:1060px;top:420px" width="150" height="120" viewBox="0 0 150 120" fill="none" stroke="#2B2825" stroke-width="1.5" stroke-linecap="round"><path d="M120 18 C 90 30, 60 60, 30 96"/><path d="M28 80 L 30 96 L 44 90"/></svg>`);
+      f.querySelector('.h3').insertAdjacentHTML('afterend', `<svg width="200" height="10" viewBox="0 0 200 10" style="display:block;margin:-6px 0 14px"><path d="M2 6 C 60 3, 130 2.6, 196 5" stroke="#2B2825" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`);
+    }
+    if (id === 'd3') f.querySelector('.fig .chip').textContent = 'Concept sketch';
+    if (id === 'd4') f.querySelector('.fig .chip').textContent = 'Concept sketch';
+  }
+  document.querySelectorAll('.char').forEach(el => { const p = POSES[el.dataset.pose] || {}; el.innerHTML = sogeum({ ...p, line: false, viewBox: '0 0 120 112' }); });
+  document.querySelectorAll('.crop').forEach(el => el.insertAdjacentHTML('beforeend', `<svg class="cropm" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" fill="none" stroke="#8A847B" stroke-width=".25" vector-effect="non-scaling-stroke"></svg>`));
+  const q = new URLSearchParams(location.search).get('f');
+  if (q) { document.body.classList.add('single'); document.getElementById(q).classList.add('on'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+{
+  "follow": {
+    "left": {
+      "pose": "neutral",
+      "eyes": "translate(-1.10 1.60)",
+      "roll": "rotate(-2.76 60 64)",
+      "lean": "rotate(-0.85 60 9)",
+      "active": "true",
+      "mode": "follow",
+      "x": 249
+    },
+    "right": {
+      "pose": "neutral",
+      "eyes": "translate(2.40 0.15)",
+      "roll": "rotate(8.62 60 64)",
+      "lean": "rotate(3.19 60 9)",
+      "active": "true",
+      "mode": "follow",
+      "x": 249
+    },
+    "afterLeave": {
+      "pose": "neutral",
+      "eyes": "translate(0.00 0.00)",
+      "roll": "rotate(0.02 60 64)",
+      "lean": "rotate(0.15 60 9)",
+      "active": "true",
+      "mode": "follow",
+      "x": 249
+    }
+  },
+  "reactions": {
+    "menu": {
+      "pose": "menu",
+      "eyes": "translate(1.20 1.60)",
+      "roll": "rotate(3.98 60 64)",
+      "lean": "rotate(-3.02 60 9)",
+      "active": "true",
+      "mode": "react",
+      "x": 935
+    },
+    "story": {
+      "pose": "storyA",
+      "eyes": "translate(2.38 -0.37)",
+      "roll": "rotate(4.10 60 64)",
+      "lean": "rotate(-1.03 60 9)",
+      "active": "true",
+      "mode": "travel",
+      "x": 1002
+    },
+    "media": {
+      "pose": "media",
+      "eyes": "translate(1.00 0.40)",
+      "roll": "rotate(3.02 60 64)",
+      "lean": "rotate(-2.59 60 9)",
+      "active": "true",
+      "mode": "react",
+      "x": 1077
+    },
+    "visit": {
+      "pose": "visitRight",
+      "eyes": "translate(2.40 0.40)",
+      "roll": "rotate(5.98 60 64)",
+      "lean": "rotate(-2.76 60 9)",
+      "active": "true",
+      "mode": "react",
+      "x": 1146
+    }
+  },
+  "afterHover": {
+    "pose": "neutral",
+    "eyes": "translate(2.00 1.57)",
+    "roll": "rotate(4.88 60 64)",
+    "lean": "rotate(0.90 60 9)",
+    "active": "true",
+    "mode": "follow",
+    "x": 249
+  },
+  "idle": {
+    "pose": "neutral",
+    "eyes": "translate(0.00 0.00)",
+    "roll": "rotate(0.00 60 64)",
+    "lean": "rotate(0.00 60 9)",
+    "active": "false",
+    "mode": "follow",
+    "x": 249
+  },
+  "reverse": {
+    "first": {
+      "draw": "136.5183deg",
+      "ep": "-30%",
+      "shaded": "1"
+    },
+    "resolved": {
+      "draw": "374deg",
+      "ep": "130%",
+      "shaded": "0"
+    },
+    "back": {
+      "draw": "136.5183deg",
+      "ep": "-30%",
+      "shaded": "1"
+    },
+    "reversesExactly": true
+  },
+  "resize": {
+    "at900": {
+      "docW": 900,
+      "vw": 900,
+      "pinned": false,
+      "spacer": false
+    },
+    "backTo1440": {
+      "docW": 1440,
+      "vw": 1440,
+      "pinned": true,
+      "spacers": 1
+    }
+  },
+  "keyboard": {
+    "skip": {
+      "active": "skip-link",
+      "visible": true
+    },
+    "order": [
+      "BB’s BakeryBB’s",
+      "Menu",
+      "Story",
+      "Media",
+      "Visit",
+      "Directions to BB’s Bakery (o",
+      "See the menu",
+      "Plan a visit",
+      "01 Salt bread"
+    ],
+    "focusRing": "solid 3px"
+  },
+  "jumps": {
+    "390": [
+      {
+        "target": "visit",
+        "top": 72,
+        "expected": 72,
+        "active": "visit",
+        "ok": true
+      },
+      {
+        "target": "menu",
+        "top": 72,
+        "expected": 72,
+        "active": "menu",
+        "ok": true
+      },
+      {
+        "target": "visit",
+        "top": 72,
+        "expected": 72,
+        "active": "visit",
+        "ok": true
+      }
+    ],
+    "768": [
+      {
+        "target": "visit",
+        "top": 166,
+        "expected": 166,
+        "active": "visit",
+        "ok": true
+      },
+      {
+        "target": "story",
+        "top": 166,
+        "expected": 166,
+        "active": "story",
+        "ok": true
+      },
+      {
+        "target": "menu",
+        "top": 166,
+        "expected": 166,
+        "active": "menu",
+        "ok": true
+      },
+      {
+        "target": "media",
+        "top": 166,
+        "expected": 166,
+        "active": "media",
+        "ok": true
+      },
+      {
+        "target": "visit",
+        "top": 166,
+        "expected": 166,
+        "active": "visit",
+        "ok": true
+      }
+    ],
+    "1440": [
+      {
+        "target": "visit",
+        "top": 184,
+        "expected": 184,
+        "active": "visit",
+        "ok": true
+      },
+      {
+        "target": "story",
+        "top": 184,
+        "expected": 184,
+        "active": "story",
+        "ok": true
+      },
+      {
+        "target": "menu",
+        "top": 184,
+        "expected": 184,
+        "active": "menu",
+        "ok": true
+      },
+      {
+        "target": "media",
+        "top": 184,
+        "expected": 184,
+        "active": "media",
+        "ok": true
+      },
+      {
+        "target": "visit",
+        "top": 184,
+        "expected": 184,
+        "active": "visit",
+        "ok": true
+      }
+    ]
+  },
+  "sheet": {
+    "toggleBox": {
+      "w": 48,
+      "h": 48
+    },
+    "open": {
+      "expanded": "true",
+      "dialog": true,
+      "mainInert": true,
+      "focus": "Close site index"
+    },
+    "focusStaysInside": true,
+    "closed": {
+      "expanded": "false",
+      "hidden": true,
+      "focusOnToggle": true,
+      "mainInert": false
+    },
+    "linkNavigates": {
+      "hidden": true,
+      "visitTop": 72
+    }
+  },
+  "errors": []
+}

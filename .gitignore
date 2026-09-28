@@ -1,0 +1,17 @@
+# dependencies & builds
+node_modules/
+dist/
+dist-ssr/
+*.log
+.DS_Store
+
+# Raw 2K generation sources (large). Regenerate from the Higgsfield job IDs listed in
+# phase-0/PHASE-0-ASSET-MANIFEST.md and site/ASSET-MANIFEST.md. Optimized outputs are committed.
+site/assets-src/generated/*.png
+phase-0/assets/generated/*.png
+
+# Raw QA captures (per-width overviews and JSON reports are committed)
+site/qa/**/*.png
+
+# local tooling
+site/.claude/

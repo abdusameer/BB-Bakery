@@ -1,0 +1,33 @@
+/* Phase 0 boards — shared tokens (mirrors PHASE-0-DESIGN-SYSTEM.md) */
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Nanum+Pen+Script&family=Young+Serif&display=swap');
+
+:root {
+  color-scheme: light;
+  --paper: #F4EFE6; --paper-2: #EAE3D6; --paper-3: #DCD3C3;
+  --g900: #1E1C19; --g800: #2B2825; --g600: #57524B; --g500: #6B655D; --g400: #8A847B; --g300: #B3ADA3;
+  --stamp: #A3322B;
+  --serif: 'Young Serif', Georgia, serif;
+  --sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --pen: 'Nanum Pen Script', cursive;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--g900); font-family: var(--sans); }
+body { background: var(--paper) url('../assets/generated/p0-04-paper-texture.png') 0 0 / 1024px; -webkit-font-smoothing: antialiased; }
+.label { font: 600 12px/1.2 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--g600); }
+.serif { font-family: var(--serif); font-weight: 400; }
+.pen { font-family: var(--pen); color: var(--g600); }
+.chip { position: absolute; left: 10px; bottom: 10px; background: rgba(244,239,230,.94); color: var(--g900); font: 600 11px/1 var(--sans); letter-spacing: .04em; padding: 6px 8px; border: 1px solid var(--g400); }
+.crop { position: relative; }
+.crop::before, .crop::after { content: ''; position: absolute; width: 14px; height: 14px; border: 1px solid var(--g400); pointer-events: none; }
+.crop::before { left: -8px; top: -8px; border-right: 0; border-bottom: 0; }
+.crop::after { right: -8px; bottom: -8px; border-left: 0; border-top: 0; }
+img { display: block; max-width: 100%; }
+.sheet-title { font: 400 44px/1 var(--serif); margin: 0; }
+.sheet-meta { font: 500 13px/1.4 var(--sans); color: var(--g600); }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; font: 600 15px/1 var(--sans); border-radius: 2px; text-decoration: none; }
+.btn-primary { background: var(--g900); color: var(--paper); }
+.btn-secondary { color: var(--g900); border: 1.5px solid var(--g800); }
+.tag { display: inline-block; font: 600 11px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; padding: 7px 9px; border: 1px solid var(--g800); color: var(--g900); }
+.tag.confirm { border-style: dashed; border-color: var(--g600); }
+.tag.confirm::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--stamp); margin-right: 7px; vertical-align: 1px; }
+.stamp { display: inline-block; color: var(--stamp); border: 2px solid var(--stamp); padding: 6px 10px; font: 600 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; transform: rotate(-3deg); }

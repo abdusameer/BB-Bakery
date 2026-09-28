@@ -1,0 +1,83 @@
+/* Guide character: pose visibility is CSS-driven via data-pose on the <svg>.
+   Transforms on lean/roll/legs/eyes are written by src/motion/guide.ts (SVG attributes),
+   so CSS never sets `transform` on those groups (no GSAP/CSS transform conflicts). */
+
+.guide-svg { overflow: visible; }
+.guide-svg [data-part] { transition: opacity 140ms linear; }
+.guide-svg [data-part='body'] { transition: transform 300ms cubic-bezier(.45, .05, .35, 1); }
+
+/* hidden by default */
+.guide-svg [data-part='arm-l-reach'], .guide-svg [data-part='arm-r-reach'],
+.guide-svg [data-part='hand-l-reach'], .guide-svg [data-part='hand-r-reach'],
+.guide-svg [data-part='hand-l-sit'], .guide-svg [data-part='hand-r-sit'],
+.guide-svg [data-part^='front-'], .guide-svg [data-part='wink'] { opacity: 0; }
+
+/* menu: let go with the right hand, point down at the products */
+.guide-svg[data-pose='menu'] [data-part='arm-r-grip'], .guide-svg[data-pose='menu'] [data-part='hand-r-grip'] { opacity: 0; }
+.guide-svg[data-pose='menu'] [data-part='front-down-r'] { opacity: 1; }
+
+/* story: climbing hand over hand */
+.guide-svg[data-pose='storyA'] [data-part='arm-r-grip'], .guide-svg[data-pose='storyA'] [data-part='hand-r-grip'] { opacity: 0; }
+.guide-svg[data-pose='storyA'] [data-part='arm-r-reach'], .guide-svg[data-pose='storyA'] [data-part='hand-r-reach'] { opacity: 1; }
+.guide-svg[data-pose='storyB'] [data-part='arm-l-grip'], .guide-svg[data-pose='storyB'] [data-part='hand-l-grip'] { opacity: 0; }
+.guide-svg[data-pose='storyB'] [data-part='arm-l-reach'], .guide-svg[data-pose='storyB'] [data-part='hand-l-reach'] { opacity: 1; }
+.guide-svg[data-pose='storyA'] [data-part], .guide-svg[data-pose='storyB'] [data-part] { transition-duration: 60ms; }
+
+/* media: holds a drawn camera, one eye closed */
+.guide-svg[data-pose='media'] [data-part='arm-r-grip'], .guide-svg[data-pose='media'] [data-part='hand-r-grip'], .guide-svg[data-pose='media'] [data-part='eye-r'] { opacity: 0; }
+.guide-svg[data-pose='media'] [data-part='front-camera'], .guide-svg[data-pose='media'] [data-part='wink'] { opacity: 1; }
+
+/* visit: let go with the left hand, point down-left at directions */
+.guide-svg[data-pose='visit'] [data-part='arm-l-grip'], .guide-svg[data-pose='visit'] [data-part='hand-l-grip'],
+.guide-svg[data-pose='visit-static'] [data-part='arm-l-grip'], .guide-svg[data-pose='visit-static'] [data-part='hand-l-grip'] { opacity: 0; }
+.guide-svg[data-pose='visit'] [data-part='front-down-l'], .guide-svg[data-pose='visit-static'] [data-part='front-down-l'] { opacity: 1; }
+
+/* tuck: perched on top of the line, mittens resting on it */
+.guide-svg[data-pose='tuck'] [data-part^='arm-'], .guide-svg[data-pose='tuck'] [data-part='hand-l-grip'], .guide-svg[data-pose='tuck'] [data-part='hand-r-grip'] { opacity: 0; }
+.guide-svg[data-pose='tuck'] [data-part='hand-l-sit'], .guide-svg[data-pose='tuck'] [data-part='hand-r-sit'] { opacity: 1; }
+.guide-svg[data-pose='tuck'] [data-part='body'] { transform: translateY(-70px); }
+
+.guide-svg [data-part='blink'] { transform-box: fill-box; transform-origin: center; }
+.guide-svg.is-blinking [data-part='blink'] { animation: guide-blink 140ms linear 1; }
+@keyframes guide-blink { 50% { transform: scaleY(.1); } }
+
+/* header shelf band: content fades out under the nav line so the hanging guide never covers it */
+.shelf { display: none; }
+@media (min-width: 768px) {
+  .shelf { display: block; position: absolute; left: 0; right: 0; top: 100%; height: var(--shelf-h); pointer-events: none; background: linear-gradient(to bottom, rgba(244, 239, 230, .97) 0%, rgba(244, 239, 230, .88) 38%, rgba(244, 239, 230, 0) 100%); }
+  html.guide-perched .shelf { height: 20px; }
+}
+@media (max-height: 559.98px) { .shelf { height: 20px; } }
+
+/* mobile peek */
+.peek-svg { transition: transform 200ms cubic-bezier(.22, .61, .36, 1); }
+html.sheet-open .peek-svg, html[data-section='visit'] .peek-svg { transform: translateY(70%); }
+.peek-svg.is-bobbing { animation: peek-bob 220ms cubic-bezier(.22, .61, .36, 1) 1; }
+@keyframes peek-bob { 50% { transform: translateY(-9%); } }
+
+/* sheet illustration and the Visit finale guide use static poses */
+.sheet-char .guide-svg, .visit-guide .guide-svg { width: 100%; height: 100%; }
+
+.visit-guide { display: none; }
+@media (max-width: 767.98px) {
+  .visit-guide { display: block; position: relative; height: 60px; margin-bottom: -6px; }
+  .visit-guide-line { position: absolute; left: 0; right: 0; top: 0; width: 100%; height: 4px; overflow: visible; }
+  .visit-guide-line path { fill: none; stroke: var(--g800); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .visit-guide { height: 84px; }
+  .visit-guide .guide-svg { position: absolute; right: 12%; top: -7px; width: 90px; height: 84px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-svg [data-part], .guide-svg [data-part='body'], .peek-svg { transition: none; }
+  .guide-svg.is-blinking [data-part='blink'], .peek-svg.is-bobbing { animation: none; }
+}
+
+/* visitRight (desktop): let go with the right hand and point at the header Directions button */
+.guide-svg[data-pose='visitRight'] [data-part='arm-r-grip'], .guide-svg[data-pose='visitRight'] [data-part='hand-r-grip'] { opacity: 0; }
+.guide-svg[data-pose='visitRight'] [data-part='front-point-r'] { opacity: 1; }
+
+/* the header shelf takes the night tone while the dark chapter is under it */
+html.shelf-dark .shelf { background: linear-gradient(to bottom, rgba(23, 19, 15, .96) 0%, rgba(23, 19, 15, .84) 38%, rgba(23, 19, 15, 0) 100%); }
+
+/* over the dark chapter the hanging guide is drawn in chalk (same rig, flipped tokens) */
+html.shelf-dark .site-header .guide { --g800: #E8DFD0; --guide-fill: #17130F; --guide-eye: #F4EFE6; --guide-ink: #E8DFD0; }

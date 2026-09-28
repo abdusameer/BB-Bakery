@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Unofficial private concept: never index. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <title>BB’s Bakery — Handcrafted bread in Los Angeles (concept)</title>
+    <meta name="description" content="Unofficial website concept for BB’s Bakery, 3130 W Olympic Blvd, Los Angeles. Not affiliated with the bakery." />
+    <meta name="theme-color" content="#F4EFE6" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Nanum+Pen+Script&family=Young+Serif&display=swap" />
+    <link rel="preload" as="image" type="image/avif" href="/img/hero-loaf-photo-1100.avif" imagesrcset="/img/hero-loaf-photo-700.avif 700w, /img/hero-loaf-photo-1100.avif 1100w, /img/hero-loaf-photo-1500.avif 1500w" imagesizes="(max-width: 767px) 118vw, (max-width: 1023px) min(97vw, 72vh, 717px), min(58vw, 97vh, 896px)" fetchpriority="high" />
+    <script>
+      // Runs before first paint. Motion classes gate every "undrawn" initial state in CSS,
+      // so with JS off (or if the app fails to boot) the page shows complete final states.
+      (function () {
+        var d = document.documentElement;
+        d.classList.remove('no-js');
+        d.classList.add('js');
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduce) d.classList.add('motion');
+        window.setTimeout(function () {
+          if (!window.__bbsMotionReady) d.classList.remove('motion');
+        }, 4000);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"><!--app-html--></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
