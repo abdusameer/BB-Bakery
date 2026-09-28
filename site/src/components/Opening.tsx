@@ -52,6 +52,7 @@ export function Opening() {
             className="hero-sketch"
             sizes="(max-width: 767px) 118vw, (max-width: 1023px) min(97vw, 72vh, 717px), min(58vw, 97vh, 896px)"
             alt="Concept image: a round country loaf with a floured, cross-scored crust, seen from above on paper."
+            label="the loaf"
             marks={heroMarks}
           />
           <p className="note" aria-hidden="true">baked fresh, every day</p>

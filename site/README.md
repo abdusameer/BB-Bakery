@@ -34,7 +34,8 @@ npm run preview      # http://127.0.0.1:4174 — serves dist/ exactly as built
 | `npm run preview` | Serve `dist/` on port 4174 |
 | `npm run images` | Rebuild `public/img/` from `assets-src/generated/` (white-point, align drawings to photos, AVIF/WebP). Takes ~50 s |
 | `node scripts/qa.mjs --base http://127.0.0.1:4174 --out qa/screens` | Screenshots at 1440/1280/1024/768/430/390/360, plus overflow, console, request, and nav-overlap checks (`--reduced`, `--nojs`, `--widths` optional) |
-| `node scripts/qa-interactions.mjs --base http://127.0.0.1:4174` | Guide follow and reactions, reverse scroll, live resize, keyboard, mobile sheet |
+| `node scripts/qa-interactions.mjs --base http://127.0.0.1:4174` | Guide follow and reactions, anchor-jump accuracy, reverse scroll, live resize, keyboard, mobile sheet |
+| `node scripts/qa-mobile.mjs --base http://127.0.0.1:4174` | Touch: peek finger-follow, scroll watching, section reactions, Sketch toggle and press-and-hold, tablet finger-follow |
 
 The QA scripts drive the locally installed Google Chrome via `puppeteer-core` (dev dependency; no browser download).
 

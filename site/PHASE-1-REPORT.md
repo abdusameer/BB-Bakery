@@ -18,6 +18,17 @@
 | **Footer** | Address and hours, **Unofficial website concept** notice, concept-image disclosure, credits |
 | **"After hours" chapter** (added at your request, `/atmosphere-background`) | Visit + footer turn warm charcoal (`#17130F`). A **WebGL fragment shader** (`src/motion/atmosphereGL.ts`, from the `/webgl-landing-steering` review: Lane A, a subtle depth field; raw WebGL with no library, +3.6 KB gz) draws 8 tall crust-gold light folds (5 on mobile) that rise from the lower edge, drift slowly (sine sway, lean, ±10 % intensity) and are screen-blended so crossings brighten, with drifting fabric-crease noise, film grain against banding, a faint warm glow that follows the pointer on desktop, and a focal bloom in the lower right that continues into the footer. If WebGL is unavailable, the Canvas 2D version (`atmosphere.ts`) takes over automatically. Context loss is handled and GPU resources are released on cleanup. Measured contrast over the glow: primary facts ≥ 7:1, the smallest map caption 4.7:1 before its halo. The colors come from the bread photography, not cyan. Tokens flip inside `.is-dark`, so text becomes paper-toned, **Get directions** becomes a paper button, the map turns to chalk, and the guide is drawn in chalk (the header shelf and hanging guide switch while the chapter is under them). It renders at reduced resolution (DPR cap 1.5), is capped at 30 fps, and pauses off-screen or when the tab is hidden. Reduced motion shows one still frame; with JS off, a static CSS glow |
 
+## Mobile & touch interactivity (added on request)
+
+| Where | What happens |
+| --- | --- |
+| **Phone character (peek)** | A bigger peek that looks over the header rule beside ☰. Its eyes and head follow your finger while it touches or drags (even mid-scroll), then return to neutral 0.7 s after you lift. Its eyes watch the page scroll by, leaning slightly with the motion. Each section gets a small reaction: **Menu** looks down and nods twice at the food, **Story** sways like climbing along the line, **Media** winks with a camera flash, **Visit** ducks while the chalk guide above *Get directions* takes over. It uses one damped rAF loop that stops when settled, and it's static under reduced motion |
+| **Tablet character** | The full hanging rig (eyes, head, body lean, leg swing) follows your finger while you touch, like the mouse on desktop, then releases |
+| **Sketch toggle** (every bread, all sizes) | A **Sketch** button (44 px, `aria-pressed`, label names the bread) swaps the photo back to its pencil drawing and becomes **Photo** to swap back. On touch, **press and hold** a picture to peek at the drawing while you hold. There's a soft crossfade, no fade under reduced motion, and the long-press image callout is suppressed |
+| **Visit glow** | The WebGL glow follows your finger on touch screens, and the mouse on desktop |
+
+Evidence: `qa/mobile/mobile.json`, `qa/mobile-peek-states.jpg`, `qa/mobile-sketch-toggle.jpg` (run with `node scripts/qa-mobile.mjs`).
+
 ## Verification (evidence in `qa/`)
 
 | Check | Result |

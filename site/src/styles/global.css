@@ -161,8 +161,8 @@ ol, ul { margin: 0; padding: 0; list-style: none; }
   .header-inner { align-items: center; }
   .quick-links { display: flex; margin-left: auto; align-items: center; }
   .quick-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 9px; font: 600 0.9375rem/1 var(--sans); text-decoration: none; }
-  .peek { display: block; position: relative; width: 50px; height: var(--header-h); margin: 0 4px; overflow: hidden; pointer-events: none; }
-  .peek svg { position: absolute; left: -2px; bottom: -18px; width: 56px; height: 41px; overflow: visible; }
+  .peek { display: block; position: relative; width: 60px; height: var(--header-h); margin: 0 2px; overflow: hidden; pointer-events: none; }
+  .peek svg { position: absolute; left: 0; bottom: -14px; width: 60px; height: 38px; overflow: visible; }
   .index-toggle { display: grid; place-items: center; width: 48px; height: 48px; border: 1.5px solid var(--g800); border-radius: 2px; background: transparent; cursor: pointer; padding: 0; }
   .index-toggle svg { width: 22px; height: 22px; }
   .nav-line { left: 0; width: 100%; }
@@ -543,3 +543,27 @@ html:not(.motion) .menu-item .sketch-marks .construct { opacity: .3; }
 .menu.is-pinned .menu-item[data-inactive] { pointer-events: none; }
 /* map captions sit on the brightest part of the glow: full paper tone + a soft night halo (≥ 4.5:1) */
 .is-dark .visit-map figcaption { color: var(--g900); text-shadow: 0 0 10px rgba(23, 19, 15, .85), 0 0 3px rgba(23, 19, 15, .9); }
+
+/* ==========================================================================
+   Sketch toggle: tap/click "Sketch" (or press-and-hold the picture on touch)
+   to swap a photo back to its pencil drawing. Overrides the scroll state while on.
+   ========================================================================== */
+.sketch-toggle {
+  position: absolute; top: 8px; right: 8px; z-index: 5;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 0 12px;
+  background: rgba(244, 239, 230, .9); color: var(--g900); border: 1px solid var(--g800); border-radius: 2px;
+  font: 600 .75rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.sketch-toggle svg { width: 16px; height: 16px; }
+.sketch-toggle:hover { background: var(--paper); }
+.sketch-toggle[aria-pressed='true'] { background: var(--g900); color: var(--paper); }
+.hero-sketch .sketch-toggle { top: 0; right: 0; }
+.sketch-frame { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.sketch.is-sketch .layer-outline, .sketch.is-sketch .layer-shaded { opacity: 1 !important; -webkit-mask-image: none !important; mask-image: none !important; }
+.sketch.is-sketch .layer-photo img { opacity: 0 !important; }
+.sketch.is-sketch .sketch-marks .draw-path { stroke-dashoffset: 0 !important; opacity: .5 !important; }
+.sketch.is-sketch-fading .layer, .sketch.is-sketch-fading .layer img { transition: opacity 380ms cubic-bezier(.22, .61, .36, 1); }
+@media (prefers-reduced-motion: reduce) { .sketch.is-sketch-fading .layer, .sketch.is-sketch-fading .layer img { transition: none; } }
+@media (max-width: 767.98px) { .menu-item .sketch-toggle { top: 6px; right: 6px; } }
+.menu.is-pinned .menu-item[data-inactive] .sketch-toggle { visibility: hidden; }

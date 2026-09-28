@@ -51,9 +51,10 @@
 
 /* mobile peek */
 .peek-svg { transition: transform 200ms cubic-bezier(.22, .61, .36, 1); }
-html.sheet-open .peek-svg, html[data-section='visit'] .peek-svg { transform: translateY(70%); }
-.peek-svg.is-bobbing { animation: peek-bob 220ms cubic-bezier(.22, .61, .36, 1) 1; }
-@keyframes peek-bob { 50% { transform: translateY(-9%); } }
+html.sheet-open .peek-svg, html[data-section='visit'] .peek-svg { transform: translateY(80%); }
+.peek-svg [data-part='peek-wink'], .peek-svg [data-part='peek-flash'] { opacity: 0; transition: opacity 120ms linear; }
+.peek-svg[data-peek='media'] [data-part='peek-wink'], .peek-svg[data-peek='media'] [data-part='peek-flash'] { opacity: 1; }
+.peek-svg[data-peek='media'] [data-part='peek-eye-r'] { opacity: 0; }
 
 /* sheet illustration and the Visit finale guide use static poses */
 .sheet-char .guide-svg, .visit-guide .guide-svg { width: 100%; height: 100%; }
@@ -69,7 +70,7 @@ html.sheet-open .peek-svg, html[data-section='visit'] .peek-svg { transform: tra
 
 @media (prefers-reduced-motion: reduce) {
   .guide-svg [data-part], .guide-svg [data-part='body'], .peek-svg { transition: none; }
-  .guide-svg.is-blinking [data-part='blink'], .peek-svg.is-bobbing { animation: none; }
+  .guide-svg.is-blinking [data-part='blink'] { animation: none; }
 }
 
 /* visitRight (desktop): let go with the right hand and point at the header Directions button */

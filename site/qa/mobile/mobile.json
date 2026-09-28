@@ -1,0 +1,96 @@
+{
+  "errors": [],
+  "peekFollow": {
+    "left": {
+      "eyes": "translate(-2.40 1.80)",
+      "body": "rotate(-9.58 60 80)",
+      "move": "matrix(1,0,0,1,0,-5)",
+      "peek": "neutral",
+      "active": "true"
+    },
+    "right": {
+      "eyes": "translate(0.84 1.41)",
+      "body": "rotate(1.85 60 80)",
+      "move": "matrix(1,0,0,1,0,-5)",
+      "peek": "neutral",
+      "active": "true"
+    },
+    "released": {
+      "eyes": "translate(0.00 0.00)",
+      "body": "rotate(0.05 60 80)",
+      "move": "matrix(1,0,0,1,0,-5)",
+      "peek": "neutral",
+      "active": "true"
+    }
+  },
+  "peekScroll": {
+    "whileScrolling": {
+      "eyes": "translate(-0.74 1.46)",
+      "body": "rotate(0.38 60 80)",
+      "move": "matrix(0.99868,0.05144,-0.05144,0.99868,4.1944,-6.7172)",
+      "peek": "neutral",
+      "active": "true"
+    },
+    "settled": {
+      "eyes": "translate(-0.00 0.03)",
+      "body": "rotate(-0.07 60 80)",
+      "move": "matrix(1,0,0,1,0,-5)",
+      "peek": "neutral",
+      "active": "true"
+    }
+  },
+  "peekReactions": {
+    "menu": {
+      "eyes": "translate(-1.03 1.75)",
+      "body": "rotate(-2.32 60 80)",
+      "move": "matrix(0.99552,0.0945,-0.0945,0.99552,7.8288,-7.9875)",
+      "peek": "neutral",
+      "active": "true"
+    },
+    "media": {
+      "eyes": "translate(-0.00 0.89)",
+      "body": "rotate(1.43 60 80)",
+      "move": "matrix(1,0,0,1,0,-5.0741)",
+      "peek": "media",
+      "active": "true"
+    },
+    "after": {
+      "eyes": "translate(-0.00 0.01)",
+      "body": "rotate(0.03 60 80)",
+      "move": "matrix(1,0,0,1,0,-5)",
+      "peek": "neutral",
+      "active": "false"
+    }
+  },
+  "sketch": {
+    "toggleBox": {
+      "w": 99,
+      "h": 44
+    },
+    "on": {
+      "cls": "sketch  is-sketch",
+      "pressed": "true",
+      "label": "Photo — show the concept photo of salt bread"
+    },
+    "off": "sketch ",
+    "holding": "sketch  is-sketch is-sketch-fading",
+    "afterHold": "sketch "
+  },
+  "tablet": {
+    "fingerRight": {
+      "eyes": "translate(2.40 1.60)",
+      "roll": "rotate(6.56 60 64)",
+      "lean": "rotate(1.90 60 9)"
+    },
+    "fingerLeft": {
+      "eyes": "translate(-0.61 1.60)",
+      "roll": "rotate(-1.12 60 64)",
+      "lean": "rotate(0.02 60 9)"
+    },
+    "released": {
+      "eyes": "translate(-0.00 0.00)",
+      "roll": "rotate(-0.02 60 64)",
+      "lean": "rotate(-0.04 60 9)"
+    }
+  }
+}

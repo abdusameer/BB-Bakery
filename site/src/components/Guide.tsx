@@ -130,25 +130,40 @@ export function GuideSVG({ idSuffix = 'g', pose = 'neutral' }: { idSuffix?: stri
   );
 }
 
-/** Mobile peek: the roll's upper half only, looking over the header rule. */
+/** Mobile peek: the roll looking over the header rule. Parts are driven by motion/guide.ts:
+    peek-move (GSAP reactions), peek-body (finger-follow tilt), peek-face, peek-eyes, wink, flash. */
 export function PeekSVG() {
   return (
-    <svg viewBox="26 40 68 50" aria-hidden="true" focusable="false" className="peek-svg">
+    <svg viewBox="22 38 76 48" aria-hidden="true" focusable="false" className="peek-svg" data-peek="neutral">
       <g className="g-ink" fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <g data-part="peek-body">
-          <path strokeWidth={1.9} style={FILL} d={ROLL} />
-          <g strokeWidth={1.2} opacity={0.85}>
-            <path d="M47.2 50 C 51.6 57.4, 52.6 68.8, 49.6 79.8" />
-            <path d="M71.4 49.4 C 75.8 57, 76.6 68.6, 73.4 79.8" />
+        <g data-part="peek-move">
+          <g data-part="peek-body">
+            <path strokeWidth={1.8} style={FILL} d={ROLL} />
+            <g strokeWidth={1.15} opacity={0.85}>
+              <path d="M36.8 57.6 C 40.6 62.4, 41.4 70.6, 39 78.6" />
+              <path d="M47.2 50 C 51.6 57.4, 52.6 68.8, 49.6 79.8" />
+              <path d="M71.4 49.4 C 75.8 57, 76.6 68.6, 73.4 79.8" />
+              <path d="M83.2 57.6 C 86.6 62.4, 87.2 70.4, 85 78.2" />
+            </g>
+            <g strokeWidth={0.95}>
+              <path d="M55.6 49.8 l1.6 -0.5 l0.5 1.6 l-1.6 0.5 z" />
+              <path d="M61.6 48.6 l1.4 0.3 l-0.3 1.4 l-1.4 -0.3 z" />
+              <path d="M66.4 50.8 l1.2 -0.5 l0.5 1.2 l-1.2 0.5 z" />
+            </g>
+            <g data-part="peek-face">
+              <g strokeWidth={1} opacity={0.75}>
+                <path d="M54.2 57.6 C 55.6 56.8, 57.2 56.8, 58.4 57.4" />
+                <path d="M62.6 57.4 C 63.8 56.8, 65.4 56.8, 66.8 57.6" />
+              </g>
+              <g data-part="peek-eyes" style={EYE} stroke="none">
+                <ellipse cx="56.4" cy="62.4" rx="1.9" ry="2.25" />
+                <ellipse data-part="peek-eye-r" cx="64.6" cy="62.4" rx="1.9" ry="2.25" />
+              </g>
+              <path data-part="peek-wink" strokeWidth={1.2} d="M62.6 62.6 C 63.6 61.6, 65.4 61.6, 66.4 62.6" />
+              <path strokeWidth={1} d="M59 67.8 C 60 68.6, 61.2 68.6, 62.2 67.8" />
+            </g>
           </g>
-          <g strokeWidth={0.95}>
-            <path d="M55.6 49.8 l1.6 -0.5 l0.5 1.6 l-1.6 0.5 z" />
-            <path d="M61.6 48.6 l1.4 0.3 l-0.3 1.4 l-1.4 -0.3 z" />
-          </g>
-          <g data-part="peek-eyes" style={EYE} stroke="none">
-            <ellipse cx="56.4" cy="62.4" rx="1.9" ry="2.25" />
-            <ellipse cx="64.6" cy="62.4" rx="1.9" ry="2.25" />
-          </g>
+          <path data-part="peek-flash" strokeWidth={1.1} d="M88 47 L 92 43 M90.5 52 L 95.5 51 M84 44 L 85 39" />
         </g>
         <g strokeWidth={1.4}>
           <Mitten part="peek-hand-l" x={33} y={68.4} />

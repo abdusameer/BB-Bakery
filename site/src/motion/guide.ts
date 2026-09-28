@@ -42,30 +42,102 @@ export function initGuide(): () => void {
   };
   const reduce = () => mq.reduce.matches;
 
-  /* ---------------- mobile peek ---------------- */
+  /* ---------------- mobile peek (phones) ----------------
+     Eyes + head follow the finger while it touches or drags (even mid-scroll), the eyes watch
+     the page scroll by, and each section gets a small reaction. One damped rAF loop that stops
+     when settled; static under reduced motion. */
   if (peekSvg) {
-    const eyes = peekSvg.querySelector('[data-part="peek-eyes"]');
-    let glanceT = 0;
-    const onDown = (e: PointerEvent) => {
-      if (mq.wide.matches || reduce() || !eyes) return;
-      const r = peekSvg.getBoundingClientRect();
-      const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
-      const d = Math.hypot(dx, dy) || 1;
-      gsap.to(eyes, { x: (dx / d) * 2.2, y: clamp((dy / d) * 1.6, -1, 1.6), duration: 0.08, overwrite: true });
-      clearTimeout(glanceT);
-      glanceT = later(() => gsap.to(eyes, { x: 0, y: 0, duration: 0.3, overwrite: true }), 900);
+    const pp = (n: string) => peekSvg.querySelector<SVGGElement>(`[data-part="${n}"]`)!;
+    const PK = { move: pp('peek-move'), body: pp('peek-body'), face: pp('peek-face'), eyes: pp('peek-eyes') };
+    const pc = { ex: 0, ey: 0, tilt: 0 };
+    let fx: number | null = null, fy: number | null = null;
+    let scrollV = 0, lastY = window.scrollY, lastT = performance.now();
+    let praf = 0, plast = 0, releaseT = 0;
+    const phone = () => !mq.wide.matches;
+    const ptick = (t: number) => {
+      const dt = Math.min(0.05, plast ? (t - plast) / 1000 : 0.016);
+      plast = t;
+      let tex = 0, tey = 0, ttilt = 0;
+      if (fx !== null && fy !== null) {
+        const r = peekSvg.getBoundingClientRect();
+        const dx = fx - (r.left + r.width / 2), dy = fy - (r.top + r.height * 0.45);
+        tex = clamp(dx / 220, -1, 1) * 2.4;
+        tey = clamp(dy / 320, -1, 1) * 1.8;
+        ttilt = clamp(dx / 260, -1, 1) * 11;
+      }
+      // watch the page move: eyes drift toward the scroll direction
+      scrollV *= Math.exp(-dt / 0.28);
+      tey = clamp(tey + clamp(scrollV * 1.6, -1.8, 1.8), -1.8, 1.8);
+      ttilt += clamp(scrollV * 2.5, -4, 4); // a slight lean with the page's motion
+      const k = (tau: number) => 1 - Math.exp(-dt / tau);
+      pc.ex += (tex - pc.ex) * k(0.07);
+      pc.ey += (tey - pc.ey) * k(0.07);
+      pc.tilt += (ttilt - pc.tilt) * k(0.22);
+      PK.eyes.setAttribute('transform', `translate(${pc.ex.toFixed(2)} ${pc.ey.toFixed(2)})`);
+      PK.face.setAttribute('transform', `translate(${clamp(pc.ex * 0.5, -1.2, 1.2).toFixed(2)} 0)`);
+      PK.body.setAttribute('transform', `rotate(${pc.tilt.toFixed(2)} 60 80)`);
+      const busy = Math.abs(tex - pc.ex) > 0.01 || Math.abs(tey - pc.ey) > 0.01 || Math.abs(ttilt - pc.tilt) > 0.02 || Math.abs(scrollV) > 0.01;
+      praf = busy ? requestAnimationFrame(ptick) : 0;
+      peekSvg.dataset.animationActive = praf ? 'true' : 'false';
     };
-    window.addEventListener('pointerdown', onDown, { passive: true });
-    offs.push(() => window.removeEventListener('pointerdown', onDown));
-    offs.push(on('section', () => {
-      if (mq.wide.matches || reduce()) return;
-      peekSvg.classList.remove('is-bobbing');
-      void peekSvg.getBoundingClientRect();
-      peekSvg.classList.add('is-bobbing');
+    const pkick = () => { if (!praf && !document.hidden && !reduce() && phone()) { plast = 0; praf = requestAnimationFrame(ptick); } };
+    const onTouch = (e: TouchEvent) => {
+      const tt = e.touches[0];
+      if (!tt || !phone() || reduce()) return;
+      fx = tt.clientX; fy = tt.clientY;
+      clearTimeout(releaseT);
+      pkick();
+    };
+    const onTouchEnd = () => { clearTimeout(releaseT); releaseT = later(() => { fx = null; fy = null; pkick(); }, 700); };
+    const onScrollPk = () => {
+      const now = performance.now(), y = window.scrollY;
+      const v = (y - lastY) / Math.max(8, now - lastT); // px per ms
+      lastY = y; lastT = now;
+      if (!phone() || reduce()) return;
+      scrollV = clamp(scrollV * 0.5 + v * 0.5, -3, 3);
+      pkick();
+    };
+    window.addEventListener('touchstart', onTouch, { passive: true });
+    window.addEventListener('touchmove', onTouch, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    window.addEventListener('scroll', onScrollPk, { passive: true });
+    offs.push(() => {
+      window.removeEventListener('touchstart', onTouch);
+      window.removeEventListener('touchmove', onTouch);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+      window.removeEventListener('scroll', onScrollPk);
+      cancelAnimationFrame(praf);
+    });
+
+    // section reactions (GSAP on the outer group, so they compose with the finger-follow tilt)
+    gsap.set(PK.move, { y: -5, svgOrigin: '60 80' });
+    let peekTl: gsap.core.Timeline | null = null;
+    offs.push(on('section', (id) => {
+      if (!phone() || reduce()) return;
+      peekTl?.kill();
+      peekSvg.dataset.peek = 'neutral';
+      const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' }, onComplete: () => { peekSvg.dataset.peek = 'neutral'; } });
+      if (id === 'menu') {
+        // looks down at the food and nods twice
+        fy = window.innerHeight; fx = window.innerWidth / 2; pkick();
+        tl.to(PK.move, { rotation: 7, y: -2, duration: 0.18 }).to(PK.move, { rotation: 0, y: -5, duration: 0.18 })
+          .to(PK.move, { rotation: 7, y: -2, duration: 0.18 }).to(PK.move, { rotation: 0, y: -5, duration: 0.22 });
+        releaseT = later(() => { fx = null; fy = null; pkick(); }, 900);
+      } else if (id === 'story') {
+        // sways side to side, like climbing along the line
+        tl.to(PK.move, { x: -5, rotation: -6, duration: 0.2 }).to(PK.move, { x: 5, rotation: 6, duration: 0.3 })
+          .to(PK.move, { x: -3, rotation: -3, duration: 0.24 }).to(PK.move, { x: 0, rotation: 0, duration: 0.22 });
+      } else if (id === 'media') {
+        // wink and a camera flash
+        tl.call(() => { peekSvg.dataset.peek = 'media'; }).to(PK.move, { y: -7, duration: 0.16 }).to(PK.move, { y: -5, duration: 0.2 }).to({}, { duration: 0.7 });
+      } else if (id === null) {
+        tl.to(PK.move, { y: -8, duration: 0.18 }).to(PK.move, { y: -5, duration: 0.24 });
+      }
+      peekTl = tl;
     }));
-    const endBob = () => peekSvg.classList.remove('is-bobbing');
-    peekSvg.addEventListener('animationend', endBob);
-    offs.push(() => peekSvg.removeEventListener('animationend', endBob));
+    offs.push(() => { peekTl?.kill(); gsap.killTweensOf(PK.move); });
   }
 
   if (!wrap || !svg || !inner) return () => { offs.forEach((f) => f()); timers.forEach((t) => clearTimeout(t)); };
@@ -193,7 +265,7 @@ export function initGuide(): () => void {
       const dist = Math.hypot(dx, dy);
       tex = clamp(dx / 480, -1, 1) * 2.4;
       tey = clamp(dy / 480, -1, 1) * 1.6;
-      if (!glance && mode === 'follow' && dist > 24) {
+      if (mode === 'follow' && dist > 24) {
         thead = clamp(dx / 700, -1, 1) * 9;
         tlean = clamp(dx / 900, -1, 1) * 4;
       } else if (dist <= 24) { thead = cur.head; tlean = cur.lean; }
@@ -254,21 +326,30 @@ export function initGuide(): () => void {
   const onLeave = () => { px = null; py = null; kick(); };
   const onDoc = (e: MouseEvent) => { if (!e.relatedTarget) onLeave(); };
   const onVis = () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; onLeave(); } };
-  // touch / coarse: brief glance toward the tap, eyes only
-  const onDown = (e: PointerEvent) => {
-    if (e.pointerType === 'mouse' || !mq.wide.matches || reduce()) return;
-    px = e.clientX; py = e.clientY; glance = true;
+  // tablets (touch, ≥768): the whole rig follows the finger while it touches or drags, then lets go
+  let touchT = 0;
+  const onTouchT = (e: TouchEvent) => {
+    const tt = e.touches[0];
+    if (!tt || !mq.wide.matches || mq.fine.matches || reduce()) return;
+    px = tt.clientX; py = tt.clientY; glance = true;
+    clearTimeout(touchT);
     kick();
-    later(() => { glance = false; px = null; py = null; kick(); }, 900);
   };
+  const onTouchEndT = () => { clearTimeout(touchT); touchT = later(() => { glance = false; px = null; py = null; kick(); }, 700); };
   window.addEventListener('pointermove', onMove, { passive: true });
-  window.addEventListener('pointerdown', onDown, { passive: true });
+  window.addEventListener('touchstart', onTouchT, { passive: true });
+  window.addEventListener('touchmove', onTouchT, { passive: true });
+  window.addEventListener('touchend', onTouchEndT, { passive: true });
+  window.addEventListener('touchcancel', onTouchEndT, { passive: true });
   document.addEventListener('mouseout', onDoc);
   window.addEventListener('blur', onLeave);
   document.addEventListener('visibilitychange', onVis);
   offs.push(() => {
     window.removeEventListener('pointermove', onMove);
-    window.removeEventListener('pointerdown', onDown);
+    window.removeEventListener('touchstart', onTouchT);
+    window.removeEventListener('touchmove', onTouchT);
+    window.removeEventListener('touchend', onTouchEndT);
+    window.removeEventListener('touchcancel', onTouchEndT);
     document.removeEventListener('mouseout', onDoc);
     window.removeEventListener('blur', onLeave);
     document.removeEventListener('visibilitychange', onVis);

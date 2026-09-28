@@ -1,4 +1,6 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent as RPointerEvent, ReactNode } from 'react';
+import { IconPencil, IconPhoto } from './Icons';
 import { images } from '../generated/images';
 
 type Props = {
@@ -10,6 +12,7 @@ type Props = {
   marks?: ReactNode;           // extra authored SVG marks (draw-path elements), in 0–100 viewBox
   className?: string;
   study?: boolean;             // reduced-motion "Pencil study" thumbnail
+  label?: string;              // what the bread is (for the sketch toggle's accessible name)
 };
 
 /**
@@ -17,7 +20,27 @@ type Props = {
  * All three rasters are white-pointed, so `mix-blend-mode: multiply` melts them into the paper.
  * With JS off or reduced motion the final state (photo + faint trace) is what renders.
  */
-export function SketchFigure({ img, alt, sizes, eager, chip = 'Concept image', marks, className, study = true }: Props) {
+export function SketchFigure({ img, alt, sizes, eager, chip = 'Concept image', marks, className, study = true, label }: Props) {
+  // "Sketch" toggle (tap / click) and press-and-hold peek (touch): swap the photo back to its drawing.
+  const [pinned, setPinned] = useState(false);
+  const [holding, setHolding] = useState(false);
+  const [fading, setFading] = useState(false);
+  const holdT = useRef(0);
+  const fadeT = useRef(0);
+  const showSketch = pinned || holding;
+  // brief transition window around each swap (scrub updates stay instant otherwise)
+  const fade = () => {
+    setFading(true);
+    window.clearTimeout(fadeT.current);
+    fadeT.current = window.setTimeout(() => setFading(false), 420);
+  };
+  useEffect(() => () => { window.clearTimeout(fadeT.current); window.clearTimeout(holdT.current); }, []);
+  const onDown = (e: RPointerEvent) => {
+    if (e.pointerType !== 'touch') return;
+    window.clearTimeout(holdT.current);
+    holdT.current = window.setTimeout(() => { fade(); setHolding(true); }, 320);
+  };
+  const onUp = () => { window.clearTimeout(holdT.current); if (holding) { fade(); setHolding(false); } };
   const d = images[img];
   const [aw, ah] = d.ar;
   const src = (kind: string, w: number, ext: string) => `/img/${img}-${kind}-${w}.${ext}`;
@@ -34,9 +57,16 @@ export function SketchFigure({ img, alt, sizes, eager, chip = 'Concept image', m
   const mid = d.drawWidths[1];
 
   return (
-    <figure className={`sketch ${className ?? ''}`} data-anim="" data-img={img} style={style}>
+    <figure className={`sketch ${className ?? ''}${showSketch ? ' is-sketch' : ''}${fading ? ' is-sketch-fading' : ''}`} data-anim="" data-img={img} style={style}>
       <div className="sketch-crop">
-      <div className="sketch-frame">
+      <div
+        className="sketch-frame"
+        onPointerDown={onDown}
+        onPointerUp={onUp}
+        onPointerCancel={onUp}
+        onPointerLeave={onUp}
+        onContextMenu={(e) => { if (holding) e.preventDefault(); }}
+      >
         <picture className="layer layer-photo">
           <source type="image/avif" srcSet={set('photo', d.widths, 'avif')} sizes={sizes} />
           <img
@@ -60,6 +90,11 @@ export function SketchFigure({ img, alt, sizes, eager, chip = 'Concept image', m
         )}
         <span className="chip">{chip}</span>
       </div>
+      <button type="button" className="sketch-toggle" aria-pressed={pinned} onClick={() => { fade(); setPinned((v) => !v); }}>
+        {pinned ? <IconPhoto /> : <IconPencil />}
+        <span>{pinned ? 'Photo' : 'Sketch'}</span>
+        <span className="visually-hidden">{pinned ? ` — show the concept photo${label ? ` of ${label}` : ''}` : ` — show the pencil drawing${label ? ` of ${label}` : ''}`}</span>
+      </button>
       </div>
       {study && (
         <figcaption className="sketch-study">

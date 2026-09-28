@@ -1,26 +1,5 @@
 [
   {
-    "viewport": "1440-reduced",
-    "vw": 1440,
-    "docW": 1440,
-    "overflow": false,
-    "brokenImages": [],
-    "guideOverlapsNav": false,
-    "h1": 1,
-    "robots": "noindex, nofollow",
-    "consoleErrors": [],
-    "failedRequests": [],
-    "shots": [
-      "1440-reduced-01-opening.png",
-      "1440-reduced-02-menu.png",
-      "1440-reduced-03-menu-item1.png",
-      "1440-reduced-06-story.png",
-      "1440-reduced-07-media.png",
-      "1440-reduced-08-visit.png",
-      "1440-reduced-09-footer.png"
-    ]
-  },
-  {
     "viewport": "390-reduced",
     "vw": 390,
     "docW": 390,

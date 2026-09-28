@@ -167,8 +167,24 @@ export function initAtmosphereGL(canvas: HTMLCanvasElement): (() => void) | null
     ptr.tAmt = 1;
   };
   const onLeave = () => { ptr.tAmt = 0; };
+  // touch: the glow follows the finger while it touches or drags (keeps firing during scroll)
+  let touchT = 0;
+  const onTouch = (e: TouchEvent) => {
+    const tt = e.touches[0];
+    if (!tt || reduceMQ.matches) return;
+    const r = canvas.getBoundingClientRect();
+    ptr.tx = (tt.clientX - r.left) / r.width;
+    ptr.ty = 1 - (tt.clientY - r.top) / r.height;
+    ptr.tAmt = 1;
+    window.clearTimeout(touchT);
+  };
+  const onTouchEnd = () => { window.clearTimeout(touchT); touchT = window.setTimeout(() => { ptr.tAmt = 0; }, 600); };
   section.addEventListener('pointermove', onMove as EventListener, { passive: true });
   section.addEventListener('pointerleave', onLeave);
+  section.addEventListener('touchstart', onTouch as EventListener, { passive: true });
+  section.addEventListener('touchmove', onTouch as EventListener, { passive: true });
+  section.addEventListener('touchend', onTouchEnd);
+  section.addEventListener('touchcancel', onTouchEnd);
 
   const onLost = (e: Event) => { e.preventDefault(); lost = true; stop(); canvas.dataset.renderer = 'webgl-lost'; };
   const onRestored = () => {
@@ -205,6 +221,11 @@ export function initAtmosphereGL(canvas: HTMLCanvasElement): (() => void) | null
     reduceMQ.removeEventListener('change', onReduce);
     section.removeEventListener('pointermove', onMove as EventListener);
     section.removeEventListener('pointerleave', onLeave);
+    section.removeEventListener('touchstart', onTouch as EventListener);
+    section.removeEventListener('touchmove', onTouch as EventListener);
+    section.removeEventListener('touchend', onTouchEnd);
+    section.removeEventListener('touchcancel', onTouchEnd);
+    window.clearTimeout(touchT);
     canvas.removeEventListener('webglcontextlost', onLost);
     canvas.removeEventListener('webglcontextrestored', onRestored);
     if (buf) gl.deleteBuffer(buf);
