@@ -8,11 +8,11 @@
       "pose": "neutral",
       "scene": null,
       "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "transform": "translate(348.797px, 0px)",
       "fig": {
-        "l": 272,
+        "l": 372,
         "t": 73,
-        "r": 328,
+        "r": 428,
         "b": 150
       },
       "overlaps": []
@@ -25,11 +25,11 @@
       "pose": "neutral",
       "scene": "live",
       "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "transform": "translate(348.797px, 0px)",
       "fig": {
-        "l": 271,
+        "l": 371,
         "t": 73,
-        "r": 329,
+        "r": 429,
         "b": 149
       },
       "overlaps": []
@@ -42,31 +42,24 @@
       "pose": "wave",
       "scene": "live",
       "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "transform": "translate(348.797px, 0px)",
       "fig": {
-        "l": 273,
+        "l": 373,
         "t": 73,
-        "r": 348,
+        "r": 448,
         "b": 150
       },
       "overlaps": []
     },
     {
       "name": "04-exit",
-      "winking": false,
-      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
-      "clip": "polygon(-900px 39.1px,",
-      "transform": "translate3d(248.672px, -35.2462px, 0px)",
-      "fig": {
-        "l": 272,
-        "t": 72,
-        "r": 328,
-        "b": 101
-      },
-      "overlaps": []
+      "fig": null,
+      "overlaps": [],
+      "winking": false,
+      "chalk": false
     },
     {
       "name": "05-away",
@@ -76,11 +69,11 @@
       "pose": "neutral",
       "scene": "idle",
       "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "transform": "translate(348.797px, 0px)",
       "fig": {
-        "l": 272,
+        "l": 372,
         "t": 73,
-        "r": 328,
+        "r": 428,
         "b": 150
       },
       "overlaps": []
@@ -94,7 +87,7 @@
       "poses": [
         "present"
       ],
-      "ms": 5330
+      "ms": 5266
     },
     {
       "name": "bread-1",
@@ -105,7 +98,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4751
+      "ms": 4901
     },
     {
       "name": "bread-2",
@@ -116,7 +109,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4760
+      "ms": 4822
     },
     {
       "name": "bread-3",
@@ -127,7 +120,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4819
+      "ms": 4789
     },
     {
       "name": "bread-4",
@@ -138,7 +131,7 @@
       "poses": [
         "present"
       ],
-      "ms": 5195
+      "ms": 5132
     },
     {
       "name": "12-after-breads",
@@ -167,9 +160,9 @@
       "clip": "polygon(-900px 89.8px,",
       "transform": "translate(1005.05px, -80.6857px)",
       "fig": {
-        "l": 1025,
+        "l": 1024,
         "t": 72,
-        "r": 1083,
+        "r": 1082,
         "b": 147
       },
       "overlaps": []
@@ -236,13 +229,13 @@
       "visibility": "visible",
       "pose": "present",
       "scene": "live",
-      "clip": "polygon(-15.6px -900px",
-      "transform": "translate(773.651px, 429.02px) scale(1.3528, 1.3528)",
+      "clip": "polygon(-12px -900px, ",
+      "transform": "translate(768.753px, 433.437px) scale(1.3528, 1.3528)",
       "fig": {
-        "l": 781,
-        "t": 514,
-        "r": 895,
-        "b": 579
+        "l": 776,
+        "t": 518,
+        "r": 890,
+        "b": 584
       },
       "overlaps": []
     },
@@ -254,12 +247,12 @@
       "pose": "present",
       "scene": "live",
       "clip": "polygon(-176.9px -900p",
-      "transform": "translate(991.922px, 292.394px) scale(1.3528, 1.3528)",
+      "transform": "translate(991.922px, 293.113px) scale(1.3528, 1.3528)",
       "fig": {
         "l": 999,
-        "t": 374,
+        "t": 375,
         "r": 1114,
-        "b": 443
+        "b": 444
       },
       "overlaps": []
     },
@@ -271,12 +264,12 @@
       "pose": "present",
       "scene": "live",
       "clip": "polygon(-176.9px -900p",
-      "transform": "translate(991.922px, 292.394px) scale(1.3528, 1.3528)",
+      "transform": "translate(991.922px, 293.113px) scale(1.3528, 1.3528)",
       "fig": {
         "l": 999,
         "t": 378,
         "r": 1114,
-        "b": 443
+        "b": 444
       },
       "overlaps": []
     },
@@ -287,13 +280,13 @@
       "visibility": "visible",
       "pose": "present",
       "scene": "live",
-      "clip": "polygon(-76px -900px, ",
-      "transform": "translate(855.397px, 356.752px) scale(1.3528, 1.3528)",
+      "clip": "polygon(-40.3px -900px",
+      "transform": "translate(807.1px, 401.075px) scale(1.3528, 1.3528)",
       "fig": {
-        "l": 860,
-        "t": 439,
-        "r": 973,
-        "b": 508
+        "l": 812,
+        "t": 483,
+        "r": 925,
+        "b": 552
       },
       "overlaps": []
     },
@@ -326,7 +319,7 @@
       "pose": "ledge",
       "scene": "live",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 764.959px) scale(1.5, 1.5)",
+      "transform": "translate(1144.26px, 765.089px) scale(1.5, 1.5)",
       "fig": {
         "l": 1154,
         "t": 758,
@@ -343,11 +336,11 @@
       "pose": "ledgeWave",
       "scene": "live",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "transform": "translate(1144.26px, 762.473px) scale(1.5, 1.5)",
       "fig": {
         "l": 1155,
-        "t": 748,
-        "r": 1265,
+        "t": 742,
+        "r": 1260,
         "b": 795
       },
       "overlaps": []
@@ -360,10 +353,10 @@
       "pose": "ledge",
       "scene": "idle",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "transform": "translate(1144.26px, 762.473px) scale(1.5, 1.5)",
       "fig": {
         "l": 1156,
-        "t": 755,
+        "t": 754,
         "r": 1241,
         "b": 795
       },
@@ -377,10 +370,10 @@
       "pose": "ledge",
       "scene": "idle",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "transform": "translate(1144.26px, 762.473px) scale(1.5, 1.5)",
       "fig": {
         "l": 1156,
-        "t": 755,
+        "t": 754,
         "r": 1241,
         "b": 795
       },
@@ -394,10 +387,10 @@
       "pose": "ledge",
       "scene": "idle",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 942.468px) scale(1.5, 1.5)",
+      "transform": "translate(1144.26px, 936.922px) scale(1.5, 1.5)",
       "fig": {
         "l": 1156,
-        "t": 934,
+        "t": 929,
         "r": 1241,
         "b": 955
       },
@@ -410,13 +403,13 @@
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
-      "clip": "polygon(-900px 3.9px, ",
-      "transform": "translate3d(1145.84px, -0.0185px, 0px)",
+      "clip": "polygon(-900px 4.3px, ",
+      "transform": "translate3d(1145.84px, -0.4339px, 0px)",
       "fig": {
-        "l": 1168,
+        "l": 1169,
         "t": 73,
         "r": 1225,
-        "b": 150
+        "b": 149
       },
       "overlaps": []
     },

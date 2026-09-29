@@ -2,21 +2,21 @@
   "follow": {
     "left": {
       "pose": "neutral",
-      "eyes": "translate(-1.10 1.60)",
-      "roll": "rotate(-2.75 60 64)",
-      "lean": "rotate(-0.83 60 9)",
+      "eyes": "translate(-1.60 1.60)",
+      "roll": "rotate(-4.05 60 64)",
+      "lean": "rotate(-1.26 60 9)",
       "active": "true",
       "mode": "follow",
-      "x": 249
+      "x": 349
     },
     "right": {
       "pose": "neutral",
       "eyes": "translate(2.40 0.15)",
-      "roll": "rotate(8.57 60 64)",
-      "lean": "rotate(3.14 60 9)",
+      "roll": "rotate(8.65 60 64)",
+      "lean": "rotate(3.20 60 9)",
       "active": "true",
       "mode": "follow",
-      "x": 249
+      "x": 349
     },
     "afterLeave": {
       "pose": "neutral",
@@ -25,7 +25,7 @@
       "lean": "rotate(0.14 60 9)",
       "active": "true",
       "mode": "follow",
-      "x": 249
+      "x": 349
     }
   },
   "reactions": {
@@ -33,25 +33,25 @@
       "pose": "menu",
       "eyes": "translate(1.20 1.60)",
       "roll": "rotate(3.98 60 64)",
-      "lean": "rotate(-3.01 60 9)",
+      "lean": "rotate(-3.03 60 9)",
       "active": "true",
       "mode": "react",
       "x": 935
     },
     "story": {
       "pose": "storyA",
-      "eyes": "translate(2.38 -0.37)",
-      "roll": "rotate(4.10 60 64)",
-      "lean": "rotate(-1.02 60 9)",
+      "eyes": "translate(2.39 -0.38)",
+      "roll": "rotate(4.22 60 64)",
+      "lean": "rotate(-0.69 60 9)",
       "active": "true",
       "mode": "travel",
-      "x": 1002
+      "x": 1004
     },
     "media": {
       "pose": "media",
       "eyes": "translate(1.00 0.40)",
       "roll": "rotate(3.02 60 64)",
-      "lean": "rotate(-2.57 60 9)",
+      "lean": "rotate(-2.59 60 9)",
       "active": "true",
       "mode": "react",
       "x": 1077
@@ -59,8 +59,8 @@
     "visit": {
       "pose": "visitRight",
       "eyes": "translate(2.40 0.40)",
-      "roll": "rotate(5.97 60 64)",
-      "lean": "rotate(-2.71 60 9)",
+      "roll": "rotate(5.98 60 64)",
+      "lean": "rotate(-2.73 60 9)",
       "active": "true",
       "mode": "react",
       "x": 1146
@@ -68,12 +68,12 @@
   },
   "afterHover": {
     "pose": "neutral",
-    "eyes": "translate(2.00 1.58)",
-    "roll": "rotate(4.88 60 64)",
-    "lean": "rotate(0.86 60 9)",
+    "eyes": "translate(1.51 1.58)",
+    "roll": "rotate(3.84 60 64)",
+    "lean": "rotate(0.52 60 9)",
     "active": "true",
     "mode": "follow",
-    "x": 249
+    "x": 349
   },
   "idle": {
     "pose": "neutral",
@@ -82,11 +82,11 @@
     "lean": "rotate(0.00 60 9)",
     "active": "false",
     "mode": "follow",
-    "x": 249
+    "x": 349
   },
   "reverse": {
     "first": {
-      "draw": "147.0494deg",
+      "draw": "145.3429deg",
       "ep": "-30%",
       "shaded": "1"
     },
@@ -96,7 +96,7 @@
       "shaded": "0"
     },
     "back": {
-      "draw": "147.0494deg",
+      "draw": "145.3429deg",
       "ep": "-30%",
       "shaded": "1"
     },
@@ -122,12 +122,12 @@
       "visible": true
     },
     "order": [
-      "BB’s BakeryBB’s",
+      "BB Bakery and CafeBB",
       "Menu",
       "Story",
       "Media",
       "Visit",
-      "Directions to BB’s Bakery (o",
+      "Directions to BB Bakery and ",
       "See the menu",
       "Plan a visit",
       "Sketch — show the pencil dra"

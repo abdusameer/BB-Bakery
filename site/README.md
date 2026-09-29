@@ -1,6 +1,6 @@
-# BB's Bakery — "The Bakery Sketchbook" (unofficial concept site)
+# BB Bakery and Cafe — "The Bakery Sketchbook" (unofficial concept site)
 
-> **Unofficial private concept.** Not commissioned, reviewed, or approved by BB's Bakery. The page ships with `noindex, nofollow` and a footer notice. Do not deploy publicly unless that's separately decided. Every generated image is labeled "Concept image".
+> **Unofficial private concept.** Not commissioned, reviewed, or approved by BB Bakery and Cafe. The page ships with `noindex, nofollow` and a footer notice. Do not deploy publicly unless that's separately decided. Every generated image is labeled "Concept image".
 
 A single-page React + Vite + TypeScript site. Pencil drawings of bread shade in with graphite and resolve into photographs as you scroll. A small pencil salt-bread character hangs from the navigation line.
 
@@ -76,7 +76,7 @@ qa/                       latest screenshots + JSON reports
 
 ## Placeholders that need the owner
 
-- Logo: the typeset "BB's Bakery" wordmark stands in.
+- Logo: the typeset "BB Bakery and Cafe" wordmark ("BB" on phones) stands in.
 - Phone and social links: "to be added" (`src/content.ts → visit.futureContact`).
 - The owners' story: dashed placeholder block (`story.ownerTitle / ownerBody`).
 - Every photo: murals, patio, packaging, interior, storefront, and real product photos.

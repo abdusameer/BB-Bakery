@@ -27,7 +27,7 @@ export function Opening() {
         <div className="opening-copy">
           <p className="eyebrow">{business.category} · Los Angeles</p>
           <h1 id="page-title" className="h1">
-            <span className="line">BB’s</span> <span className="line">Bakery</span>
+            <span className="line">BB</span> <span className="line">Bakery</span> <span className="line">and Cafe</span>
           </h1>
           <Underline className="h1-underline" draw />
           <p className="lead">Handcrafted bread, baked fresh every day.</p>

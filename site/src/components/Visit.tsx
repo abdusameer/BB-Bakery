@@ -45,7 +45,7 @@ export function Visit() {
               <GuideSVG idSuffix="visit" pose="visit-static" />
             </div>
             <a className="btn btn-primary" id="get-directions" href={links.googleDirections} target="_blank" rel="noopener">
-              Get directions<span className="visually-hidden"> to BB’s Bakery (opens Google Maps in a new tab)</span> <IconArrowUpRight />
+              Get directions<span className="visually-hidden"> to BB Bakery and Cafe (opens Google Maps in a new tab)</span> <IconArrowUpRight />
             </a>
             <a className="btn btn-secondary" href={links.appleDirections} target="_blank" rel="noopener">
               <PencilBox />Open in Apple Maps<span className="visually-hidden"> (new tab)</span> <IconArrowUpRight />
@@ -59,7 +59,7 @@ export function Visit() {
         </div>
 
         <figure className="visit-map">
-          <a href={links.googleDirections} target="_blank" rel="noopener" aria-label="Open BB’s Bakery’s address in Google Maps (new tab)">
+          <a href={links.googleDirections} target="_blank" rel="noopener" aria-label="Open BB Bakery and Cafe’s address in Google Maps (new tab)">
             <svg viewBox="0 0 668 520" role="img" aria-label="Pencil sketch of W Olympic Blvd with a dotted route to the bakery, not to scale" focusable="false">
               <defs>
                 <pattern id="map-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">

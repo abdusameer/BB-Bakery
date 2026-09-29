@@ -70,8 +70,8 @@ export function Header({ active }: Props) {
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
         <div className="header-inner">
-          <a className="wordmark" href="#top" onClick={(e) => { if (e.button === 0 && !e.metaKey && !e.ctrlKey) { e.preventDefault(); scrollToId('top', 'h1'); } }} aria-label="BB’s Bakery, back to top">
-            <span className="wm-full">BB’s Bakery</span><span className="wm-short" aria-hidden="true">BB’s</span>
+          <a className="wordmark" href="#top" onClick={(e) => { if (e.button === 0 && !e.metaKey && !e.ctrlKey) { e.preventDefault(); scrollToId('top', 'h1'); } }} aria-label="BB Bakery and Cafe, back to top">
+            <span className="wm-full">BB Bakery and Cafe</span><span className="wm-short" aria-hidden="true">BB</span>
           </a>
           <nav className="primary-nav" aria-label="Primary">
             <ul className="nav-list">
@@ -95,7 +95,7 @@ export function Header({ active }: Props) {
               ))}
             </ul>
             <a className="btn btn-primary header-directions" href={links.googleDirections} target="_blank" rel="noopener">
-              <span className="hd-label">Directions</span><span className="visually-hidden"> to BB’s Bakery (opens Google Maps in a new tab)</span>
+              <span className="hd-label">Directions</span><span className="visually-hidden"> to BB Bakery and Cafe (opens Google Maps in a new tab)</span>
               <IconArrowUpRight />
             </a>
           </nav>
@@ -132,7 +132,7 @@ export function Header({ active }: Props) {
         hidden={!open}
       >
         <div className="sheet-head">
-          <span className="wordmark" aria-hidden="true">BB’s Bakery</span>
+          <span className="wordmark" aria-hidden="true">BB Bakery and Cafe</span>
           <button type="button" className="sheet-close" onClick={() => setOpen(false)}>
             <IconClose /><span className="visually-hidden">Close site index</span>
           </button>
