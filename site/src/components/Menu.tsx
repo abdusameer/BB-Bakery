@@ -51,6 +51,7 @@ export function Menu() {
                   img={it.img}
                   alt={it.alt}
                   label={it.name.toLowerCase()}
+                  eraser
                   sizes="(max-width: 767px) 92vw, (max-width: 1023px) 48vw, 560px"
                   marks={<ConstructionMarks img={it.img} />}
                 />

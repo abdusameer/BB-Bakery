@@ -17,7 +17,9 @@ export function addSketchSteps(tl: gsap.core.Timeline, fig: HTMLElement, t0: num
   const lineFinal = parseFloat(getComputedStyle(fig).getPropertyValue('--line-final')) || 0;
 
   if (marks.length) {
-    tl.fromTo(marks, { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 0, duration: d(0.18) }, at(0));
+    // hidden until drawing starts: a round cap at the path start would otherwise leave a dot
+    tl.fromTo(marks, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: d(0.18) }, at(0));
+    tl.fromTo(marks, { opacity: 0 }, { opacity: 1, duration: d(0.02) }, at(0));
     tl.fromTo(marks, { opacity: 1 }, { opacity: 0, duration: d(0.18), immediateRender: false }, at(0.6));
   }
   tl.fromTo(fig, { '--draw': '0deg' }, { '--draw': '374deg', duration: d(0.28) }, at(0.02))

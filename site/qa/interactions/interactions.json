@@ -3,8 +3,8 @@
     "left": {
       "pose": "neutral",
       "eyes": "translate(-1.10 1.60)",
-      "roll": "rotate(-2.77 60 64)",
-      "lean": "rotate(-0.86 60 9)",
+      "roll": "rotate(-2.76 60 64)",
+      "lean": "rotate(-0.84 60 9)",
       "active": "true",
       "mode": "follow",
       "x": 249
@@ -32,8 +32,8 @@
     "menu": {
       "pose": "menu",
       "eyes": "translate(1.20 1.60)",
-      "roll": "rotate(3.97 60 64)",
-      "lean": "rotate(-2.96 60 9)",
+      "roll": "rotate(3.98 60 64)",
+      "lean": "rotate(-2.99 60 9)",
       "active": "true",
       "mode": "react",
       "x": 935
@@ -42,7 +42,7 @@
       "pose": "storyA",
       "eyes": "translate(2.38 -0.37)",
       "roll": "rotate(4.10 60 64)",
-      "lean": "rotate(-1.04 60 9)",
+      "lean": "rotate(-1.03 60 9)",
       "active": "true",
       "mode": "travel",
       "x": 1002
@@ -51,7 +51,7 @@
       "pose": "media",
       "eyes": "translate(1.00 0.40)",
       "roll": "rotate(3.02 60 64)",
-      "lean": "rotate(-2.59 60 9)",
+      "lean": "rotate(-2.57 60 9)",
       "active": "true",
       "mode": "react",
       "x": 1077
@@ -69,8 +69,8 @@
   "afterHover": {
     "pose": "neutral",
     "eyes": "translate(2.00 1.58)",
-    "roll": "rotate(4.88 60 64)",
-    "lean": "rotate(0.86 60 9)",
+    "roll": "rotate(4.85 60 64)",
+    "lean": "rotate(0.78 60 9)",
     "active": "true",
     "mode": "follow",
     "x": 249
@@ -86,7 +86,7 @@
   },
   "reverse": {
     "first": {
-      "draw": "136.5183deg",
+      "draw": "147.0494deg",
       "ep": "-30%",
       "shaded": "1"
     },
@@ -96,7 +96,7 @@
       "shaded": "0"
     },
     "back": {
-      "draw": "136.5183deg",
+      "draw": "147.0494deg",
       "ep": "-30%",
       "shaded": "1"
     },

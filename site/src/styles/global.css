@@ -257,7 +257,7 @@ html.js.motion .sketch[data-anim] .layer-shaded { opacity: 1; }
 .sketch-study { display: none; }
 
 /* initial (undrawn) states exist only when JS will animate them */
-html.js.motion .sketch[data-anim] .layer-outline { -webkit-mask-image: conic-gradient(from -90deg at var(--cx, 50%) var(--cy, 50%), #000 var(--draw, 0deg), transparent calc(var(--draw, 0deg) + 14deg)); mask-image: conic-gradient(from -90deg at var(--cx, 50%) var(--cy, 50%), #000 var(--draw, 0deg), transparent calc(var(--draw, 0deg) + 14deg)); }
+html.js.motion .sketch[data-anim] .layer-outline { -webkit-mask-image: conic-gradient(from -90deg at var(--cx, 50%) var(--cy, 50%), #000 calc(var(--draw, 0deg) - 14deg), transparent var(--draw, 0deg)); mask-image: conic-gradient(from -90deg at var(--cx, 50%) var(--cy, 50%), #000 calc(var(--draw, 0deg) - 14deg), transparent var(--draw, 0deg)); }
 html.js.motion .sketch[data-anim] .layer-shaded { -webkit-mask-image: repeating-linear-gradient(-52deg, #000 0 var(--hw, 0px), transparent var(--hw, 0px) 9px), linear-gradient(118deg, #000 var(--hp, -20%), transparent calc(var(--hp, -20%) + 14%)); -webkit-mask-composite: source-in; mask-image: repeating-linear-gradient(-52deg, #000 0 var(--hw, 0px), transparent var(--hw, 0px) 9px), linear-gradient(118deg, #000 var(--hp, -20%), transparent calc(var(--hp, -20%) + 14%)); mask-composite: intersect; }
 html.js.motion .sketch[data-anim] .layer-photo img { -webkit-mask-image: linear-gradient(104deg, #000 var(--ep, -30%), transparent calc(var(--ep, -30%) + 22%)); mask-image: linear-gradient(104deg, #000 var(--ep, -30%), transparent calc(var(--ep, -30%) + 22%)); }
 html.js.motion .draw-path { stroke-dasharray: 1; stroke-dashoffset: 1; }
@@ -567,3 +567,26 @@ html:not(.motion) .menu-item .sketch-marks .construct { opacity: .3; }
 @media (prefers-reduced-motion: reduce) { .sketch.is-sketch-fading .layer, .sketch.is-sketch-fading .layer img { transition: none; } }
 @media (max-width: 767.98px) { .menu-item .sketch-toggle { top: 6px; right: 6px; } }
 .menu.is-pinned .menu-item[data-inactive] .sketch-toggle { visibility: hidden; }
+
+/* ==========================================================================
+   Pinned menu hand-off: an eraser wipes the finished product off the paper,
+   then the next one is drawn. --xo is scrubbed by motion/index.ts.
+   ========================================================================== */
+.menu.is-pinned .menu-item .sketch-frame {
+  -webkit-mask-image: linear-gradient(104deg, transparent var(--xo, -30%), #000 calc(var(--xo, -30%) + 16%));
+  mask-image: linear-gradient(104deg, transparent var(--xo, -30%), #000 calc(var(--xo, -30%) + 16%));
+}
+.menu.is-pinned .menu-item[data-inactive] .chip { visibility: hidden; }
+.eraser { display: none; }
+.menu.is-pinned .eraser {
+  display: block; position: absolute; z-index: 6; top: 52%; left: calc(var(--xo, -30%) + 9%);
+  width: 34%; aspect-ratio: 150 / 96; pointer-events: none; opacity: 0; visibility: hidden;
+  filter: drop-shadow(0 6px 8px rgba(30, 28, 25, .14));
+}
+.eraser svg { width: 100%; height: 100%; overflow: visible; }
+.eraser-ink path { fill: none; stroke: var(--g800); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.eraser-ink .eraser-body, .eraser-ink .eraser-top { fill: var(--paper); }
+.eraser-ink .eraser-top { fill: var(--paper-2); }
+.eraser-hatch { stroke: var(--g400); stroke-width: .9; }
+.eraser-ink .eraser-label { stroke-width: 1.2; opacity: .7; }
+.eraser-ink .eraser-crumb { fill: var(--g600); stroke: none; }

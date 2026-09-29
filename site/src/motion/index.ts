@@ -198,11 +198,10 @@ function buildPinnedMenu(section: HTMLElement) {
 
   const setIndex = (i: number) => links.forEach((a, j) => (j === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
   setIndex(0);
-  // Items switch with visibility; only the frame and text fade (never a wrapper around a
-  // multiply-blended frame, or the paper would turn into a white box during the fade).
-  const faders = (item: HTMLElement) => item.querySelectorAll(':scope > .sketch > .sketch-frame, :scope > .menu-count, :scope > .menu-item-text');
-  // Hidden items stay in the accessibility tree (opacity, not visibility), so every name and alt is readable.
-  items.slice(1).forEach((it) => gsap.set(faders(it), { opacity: 0 }));
+  // Text fades between items; pictures are drawn in and then ERASED off the paper (mask on the
+  // frame driven by --xo, with a drawn eraser riding the front), so no wrapper ever fades.
+  const texts = (item: HTMLElement) => item.querySelectorAll(':scope > .menu-count, :scope > .menu-item-text');
+  items.slice(1).forEach((it) => gsap.set(texts(it), { opacity: 0 }));
   items.forEach((it, i) => it.toggleAttribute('data-inactive', i > 0));
 
   const tl = gsap.timeline({
@@ -225,14 +224,33 @@ function buildPinnedMenu(section: HTMLElement) {
   });
   items.forEach((item, i) => {
     const fig = item.querySelector<HTMLElement>('.sketch')!;
-    if (i > 0) {
-      tl.fromTo(faders(items[i - 1]), { opacity: 1 }, { opacity: 0, duration: 0.05 }, i - 0.06);
-      tl.fromTo(faders(item), { opacity: 0 }, { opacity: 1, duration: 0.05, immediateRender: false }, i);
-    }
+    const eraser = item.querySelector<HTMLElement>('.eraser');
+    // text in (the first item's is already visible)
+    if (i > 0) tl.fromTo(texts(item), { opacity: 0 }, { opacity: 1, duration: 0.05, immediateRender: false }, i);
+    // draw → graphite → photograph (ends ~i+0.57), then hold the finished photo
     addSketchSteps(tl, fig, i + 0.04, {
       underline: item.querySelector('.menu-item-underline .draw-path'),
       arrow: gsap.utils.toArray<Element>('.menu-arrow .draw-path', item)
-    }, 0.66);
+    }, 0.62);
+    // the "Concept image" label arrives with the photograph, not over a blank page
+    const chip = fig.querySelector('.chip');
+    if (chip) tl.fromTo(chip, { opacity: 0 }, { opacity: 1, duration: 0.05 }, i + 0.36);
+    // eraser cleans the product off the paper before the next one is drawn
+    if (i < n - 1) {
+      tl.fromTo(fig, { '--xo': '-30%' }, { '--xo': '132%', duration: 0.16, ease: 'power1.inOut' }, i + 0.8);
+      if (eraser) {
+        tl.fromTo(eraser, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.02, immediateRender: false }, i + 0.78)
+          .fromTo(eraser, { xPercent: -50, yPercent: -50, rotation: -14 }, {
+            keyframes: [
+              { yPercent: -150, rotation: -18 }, { yPercent: 40, rotation: -10 }, { yPercent: -120, rotation: -16 },
+              { yPercent: 20, rotation: -11 }, { yPercent: -50, rotation: -14 }
+            ],
+            duration: 0.16, ease: 'none', immediateRender: false
+          }, i + 0.8)
+          .fromTo(eraser, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.02, immediateRender: false }, i + 0.96);
+      }
+      tl.fromTo(texts(item), { opacity: 1 }, { opacity: 0, duration: 0.08, immediateRender: false }, i + 0.87);
+    }
   });
   tl.to({}, { duration: 0.001 }, n); // total length = n units
 
@@ -241,7 +259,7 @@ function buildPinnedMenu(section: HTMLElement) {
     e.preventDefault();
     const i = (e as CustomEvent<number>).detail;
     const st = tl.scrollTrigger!;
-    const y = st.start + (st.end - st.start) * ((i + 0.72) / n);
+    const y = st.start + (st.end - st.start) * ((i + 0.68) / n);
     import('../lib/bus').then(({ scrollToY }) => scrollToY(y));
   };
   window.addEventListener('bbs:menu-index', onIndex);
