@@ -37,6 +37,8 @@ export type Rig = {
   setPose: (pose: string) => void;
   /** x on the nav line under the current section */
   homeX: () => number;
+  /** 'hang' below the nav line (tablet, desktop) or 'ledge' leaning on the header rule (phones) */
+  homeKind: () => 'hang' | 'ledge';
   /** hand control back to the rig at home (pose, mode, pointer follow for the current section) */
   goHome: () => void;
   /** viewport y of the pencil nav line */
@@ -298,13 +300,14 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
     rig.scene('live');
     const r = wrap.getBoundingClientRect();
     const toward = r.left + r.width / 2 < window.innerWidth / 2 ? 1 : -1;
+    const ledge = rig.homeKind() === 'ledge';
     play(gsap.timeline({ onComplete: () => exit() }))
-      .to(body, { y: -2.6, duration: 0.12, ease: 'power2.out' }, 0)               // a small start: someone's here
-      .to(body, { y: 0, duration: 0.26, ease: 'power2.in' }, 0.12)
+      .to(body, { y: '-=2.6', duration: 0.12, ease: 'power2.out' }, 0)            // a small start: someone's here
+      .to(body, { y: '+=2.6', duration: 0.26, ease: 'power2.in' }, 0.12)
       .to(look, { ex: 1.6 * toward, ey: 1.8, head: 5 * toward, duration: 0.3, ease: 'power2.out' }, 0.04)
       .call(blink, [], 0.32)
-      .add(wave(), 0.5)
-      .call(() => rig.setPose('neutral'))                                          // grabs the line again
+      .add(wave(ledge ? 'ledgeWave' : 'wave'), 0.5)
+      .call(() => rig.setPose(ledge ? 'ledge' : 'neutral'))                        // grabs the line again
       .to(look, { ex: 0.4 * toward, ey: 0.6, head: 0, lean: 0, duration: 0.24 }, '+=0.02')
       .to({}, { duration: 0.16 });
   }
@@ -326,9 +329,18 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
     phase = 'busy';
     rig.scene('live');
     measureBase();
+    const h = wrap.offsetHeight;
+    if (rig.homeKind() === 'ledge') {                                              // phones: ducks behind the header rule
+      clip = { kind: 'box', box: () => ({ l: -OPEN, t: -OPEN, r: OPEN, b: rig.lineY() + 0.5 }) };
+      startTicker();
+      applyClip();
+      play(gsap.timeline({ onComplete: () => { park('away'); then?.(); } }))
+        .to(look, { ex: 0, ey: 1.4, head: 0, lean: 0, duration: 0.15 }, 0)
+        .to(wrap, { y: h * 0.5, duration: 0.34, ease: 'power2.in' }, 0.08);
+      return;
+    }
     clip = { kind: 'line', offset: -4 };
     startTicker();
-    const h = wrap.offsetHeight;
     play(gsap.timeline({ onComplete: () => { park('away'); then?.(); } }))
       .to(look, { ex: 0, ey: -1.4, head: 0, lean: 0, duration: 0.2 }, 0)          // looks up at the line
       .to(body, { y: -15, duration: 0.3, ease: 'power2.inOut' }, 0.06)            // pull-up
@@ -599,8 +611,31 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
       .to(look, { ey: 0.6, duration: 0.3 });
   }
 
+  /** Phones: comes back up over the header rule (all the way home, or just his eyes for a peek). */
+  function rise(full: boolean, then: () => void) {
+    phase = 'busy';
+    rig.scene('live');
+    const h = wrap.offsetHeight;
+    rig.setPose('ledge');
+    gsap.set(body, { y: LEDGE_RAISE, rotation: 0 });
+    gsap.set(svg, { rotation: 0 });
+    gsap.set(wrap, { x: rig.homeX(), y: h * 0.5, scale: 1, autoAlpha: 1, transformOrigin: origin() });
+    setLook({ ey: -0.8 });
+    clip = { kind: 'box', box: () => ({ l: -OPEN, t: -OPEN, r: OPEN, b: rig.lineY() + 0.5 }) };
+    startTicker();
+    applyClip();
+    const t = play(gsap.timeline({ onComplete: then }))
+      .to(wrap, { y: full ? 0 : h * 0.14, duration: 0.45, ease: 'power3.out' })
+      .to(look, { ex: -1.8, ey: 0.4, duration: 0.22 }, 0.4)
+      .to(look, { ex: 1.8, duration: 0.3 }, 0.75)
+      .call(blink, [], 1.05)
+      .to(look, { ex: 0, ey: 0, duration: 0.2 }, 1.1);
+    if (!full) t.to(wrap, { y: h * 0.5, duration: 0.3, ease: 'power2.in' }, 1.35).set(wrap, { autoAlpha: 0 });
+  }
+
   /** Occasional peek: hangs upside down by his feet from behind the line and looks around. */
   function peek(then: () => void) {
+    if (rig.homeKind() === 'ledge') { rise(false, then); return; }
     phase = 'busy';
     rig.scene('live');
     rig.setPose('neutral');
@@ -629,6 +664,7 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
 
   /** STATE 6: a peek, then he lowers himself from behind the line back into his hang. */
   function returnHome() {
+    if (rig.homeKind() === 'ledge') { rise(true, hang); return; }
     peek(() => {
       const h = wrap.offsetHeight;
       rig.setPose('neutral');

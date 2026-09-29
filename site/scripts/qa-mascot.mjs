@@ -19,7 +19,8 @@ const p = await browser.newPage();
 const errors = [];
 p.on('pageerror', (e) => errors.push(String(e)));
 p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-await p.setViewport({ width: W, height: H });
+const touch = W < 1024;
+await p.setViewport({ width: W, height: H, ...(touch ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}) });
 await p.goto(BASE + '/', { waitUntil: 'networkidle0' });
 await wait(2600);
 
@@ -33,8 +34,9 @@ const state = () => p.evaluate(() => {
   const fig = rs.length ? { l: Math.min(...rs.map((r) => r.left)), t: Math.min(...rs.map((r) => r.top)), r: Math.max(...rs.map((r) => r.right)), b: Math.max(...rs.map((r) => r.bottom)) } : null;
   // a line clip hides everything above the nav line (he is behind the header border there)
   if (fig && g.style.clipPath.startsWith('polygon(-900px')) { const l = document.querySelector('.nav-line').getBoundingClientRect(); fig.t = Math.max(fig.t, l.top + l.height / 2 + 1); }
-  // on the footer ledge everything below its top edge is behind the footer
-  if (fig && (svg.dataset.pose || '').startsWith('ledge')) fig.b = Math.min(fig.b, document.querySelector('.site-footer').getBoundingClientRect().top);
+  // a box clip (the header rule on phones, the footer's top edge) hides everything below its bottom
+  const bm = g.style.clipPath.match(/^polygon\(-900px -900px, 1100px -900px, 1100px ([\d.-]+)px/);
+  if (fig && bm) { const gr = g.getBoundingClientRect(); const sc = gr.width / g.offsetWidth || 1; fig.b = Math.min(fig.b, gr.top + Number(bm[1]) * sc); }
   if (fig && fig.b <= fig.t) return { visibility: cs.visibility, pose: svg.dataset.pose, scene: svg.dataset.scene ?? null, fig: null, overlaps: [], winking: false, chalk: g.classList.contains('is-chalk') };
   const hit = (sel) => [...document.querySelectorAll(sel)].filter((el) => {
     const r = el.getBoundingClientRect(); if (!r.width || getComputedStyle(el).visibility === 'hidden' || +getComputedStyle(el).opacity === 0) return false;
@@ -47,7 +49,7 @@ const state = () => p.evaluate(() => {
     visibility: cs.visibility, pose: svg.dataset.pose, scene: svg.dataset.scene ?? null, clip: g.style.clipPath ? g.style.clipPath.slice(0, 22) : '',
     transform: g.style.transform, fig: fig && Object.fromEntries(Object.entries(fig).map(([k, v]) => [k, Math.round(v)])),
     overlaps: fig && cs.visibility !== 'hidden' ? [
-      ...hit('.primary-nav a, .header-directions, .wordmark'),
+      ...hit('.primary-nav a, .header-directions, .wordmark, .quick-links a, .index-toggle'),
       ...hit('.menu-index a'),
       ...hit('.visit-map .map-addr, .visit-map .map-label, .visit-map figcaption span, .visit-actions .btn, .visit-facts h3, .visit-facts address, .visit-facts li, .future-contact, .site-footer p'),
       ...(active ? [...active.querySelectorAll('.menu-item-text h3, .menu-item-note, .menu-count, .sketch-toggle, .chip')].filter((el) => { const r = el.getBoundingClientRect(); return fig && r.left < fig.r && r.right > fig.l && r.top < fig.b && r.bottom > fig.t && getComputedStyle(el).visibility !== 'hidden'; }).map((el) => el.className || el.tagName) : [])

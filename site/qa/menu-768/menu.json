@@ -1,0 +1,124 @@
+{
+  "report": [
+    {
+      "label": "1-hold",
+      "u": 0.68,
+      "shown": [
+        "Salt bread [photo, text 1, eraser 0]"
+      ]
+    },
+    {
+      "label": "1-erasing",
+      "u": 0.88,
+      "shown": [
+        "Salt bread [photo, text 0.88, eraser 1]"
+      ]
+    },
+    {
+      "label": "2-start",
+      "u": 1.03,
+      "shown": [
+        "Garlic cream cheese bread [blank, text 0.6, eraser 0]"
+      ]
+    },
+    {
+      "label": "2-hold",
+      "u": 1.6800000000000002,
+      "shown": [
+        "Garlic cream cheese bread [photo, text 1, eraser 0]"
+      ]
+    },
+    {
+      "label": "2-erasing",
+      "u": 1.88,
+      "shown": [
+        "Garlic cream cheese bread [photo, text 0.87, eraser 1]"
+      ]
+    },
+    {
+      "label": "3-start",
+      "u": 2.0300000000000002,
+      "shown": [
+        "Cranberry cream cheese bread [blank, text 0.6, eraser 0]"
+      ]
+    },
+    {
+      "label": "3-hold",
+      "u": 2.68,
+      "shown": [
+        "Cranberry cream cheese bread [photo, text 1, eraser 0]"
+      ]
+    },
+    {
+      "label": "3-erasing",
+      "u": 2.88,
+      "shown": [
+        "Cranberry cream cheese bread [photo, text 0.88, eraser 1]"
+      ]
+    },
+    {
+      "label": "4-start",
+      "u": 3.0300000000000002,
+      "shown": [
+        "Cream-filled twisted doughnut [blank, text 0.6, eraser 0]"
+      ]
+    },
+    {
+      "label": "4-hold",
+      "u": 3.68,
+      "shown": [
+        "Cream-filled twisted doughnut [photo, text 1, eraser 0]"
+      ]
+    },
+    {
+      "label": "4-erasing",
+      "u": 3.88,
+      "shown": [
+        "Cream-filled twisted doughnut [photo, text 0.87, eraser 1]"
+      ]
+    },
+    {
+      "label": "5-start",
+      "u": 4.03,
+      "shown": [
+        "Croissant sandwich [blank, text 0.61, eraser 0]"
+      ]
+    },
+    {
+      "label": "5-hold",
+      "u": 4.68,
+      "shown": [
+        "Croissant sandwich [photo, text 1, eraser 0]"
+      ]
+    },
+    {
+      "label": "5-erasing",
+      "u": 4.88,
+      "shown": [
+        "Croissant sandwich [photo, text 0.86, eraser 1]"
+      ]
+    },
+    {
+      "label": "6-start",
+      "u": 5.03,
+      "shown": [
+        "Oat black sesame latte [blank, text 0.61, eraser 0]"
+      ]
+    },
+    {
+      "label": "6-hold",
+      "u": 5.68,
+      "shown": [
+        "Oat black sesame latte [photo, text 1, eraser 0]"
+      ]
+    },
+    {
+      "label": "back-2-hold",
+      "u": 1.68,
+      "shown": [
+        "Garlic cream cheese bread [photo, text 1, eraser 0]"
+      ]
+    }
+  ],
+  "errors": []
+}

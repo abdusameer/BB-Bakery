@@ -1,0 +1,120 @@
+{
+  "desktop": {
+    "all": {
+      "frames": 599,
+      "avg": 16.7,
+      "p95": 18.2,
+      "max": 27.9,
+      "over33": 0,
+      "over50": 0
+    },
+    "sections": {
+      "top": {
+        "frames": 25,
+        "avg": 16.7,
+        "p95": 18.7,
+        "max": 20.4,
+        "over33": 0,
+        "over50": 0
+      },
+      "menu": {
+        "frames": 420,
+        "avg": 16.7,
+        "p95": 18,
+        "max": 27.9,
+        "over33": 0,
+        "over50": 0
+      },
+      "story": {
+        "frames": 43,
+        "avg": 16.7,
+        "p95": 18.3,
+        "max": 19.6,
+        "over33": 0,
+        "over50": 0
+      },
+      "media": {
+        "frames": 80,
+        "avg": 16.6,
+        "p95": 17.8,
+        "max": 21.1,
+        "over33": 0,
+        "over50": 0
+      },
+      "visit": {
+        "frames": 31,
+        "avg": 16.7,
+        "p95": 18.1,
+        "max": 18.4,
+        "over33": 0,
+        "over50": 0
+      }
+    },
+    "mainThreadMs": {
+      "script": 404,
+      "style": 451,
+      "layout": 76,
+      "task": 2299
+    },
+    "errors": []
+  },
+  "phone": {
+    "all": {
+      "frames": 546,
+      "avg": 16.7,
+      "p95": 17.9,
+      "max": 22.2,
+      "over33": 0,
+      "over50": 0
+    },
+    "sections": {
+      "top": {
+        "frames": 28,
+        "avg": 16.6,
+        "p95": 19.2,
+        "max": 20.3,
+        "over33": 0,
+        "over50": 0
+      },
+      "menu": {
+        "frames": 361,
+        "avg": 16.7,
+        "p95": 17.8,
+        "max": 22.2,
+        "over33": 0,
+        "over50": 0
+      },
+      "story": {
+        "frames": 37,
+        "avg": 16.7,
+        "p95": 18.4,
+        "max": 20,
+        "over33": 0,
+        "over50": 0
+      },
+      "media": {
+        "frames": 72,
+        "avg": 16.7,
+        "p95": 17.7,
+        "max": 17.8,
+        "over33": 0,
+        "over50": 0
+      },
+      "visit": {
+        "frames": 48,
+        "avg": 16.7,
+        "p95": 18.1,
+        "max": 18.2,
+        "over33": 0,
+        "over50": 0
+      }
+    },
+    "mainThreadMs": {
+      "script": 343,
+      "style": 341,
+      "layout": 62,
+      "task": 1806
+    },
+    "errors": []
+  }
+}

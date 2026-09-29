@@ -5,15 +5,15 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
+      "pose": "ledge",
       "scene": null,
-      "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
         "l": 272,
-        "t": 73,
-        "r": 328,
-        "b": 150
+        "t": 60,
+        "r": 313,
+        "b": 75
       },
       "overlaps": []
     },
@@ -22,15 +22,15 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
+      "pose": "ledge",
       "scene": "live",
-      "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
         "l": 271,
-        "t": 73,
-        "r": 329,
-        "b": 149
+        "t": 60,
+        "r": 314,
+        "b": 74
       },
       "overlaps": []
     },
@@ -39,15 +39,15 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "wave",
+      "pose": "ledgeWave",
       "scene": "live",
-      "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
-        "l": 273,
-        "t": 73,
-        "r": 348,
-        "b": 150
+        "l": 271,
+        "t": 60,
+        "r": 328,
+        "b": 75
       },
       "overlaps": []
     },
@@ -55,16 +55,16 @@
       "name": "04-exit",
       "winking": false,
       "chalk": false,
-      "visibility": "visible",
+      "visibility": "hidden",
       "pose": "neutral",
-      "scene": "live",
-      "clip": "polygon(-900px 39.1px,",
-      "transform": "translate3d(248.672px, -35.2462px, 0px)",
+      "scene": "idle",
+      "clip": "",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
         "l": 272,
-        "t": 72,
-        "r": 328,
-        "b": 101
+        "t": 61,
+        "r": 313,
+        "b": 118
       },
       "overlaps": []
     },
@@ -76,12 +76,12 @@
       "pose": "neutral",
       "scene": "idle",
       "clip": "",
-      "transform": "translate(248.672px, 0px)",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
         "l": 272,
-        "t": 73,
-        "r": 328,
-        "b": 150
+        "t": 61,
+        "r": 313,
+        "b": 118
       },
       "overlaps": []
     },
@@ -94,7 +94,7 @@
       "poses": [
         "present"
       ],
-      "ms": 5330
+      "ms": 5234
     },
     {
       "name": "bread-1",
@@ -105,7 +105,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4751
+      "ms": 4823
     },
     {
       "name": "bread-2",
@@ -116,7 +116,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4760
+      "ms": 4777
     },
     {
       "name": "bread-3",
@@ -127,7 +127,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4819
+      "ms": 4739
     },
     {
       "name": "bread-4",
@@ -138,7 +138,7 @@
       "poses": [
         "present"
       ],
-      "ms": 5195
+      "ms": 5071
     },
     {
       "name": "12-after-breads",
@@ -148,12 +148,12 @@
       "pose": "neutral",
       "scene": "idle",
       "clip": "",
-      "transform": "translate(691.063px, 0px)",
+      "transform": "translate(118.245px, 0px)",
       "fig": {
-        "l": 715,
-        "t": 73,
-        "r": 770,
-        "b": 150
+        "l": 136,
+        "t": 61,
+        "r": 178,
+        "b": 118
       },
       "overlaps": []
     },
@@ -162,15 +162,15 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
+      "pose": "ledge",
       "scene": "live",
-      "clip": "polygon(-900px 89.8px,",
-      "transform": "translate(1005.05px, -80.6857px)",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
-        "l": 1025,
-        "t": 72,
-        "r": 1083,
-        "b": 147
+        "l": 272,
+        "t": 60,
+        "r": 313,
+        "b": 75
       },
       "overlaps": []
     },
@@ -179,15 +179,15 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
-      "scene": "live",
-      "clip": "polygon(-900px 89.8px,",
-      "transform": "translate(1005.05px, -80.6857px)",
+      "pose": "ledge",
+      "scene": null,
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
-        "l": 1029,
-        "t": 72,
-        "r": 1084,
-        "b": 146
+        "l": 272,
+        "t": 60,
+        "r": 313,
+        "b": 75
       },
       "overlaps": []
     },
@@ -196,15 +196,15 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
-      "scene": "live",
-      "clip": "polygon(-900px 3.9px, ",
-      "transform": "translate(1005.05px, 0px)",
+      "pose": "ledge",
+      "scene": null,
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
-        "l": 1026,
-        "t": 72,
-        "r": 1083,
-        "b": 150
+        "l": 272,
+        "t": 60,
+        "r": 313,
+        "b": 75
       },
       "overlaps": []
     },
@@ -213,15 +213,15 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
+      "pose": "ledge",
       "scene": null,
-      "clip": "",
-      "transform": "translate(1005.05px, 0px)",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
-        "l": 1029,
-        "t": 73,
-        "r": 1084,
-        "b": 150
+        "l": 272,
+        "t": 60,
+        "r": 313,
+        "b": 75
       },
       "overlaps": []
     },
@@ -236,13 +236,13 @@
       "visibility": "visible",
       "pose": "present",
       "scene": "live",
-      "clip": "polygon(-15.6px -900px",
-      "transform": "translate(773.651px, 429.02px) scale(1.3528, 1.3528)",
+      "clip": "polygon(-14.5px -900px",
+      "transform": "translate(32.0623px, 349.952px) scale(1.0008, 1.0008)",
       "fig": {
-        "l": 781,
-        "t": 514,
-        "r": 895,
-        "b": 579
+        "l": 46,
+        "t": 432,
+        "r": 109,
+        "b": 468
       },
       "overlaps": []
     },
@@ -253,13 +253,13 @@
       "visibility": "visible",
       "pose": "present",
       "scene": "live",
-      "clip": "polygon(-176.9px -900p",
-      "transform": "translate(991.922px, 292.394px) scale(1.3528, 1.3528)",
+      "clip": "polygon(-132.5px -900p",
+      "transform": "translate(150.197px, 278.148px) scale(1.0008, 1.0008)",
       "fig": {
-        "l": 999,
-        "t": 374,
-        "r": 1114,
-        "b": 443
+        "l": 164,
+        "t": 358,
+        "r": 228,
+        "b": 397
       },
       "overlaps": []
     },
@@ -270,13 +270,13 @@
       "visibility": "visible",
       "pose": "present",
       "scene": "live",
-      "clip": "polygon(-176.9px -900p",
-      "transform": "translate(991.922px, 292.394px) scale(1.3528, 1.3528)",
+      "clip": "polygon(-132.5px -900p",
+      "transform": "translate(150.197px, 278.148px) scale(1.0008, 1.0008)",
       "fig": {
-        "l": 999,
-        "t": 378,
-        "r": 1114,
-        "b": 443
+        "l": 164,
+        "t": 360,
+        "r": 228,
+        "b": 397
       },
       "overlaps": []
     },
@@ -287,32 +287,25 @@
       "visibility": "visible",
       "pose": "present",
       "scene": "live",
-      "clip": "polygon(-76px -900px, ",
-      "transform": "translate(855.397px, 356.752px) scale(1.3528, 1.3528)",
+      "clip": "polygon(-69.2px -900px",
+      "transform": "translate(86.8509px, 305.185px) scale(1.0008, 1.0008)",
       "fig": {
-        "l": 860,
-        "t": 439,
-        "r": 973,
-        "b": 508
+        "l": 100,
+        "t": 386,
+        "r": 162,
+        "b": 424
       },
       "overlaps": []
     },
     {
       "name": "22-map-gone",
+      "visibility": "visible",
+      "pose": "ledge",
+      "scene": "live",
+      "fig": null,
+      "overlaps": [],
       "winking": false,
-      "chalk": false,
-      "visibility": "hidden",
-      "pose": "neutral",
-      "scene": "idle",
-      "clip": "",
-      "transform": "translate(616.182px, 0px)",
-      "fig": {
-        "l": 640,
-        "t": 73,
-        "r": 696,
-        "b": 150
-      },
-      "overlaps": []
+      "chalk": true
     },
     {
       "name": "footer-scene",
@@ -326,12 +319,12 @@
       "pose": "ledge",
       "scene": "live",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 764.959px) scale(1.5, 1.5)",
+      "transform": "translate(234.568px, 570.17px) scale(1.3, 1.3)",
       "fig": {
-        "l": 1154,
-        "t": 758,
-        "r": 1238,
-        "b": 795
+        "l": 245,
+        "t": 585,
+        "r": 301,
+        "b": 612
       },
       "overlaps": []
     },
@@ -343,12 +336,12 @@
       "pose": "ledgeWave",
       "scene": "live",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "transform": "translate(234.568px, 570.17px) scale(1.3, 1.3)",
       "fig": {
-        "l": 1155,
-        "t": 748,
-        "r": 1265,
-        "b": 795
+        "l": 247,
+        "t": 581,
+        "r": 319,
+        "b": 612
       },
       "overlaps": []
     },
@@ -360,12 +353,12 @@
       "pose": "ledge",
       "scene": "idle",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "transform": "translate(234.568px, 570.17px) scale(1.3, 1.3)",
       "fig": {
-        "l": 1156,
-        "t": 755,
-        "r": 1241,
-        "b": 795
+        "l": 247,
+        "t": 586,
+        "r": 302,
+        "b": 612
       },
       "overlaps": []
     },
@@ -377,12 +370,12 @@
       "pose": "ledge",
       "scene": "idle",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "transform": "translate(234.568px, 570.17px) scale(1.3, 1.3)",
       "fig": {
-        "l": 1156,
-        "t": 755,
-        "r": 1241,
-        "b": 795
+        "l": 247,
+        "t": 586,
+        "r": 302,
+        "b": 612
       },
       "overlaps": []
     },
@@ -394,12 +387,12 @@
       "pose": "ledge",
       "scene": "idle",
       "clip": "polygon(-900px -900px,",
-      "transform": "translate(1144.26px, 942.468px) scale(1.5, 1.5)",
+      "transform": "translate(234.568px, 748.75px) scale(1.3, 1.3)",
       "fig": {
-        "l": 1156,
-        "t": 934,
-        "r": 1241,
-        "b": 955
+        "l": 247,
+        "t": 764,
+        "r": 302,
+        "b": 772
       },
       "overlaps": []
     },
@@ -408,32 +401,35 @@
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
-      "scene": "live",
-      "clip": "polygon(-900px 3.9px, ",
-      "transform": "translate3d(1145.84px, -0.0185px, 0px)",
+      "pose": "ledge",
+      "scene": null,
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
-        "l": 1168,
-        "t": 73,
-        "r": 1225,
-        "b": 150
+        "l": 272,
+        "t": 60,
+        "r": 313,
+        "b": 75
       },
-      "overlaps": []
+      "overlaps": [
+        "H3",
+        "LI"
+      ]
     },
     {
       "name": "17-menu-again",
       "winking": false,
       "chalk": false,
       "visibility": "visible",
-      "pose": "neutral",
+      "pose": "ledge",
       "scene": null,
-      "clip": "",
-      "transform": "translate(934.82px, 0px)",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(253.953px, 0px)",
       "fig": {
-        "l": 958,
-        "t": 73,
-        "r": 1014,
-        "b": 150
+        "l": 272,
+        "t": 60,
+        "r": 313,
+        "b": 75
       },
       "overlaps": []
     }

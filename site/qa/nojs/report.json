@@ -1,0 +1,149 @@
+[
+  {
+    "viewport": "1440-nojs",
+    "vw": 1440,
+    "docW": 1440,
+    "overflow": false,
+    "brokenImages": [],
+    "guideOverlapsNav": false,
+    "h1": 1,
+    "robots": "noindex, nofollow",
+    "consoleErrors": [],
+    "failedRequests": [],
+    "shots": [
+      "1440-nojs-01-opening.png",
+      "1440-nojs-02-menu.png",
+      "1440-nojs-03-menu-item1.png",
+      "1440-nojs-06-story.png",
+      "1440-nojs-07-media.png",
+      "1440-nojs-08-visit.png",
+      "1440-nojs-09-footer.png"
+    ]
+  },
+  {
+    "viewport": "1280-nojs",
+    "vw": 1280,
+    "docW": 1280,
+    "overflow": false,
+    "brokenImages": [],
+    "guideOverlapsNav": false,
+    "h1": 1,
+    "robots": "noindex, nofollow",
+    "consoleErrors": [],
+    "failedRequests": [],
+    "shots": [
+      "1280-nojs-01-opening.png",
+      "1280-nojs-02-menu.png",
+      "1280-nojs-03-menu-item1.png",
+      "1280-nojs-06-story.png",
+      "1280-nojs-07-media.png",
+      "1280-nojs-08-visit.png",
+      "1280-nojs-09-footer.png"
+    ]
+  },
+  {
+    "viewport": "1024-nojs",
+    "vw": 1024,
+    "docW": 1024,
+    "overflow": false,
+    "brokenImages": [],
+    "guideOverlapsNav": false,
+    "h1": 1,
+    "robots": "noindex, nofollow",
+    "consoleErrors": [],
+    "failedRequests": [],
+    "shots": [
+      "1024-nojs-01-opening.png",
+      "1024-nojs-02-menu.png",
+      "1024-nojs-03-menu-item1.png",
+      "1024-nojs-06-story.png",
+      "1024-nojs-07-media.png",
+      "1024-nojs-08-visit.png",
+      "1024-nojs-09-footer.png"
+    ]
+  },
+  {
+    "viewport": "768-nojs",
+    "vw": 768,
+    "docW": 768,
+    "overflow": false,
+    "brokenImages": [],
+    "guideOverlapsNav": false,
+    "h1": 1,
+    "robots": "noindex, nofollow",
+    "consoleErrors": [],
+    "failedRequests": [],
+    "shots": [
+      "768-nojs-01-opening.png",
+      "768-nojs-02-menu.png",
+      "768-nojs-03-menu-item1.png",
+      "768-nojs-06-story.png",
+      "768-nojs-07-media.png",
+      "768-nojs-08-visit.png",
+      "768-nojs-09-footer.png"
+    ]
+  },
+  {
+    "viewport": "430-nojs",
+    "vw": 430,
+    "docW": 430,
+    "overflow": false,
+    "brokenImages": [],
+    "guideOverlapsNav": null,
+    "h1": 1,
+    "robots": "noindex, nofollow",
+    "consoleErrors": [],
+    "failedRequests": [],
+    "shots": [
+      "430-nojs-01-opening.png",
+      "430-nojs-02-menu.png",
+      "430-nojs-03-menu-item1.png",
+      "430-nojs-06-story.png",
+      "430-nojs-07-media.png",
+      "430-nojs-08-visit.png",
+      "430-nojs-09-footer.png"
+    ]
+  },
+  {
+    "viewport": "390-nojs",
+    "vw": 390,
+    "docW": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "guideOverlapsNav": null,
+    "h1": 1,
+    "robots": "noindex, nofollow",
+    "consoleErrors": [],
+    "failedRequests": [],
+    "shots": [
+      "390-nojs-01-opening.png",
+      "390-nojs-02-menu.png",
+      "390-nojs-03-menu-item1.png",
+      "390-nojs-06-story.png",
+      "390-nojs-07-media.png",
+      "390-nojs-08-visit.png",
+      "390-nojs-09-footer.png"
+    ]
+  },
+  {
+    "viewport": "360-nojs",
+    "vw": 360,
+    "docW": 360,
+    "overflow": false,
+    "brokenImages": [],
+    "guideOverlapsNav": null,
+    "h1": 1,
+    "robots": "noindex, nofollow",
+    "consoleErrors": [],
+    "failedRequests": [],
+    "shots": [
+      "360-nojs-01-opening.png",
+      "360-nojs-02-menu.png",
+      "360-nojs-03-menu-item1.png",
+      "360-nojs-06-story.png",
+      "360-nojs-07-media.png",
+      "360-nojs-08-visit.png",
+      "360-nojs-09-footer.png"
+    ]
+  }
+]

@@ -11,7 +11,8 @@ import { initAtmosphereGL } from './atmosphereGL';
 const Q = {
   motion: '(prefers-reduced-motion: no-preference)',
   reduce: '(prefers-reduced-motion: reduce)',
-  pinned: '(min-width: 1024px) and (hover: hover) and (pointer: fine) and (min-height: 560px)',
+  pinned: '(min-height: 560px)',                 // every width; very short screens (phones on their side) keep the flow menu
+  wide: '(min-width: 1024px)',
   smooth: '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
   mobile: '(max-width: 767.98px)'
 };
@@ -80,20 +81,23 @@ export function initMotion(): () => void {
 
   /* ---------- scroll choreography, rebuilt per breakpoint ---------- */
   const mm = gsap.matchMedia();
-  mm.add({ pinned: Q.pinned, motion: Q.motion, mobile: Q.mobile }, (ctx) => {
-    const { pinned, motion, mobile } = ctx.conditions as Record<string, boolean>;
+  mm.add({ pinned: Q.pinned, wide: Q.wide, motion: Q.motion, mobile: Q.mobile }, (ctx) => {
+    const { pinned, wide, motion, mobile } = ctx.conditions as Record<string, boolean>;
     if (!motion) return;
+    // Desktop scroll is already eased by Lenis; on touch screens the scroll-linked drawings get a short
+    // ease of their own so they glide after the finger instead of tracking every jitter.
+    const soft: true | number = window.matchMedia('(pointer: coarse)').matches ? 0.5 : true;
     const undo: (() => void)[] = [];
 
     // Menu first: ScrollTrigger measures in creation order, so the pin (and its spacer)
     // must exist before any trigger further down the page is calculated.
     const section = document.getElementById('menu');
-    if (section) undo.push(pinned ? buildPinnedMenu(section) : buildFlowMenu(section));
+    if (section) undo.push(pinned ? buildPinnedMenu(section, !wide) : buildFlowMenu(section, soft));
 
     // hero parallax (gentle, fully reversible)
     gsap.to('.opening-figure .sketch-frame', {
       yPercent: 6, ease: 'none',
-      scrollTrigger: { trigger: '.opening', start: 'top top', end: 'bottom top', scrub: true }
+      scrollTrigger: { trigger: '.opening', start: 'top top', end: 'bottom top', scrub: soft }
     });
 
     // section headings: words rise through a mask (plays once per visit, never reverses)
@@ -101,7 +105,7 @@ export function initMotion(): () => void {
       // y: 0 is explicit: GSAP would otherwise read the CSS start state (translateY(110%)) as a px offset
       playOnEnter(h, gsap.fromTo(h.querySelectorAll('.split-word'), { y: 0, yPercent: 110 }, {
         y: 0, yPercent: 0, duration: 0.8, ease: 'power3.out', stagger: mobile ? 0.04 : 0.06
-      }), 'top 86%', pinned && !!h.closest('.menu-pin') ? document.querySelector('.menu-pin') : undefined);
+      }), 'top 86%', pinned && wide && !!h.closest('.menu-pin') ? document.querySelector('.menu-pin') : undefined);
     });
 
     // Story: the margin line draws down as you read; its arrows follow
@@ -109,16 +113,16 @@ export function initMotion(): () => void {
     if (storyLine) {
       gsap.fromTo(storyLine, { strokeDashoffset: 1 }, {
         strokeDashoffset: 0, ease: 'none',
-        scrollTrigger: { trigger: '.story', start: 'top 72%', end: 'bottom 72%', scrub: true }
+        scrollTrigger: { trigger: '.story', start: 'top 72%', end: 'bottom 72%', scrub: soft }
       });
     }
     gsap.utils.toArray<HTMLElement>('.story-note').forEach((note) => {
       gsap.fromTo(note.querySelectorAll('.draw-path'), { strokeDashoffset: 1 }, {
         strokeDashoffset: 0, ease: 'none',
-        scrollTrigger: { trigger: note, start: 'top 78%', end: 'top 58%', scrub: true }
+        scrollTrigger: { trigger: note, start: 'top 78%', end: 'top 58%', scrub: soft }
       });
       gsap.fromTo(note.querySelector('.note'), { autoAlpha: 0 }, {
-        autoAlpha: 1, ease: 'none', scrollTrigger: { trigger: note, start: 'top 80%', end: 'top 66%', scrub: true }
+        autoAlpha: 1, ease: 'none', scrollTrigger: { trigger: note, start: 'top 80%', end: 'top 66%', scrub: soft }
       });
     });
     const storyUnder = document.querySelectorAll('.story .owner-block, .story-figure figcaption');
@@ -137,7 +141,7 @@ export function initMotion(): () => void {
     if (clip) {
       gsap.fromTo(clip, { attr: { width: 0 } }, {
         attr: { width: 432 }, ease: 'none',
-        scrollTrigger: { trigger: '.visit-map', start: 'top 82%', end: 'center 48%', scrub: true }
+        scrollTrigger: { trigger: '.visit-map', start: 'top 82%', end: 'center 48%', scrub: soft }
       });
       const map = document.querySelector('.visit-map');
       if (map) playOnEnter(map, gsap.fromTo('.visit-map .pin', { autoAlpha: 0, y: -8 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' }), 'center 60%');
@@ -188,10 +192,12 @@ function playOnEnter(trigger: Element, anim: gsap.core.Animation, start: string,
   return st;
 }
 
-/* Desktop: one pinned stage; six items advance through 140 vh each. */
-function buildPinnedMenu(section: HTMLElement) {
+/* One pinned stage; six items advance through 140 vh each (115 vh on phones and tablets, where only the
+   picture stage pins and the intro scrolls away first). */
+function buildPinnedMenu(section: HTMLElement, compact = false) {
   section.classList.add('is-pinned');
-  const pin = section.querySelector<HTMLElement>('.menu-pin')!;
+  section.classList.toggle('is-compact', compact);
+  const pin = section.querySelector<HTMLElement>(compact ? '.menu-items' : '.menu-pin')!;
   const items = gsap.utils.toArray<HTMLElement>('.menu-item', section);
   const links = gsap.utils.toArray<HTMLAnchorElement>('.menu-index a', section);
   const n = items.length;
@@ -209,7 +215,7 @@ function buildPinnedMenu(section: HTMLElement) {
     scrollTrigger: {
       trigger: pin,
       start: () => `top top+=${headerH()}`,
-      end: () => `+=${Math.round(n * window.innerHeight * 1.4)}`,
+      end: () => `+=${Math.round(n * window.innerHeight * (compact ? 1.15 : 1.4))}`,
       pin: true,
       pinSpacing: true,
       scrub: 0.6,
@@ -266,19 +272,19 @@ function buildPinnedMenu(section: HTMLElement) {
 
   return () => {
     window.removeEventListener('bbs:menu-index', onIndex);
-    section.classList.remove('is-pinned');
+    section.classList.remove('is-pinned', 'is-compact');
     links.forEach((a) => a.removeAttribute('aria-current'));
     items.forEach((it) => it.removeAttribute('data-inactive'));
   };
 }
 
-/* Tablet, touch, and mobile: no pin. Each item scrubs as it passes through the viewport. */
-function buildFlowMenu(section: HTMLElement) {
+/* Very short screens (a phone on its side): no pin. Each item scrubs as it passes through the viewport. */
+function buildFlowMenu(section: HTMLElement, soft: true | number = true) {
   gsap.utils.toArray<HTMLElement>('.menu-item', section).forEach((item) => {
     const fig = item.querySelector<HTMLElement>('.sketch')!;
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
-      scrollTrigger: { trigger: fig, start: 'top 85%', end: 'center 35%', scrub: true }
+      scrollTrigger: { trigger: fig, start: 'top 85%', end: 'center 35%', scrub: soft }
     });
     addSketchSteps(tl, fig, 0, { underline: item.querySelector('.menu-item-underline .draw-path') });
   });

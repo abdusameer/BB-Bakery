@@ -1,8 +1,9 @@
 /*
   Mobile interaction QA (touch emulation via puppeteer-core + local Chrome).
     node scripts/qa-mobile.mjs [--base http://127.0.0.1:4174] [--out qa/mobile]
-  Checks: peek follows a finger and releases; watches scrolling; section reactions;
-  "Sketch" toggle + press-and-hold on a menu picture; tablet rig follows a finger.
+  Checks: on phones the real croissant (not the old peek) leans on the header rule; his eyes follow a
+  finger and let go; they watch the page scroll; "Sketch" toggle + press-and-hold on a menu picture;
+  the tablet rig follows a finger. (The scroll scenes are covered by qa-mascot.mjs at any size.)
 */
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs/promises';
@@ -24,41 +25,33 @@ const R = { errors: [] };
   await p.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' });
   await wait(2200);
-  const peek = () => p.evaluate(() => {
-    const s = document.querySelector('.peek-svg'); const q = (n) => s.querySelector(`[data-part="${n}"]`);
-    return { eyes: q('peek-eyes').getAttribute('transform'), body: q('peek-body').getAttribute('transform'), move: q('peek-move').getAttribute('transform') || getComputedStyle(q('peek-move')).transform, peek: s.dataset.peek, active: s.dataset.animationActive };
+  // the real croissant (not the old peek) leans on the header rule
+  const rig = () => p.evaluate(() => {
+    const w = document.querySelector('.site-header .guide'), s = w.querySelector('.guide-svg');
+    const q = (n) => s.querySelector(`[data-part="${n}"]`);
+    return { display: getComputedStyle(w).display, vis: getComputedStyle(w).visibility, pose: s.dataset.pose, eyes: q('eyes').getAttribute('transform'), lean: q('lean').getAttribute('transform'),
+      peekSvg: getComputedStyle(document.querySelector('.peek svg')).visibility, visitGuide: getComputedStyle(document.querySelector('.visit-guide')).display };
   });
   const headerClip = async () => ({ x: 170, y: await p.evaluate(() => window.scrollY), width: 220, height: 64 });
+  R.home = await rig();
+  await p.screenshot({ path: path.join(OUT, 'rig-home.png'), clip: await headerClip() });
 
-  // finger to the lower left, drag to the right
-  await p.touchscreen.touchStart(40, 700); await wait(500);
-  const left = await peek();
-  await p.screenshot({ path: path.join(OUT, 'peek-finger-left.png'), clip: await headerClip() });
-  await p.touchscreen.touchMove(370, 300); await wait(500);
-  const right = await peek();
-  await p.screenshot({ path: path.join(OUT, 'peek-finger-right.png'), clip: await headerClip() });
+  // finger to the left, then across to the right (horizontal, so the page doesn't scroll), then let go
+  await p.touchscreen.touchStart(40, 420); await wait(500);
+  const left = await rig();
+  await p.touchscreen.touchMove(370, 420); await wait(500);
+  const right = await rig();
+  await p.screenshot({ path: path.join(OUT, 'rig-finger-right.png'), clip: await headerClip() });
   await p.touchscreen.touchEnd(); await wait(1600);
-  const released = await peek();
-  R.peekFollow = { left, right, released };
+  R.fingerFollow = { left, right, released: await rig() };
 
-  // watching the scroll: quick scroll down, sample mid-motion
-  await p.evaluate(async () => { for (let i = 0; i < 8; i++) { window.scrollBy({ top: 60, behavior: 'instant' }); await new Promise((r) => requestAnimationFrame(r)); } });
-  const scrolling = await peek();
+  // watching the page: small scrolls (under the 48 px that wakes him) move his eyes
+  await p.evaluate(async () => { for (let i = 0; i < 7; i++) { window.scrollBy({ top: 5, behavior: 'instant' }); await new Promise((r) => requestAnimationFrame(r)); } });
+  const scrolling = await rig();
   await wait(1500);
-  R.peekScroll = { whileScrolling: scrolling, settled: await peek() };
-
-  // section reactions: menu (nod) and media (wink + flash)
+  R.scrollWatch = { whileScrolling: scrolling, settled: await rig() };
+  await p.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' })); await wait(600);
   const toSection = async (id) => p.evaluate((i) => { const el = document.getElementById(i); window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 60, behavior: 'instant' }); }, id);
-  await p.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' })); await wait(900);
-  await toSection('menu'); await wait(250);
-  const menuReact = await peek();
-  await p.screenshot({ path: path.join(OUT, 'peek-menu-react.png'), clip: await headerClip() });
-  await wait(1400);
-  await toSection('media'); await wait(350);
-  const mediaReact = await peek();
-  await p.screenshot({ path: path.join(OUT, 'peek-media-react.png'), clip: await headerClip() });
-  await wait(1500);
-  R.peekReactions = { menu: menuReact, media: mediaReact, after: await peek() };
 
   // Sketch toggle on the first menu item
   await toSection('menu-salt-bread'); await wait(2200);
@@ -101,3 +94,5 @@ const R = { errors: [] };
 await browser.close();
 await fs.writeFile(path.join(OUT, 'mobile.json'), JSON.stringify(R, null, 2));
 console.log(JSON.stringify(R, null, 1));
+
+process.exit(0);

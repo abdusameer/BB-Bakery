@@ -2,7 +2,7 @@
   Pinned-menu sequence QA: at each item's hold point, mid-erase, and the next item's start,
   records which item texts are visible and each picture's state (drawn / erased / blank),
   and saves screenshots. Fails loudly if more than one item shows at a hold point.
-    node scripts/qa-menu.mjs [--base http://127.0.0.1:4174] [--out qa/menu]
+    node scripts/qa-menu.mjs [--base http://127.0.0.1:4174] [--out qa/menu] [--width 1440 --height 900]  (phones/tablets: touch emulation)
 */
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs/promises';
@@ -17,7 +17,8 @@ const browser = await puppeteer.launch({ executablePath: '/Applications/Google C
 const p = await browser.newPage();
 const errors = [];
 p.on('pageerror', (e) => errors.push(String(e)));
-await p.setViewport({ width: 1440, height: 900 });
+const W = Number(args.width || 1440), Hh = Number(args.height || 900), touch = W < 1024;
+await p.setViewport({ width: W, height: Hh, ...(touch ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}) });
 await p.goto(BASE + '/', { waitUntil: 'networkidle0' });
 await wait(2000);
 const pin = await p.evaluate(() => { const sp = document.querySelector('#menu .pin-spacer'); const h = document.querySelector('.site-header').offsetHeight; return { start: sp.getBoundingClientRect().top + scrollY - h, len: sp.offsetHeight - sp.firstElementChild.offsetHeight }; });

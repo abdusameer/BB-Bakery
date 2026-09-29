@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { on } from '../lib/bus';
-import { createDirector, createSpotQueue, toVp } from './mascot';
+import { createDirector } from './mascot';
 import type { Look, Rig } from './mascot';
 
 /*
@@ -9,7 +9,7 @@ import type { Look, Rig } from './mascot';
   All transforms are written straight to SVG attributes; nothing goes through React state.
 */
 
-type Pose = 'neutral' | 'menu' | 'storyA' | 'storyB' | 'media' | 'visit' | 'visitRight' | 'tuck' | 'wave' | 'present';
+type Pose = 'neutral' | 'menu' | 'storyA' | 'storyB' | 'media' | 'visit' | 'visitRight' | 'tuck' | 'wave' | 'present' | 'ledge' | 'ledgeWave';
 type Mode = 'follow' | 'react' | 'travel' | 'perch' | 'scene';
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
@@ -25,14 +25,15 @@ const POSE_TARGETS: Record<Pose, { ex: number; ey: number; head: number; lean: n
   visitRight: { ex: 2.4, ey: 0.4, head: 6, lean: -3 },
   tuck: { ex: 0, ey: 1, head: 0, lean: 0 },
   wave: { ex: 0, ey: 0, head: 0, lean: 0 },
-  present: { ex: 0, ey: 0, head: 0, lean: 0 }
+  present: { ex: 0, ey: 0, head: 0, lean: 0 },
+  ledge: { ex: 0, ey: 0.4, head: 0, lean: 0 },
+  ledgeWave: { ex: 0, ey: 0.4, head: 0, lean: 0 }
 };
 
 export function initGuide(): () => void {
   const wrap = document.querySelector<HTMLElement>('.site-header .guide');
   const svg = wrap?.querySelector<SVGSVGElement>('.guide-svg');
   const inner = document.querySelector<HTMLElement>('.header-inner');
-  const peekSvg = document.querySelector<SVGSVGElement>('.peek-svg');
   const html = document.documentElement;
   const offs: (() => void)[] = [];
   const timers = new Set<number>();
@@ -45,207 +46,6 @@ export function initGuide(): () => void {
     short: window.matchMedia('(max-height: 559.98px)')
   };
   const reduce = () => mq.reduce.matches;
-
-  /* ---------------- mobile peek (phones) ----------------
-     Eyes + head follow the finger while it touches or drags (even mid-scroll), the eyes watch
-     the page scroll by, and each section gets a small reaction. One damped rAF loop that stops
-     when settled; static under reduced motion. */
-  if (peekSvg) {
-    const pp = (n: string) => peekSvg.querySelector<SVGGElement>(`[data-part="${n}"]`)!;
-    const PK = { move: pp('peek-move'), body: pp('peek-body'), face: pp('peek-face'), eyes: pp('peek-eyes') };
-    const pc = { ex: 0, ey: 0, tilt: 0 };
-    let fx: number | null = null, fy: number | null = null;
-    let scrollV = 0, lastY = window.scrollY, lastT = performance.now();
-    let praf = 0, plast = 0, releaseT = 0;
-    const phone = () => !mq.wide.matches;
-    const ptick = (t: number) => {
-      const dt = Math.min(0.05, plast ? (t - plast) / 1000 : 0.016);
-      plast = t;
-      let tex = 0, tey = 0, ttilt = 0;
-      if (fx !== null && fy !== null) {
-        const r = peekSvg.getBoundingClientRect();
-        const dx = fx - (r.left + r.width / 2), dy = fy - (r.top + r.height * 0.45);
-        tex = clamp(dx / 220, -1, 1) * 2.4;
-        tey = clamp(dy / 320, -1, 1) * 1.8;
-        ttilt = clamp(dx / 260, -1, 1) * 11;
-      }
-      // watch the page move: eyes drift toward the scroll direction
-      scrollV *= Math.exp(-dt / 0.28);
-      tey = clamp(tey + clamp(scrollV * 1.6, -1.8, 1.8), -1.8, 1.8);
-      ttilt += clamp(scrollV * 2.5, -4, 4); // a slight lean with the page's motion
-      const k = (tau: number) => 1 - Math.exp(-dt / tau);
-      pc.ex += (tex - pc.ex) * k(0.07);
-      pc.ey += (tey - pc.ey) * k(0.07);
-      pc.tilt += (ttilt - pc.tilt) * k(0.22);
-      PK.eyes.setAttribute('transform', `translate(${pc.ex.toFixed(2)} ${pc.ey.toFixed(2)})`);
-      PK.face.setAttribute('transform', `translate(${clamp(pc.ex * 0.5, -1.2, 1.2).toFixed(2)} 0)`);
-      PK.body.setAttribute('transform', `rotate(${pc.tilt.toFixed(2)} 60 80)`);
-      const busy = Math.abs(tex - pc.ex) > 0.01 || Math.abs(tey - pc.ey) > 0.01 || Math.abs(ttilt - pc.tilt) > 0.02 || Math.abs(scrollV) > 0.01;
-      praf = busy ? requestAnimationFrame(ptick) : 0;
-      peekSvg.dataset.animationActive = praf ? 'true' : 'false';
-    };
-    const pkick = () => { if (!praf && !document.hidden && !reduce() && phone()) { plast = 0; praf = requestAnimationFrame(ptick); } };
-    const onTouch = (e: TouchEvent) => {
-      const tt = e.touches[0];
-      if (!tt || !phone() || reduce()) return;
-      fx = tt.clientX; fy = tt.clientY;
-      clearTimeout(releaseT);
-      pkick();
-    };
-    const onTouchEnd = () => { clearTimeout(releaseT); releaseT = later(() => { fx = null; fy = null; pkick(); }, 700); };
-    /* phone scenes (the simple version of mascot.ts): waves on the first scroll and ducks behind the
-       header rule; later pops up to point at an approved bread, nods and winks; then stays home. */
-    const hand = { l: pp('peek-hand-l'), r: pp('peek-hand-r') };
-    const queue = createSpotQueue();
-    const py0 = window.scrollY;
-    let pWaved = false, pAway = false, pBusy = false, pAwaySince = 0, pLastScroll = 0, pSection: string | null = null, pT = 0;
-    const setAway = (v: boolean) => { pAway = v; html.classList.toggle('peek-away', v); if (v) pAwaySince = performance.now(); };
-    const pSchedule = (ms: number) => { clearTimeout(pT); pT = window.setTimeout(pConsider, ms); };
-    const pWake = () => {
-      pWaved = true; pBusy = true;
-      peekTl?.kill();
-      fx = window.innerWidth * 0.35; fy = window.innerHeight * 0.85; pkick();   // looks down at the page
-      peekTl = gsap.timeline({ onComplete: () => { fx = null; fy = null; pkick(); setAway(true); pBusy = false; pSchedule(1000); } })
-        .to(PK.move, { y: -9, duration: 0.2, ease: 'power2.out' })
-        .to(hand.r, { x: 3, y: -15, rotation: -24, svgOrigin: '87 71', duration: 0.22, ease: 'power2.out' }, 0.1)   // hand up
-        .to(hand.r, { rotation: 24, duration: 0.18, ease: 'sine.inOut', repeat: 4, yoyo: true })
-        .to(hand.r, { x: 0, y: 0, rotation: 0, duration: 0.18, ease: 'power2.in' })
-        .to(PK.move, { y: -5, duration: 0.2 }, '<')
-        .to({}, { duration: 0.1 });
-    };
-    const pRecommend = (t: NonNullable<ReturnType<typeof queue.current>>) => {
-      const first = queue.count() === 0;
-      queue.tried(t); queue.done(t);
-      const last = queue.isLast(t);
-      pBusy = true;
-      peekTl?.kill();
-      setAway(false);                                                            // pops back up
-      const [cx, cy] = toVp(t.frame.getBoundingClientRect(), t.center);
-      const left = cx < peekSvg.getBoundingClientRect().left + 30;
-      const h = left ? hand.l : hand.r, dir = left ? -1 : 1;
-      peekTl = gsap.timeline({ delay: 0.24, onComplete: () => { peekSvg.dataset.peek = 'neutral'; fx = null; fy = null; pkick(); pBusy = false; } })
-        .call(() => { fx = cx; fy = cy; pkick(); })                              // leans and looks at the bread
-        .to(h, { x: 4 * dir, y: -9, rotation: 40 * dir, svgOrigin: left ? '33 71' : '87 71', duration: 0.3, ease: 'back.out(1.6)' }, 0.12) // points at it
-        .to(PK.move, { rotation: 7, y: -2, duration: 0.15, ease: 'sine.inOut', yoyo: true, repeat: first ? 3 : 1 }, 0.7) // nods
-        .call(() => { fx = null; fy = null; pkick(); if (last) peekSvg.dataset.peek = 'wink'; }, [], 1.4)             // the wink is for the last bread
-        .to(h, { x: 0, y: 0, rotation: 0, duration: 0.24, ease: 'power2.inOut' }, 1.55)
-        .call(() => { peekSvg.dataset.peek = 'neutral'; }, [], 1.95)
-        .to({}, { duration: 0.2 });
-    };
-    /* goodbye at the footer: whichever croissant is on screen waves (the Visit one, else the peek) */
-    let pBye = false;
-    const pGoodbye = () => {
-      pBye = true; pBusy = true;
-      peekTl?.kill();
-      const vg = document.querySelector<SVGSVGElement>('.visit-guide .guide-svg');
-      const vr = vg?.getBoundingClientRect();
-      if (vg && vr && vr.width > 0 && vr.bottom > headerBottomPx() && vr.top < window.innerHeight) {
-        const arm = vg.querySelector('[data-part="front-wave-r"]');
-        const pose = vg.dataset.pose ?? 'visit-static';
-        peekTl = gsap.timeline({ onComplete: () => { vg.dataset.pose = pose; pBusy = false; } })
-          .call(() => { vg.dataset.pose = 'wave'; })
-          .fromTo(arm, { rotation: 40, svgOrigin: '88.8 62.6' }, { rotation: -14, duration: 0.26, ease: 'power2.out', immediateRender: false })
-          .to(arm, { rotation: 14, duration: 0.19, ease: 'sine.inOut', repeat: 4, yoyo: true })
-          .to(arm, { rotation: 40, duration: 0.16, ease: 'power2.in' });
-        return;
-      }
-      html.classList.add('peek-bye');                                            // back up over the rule
-      peekTl = gsap.timeline({ delay: 0.25, onComplete: () => { html.classList.remove('peek-bye'); pBusy = false; } })
-        .to(PK.move, { y: -9, duration: 0.2, ease: 'power2.out' })
-        .to(hand.r, { x: 3, y: -15, rotation: -24, svgOrigin: '87 71', duration: 0.22, ease: 'power2.out' }, 0.1)
-        .to(hand.r, { rotation: 24, duration: 0.18, ease: 'sine.inOut', repeat: 4, yoyo: true })
-        .to(hand.r, { x: 0, y: 0, rotation: 0, duration: 0.18, ease: 'power2.in' })
-        .to(PK.move, { y: -5, duration: 0.2 }, '<')
-        .to({}, { duration: 0.9 });
-    };
-    const headerBottomPx = () => document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 60;
-
-    function pConsider() {
-      if (!phone() || reduce()) { if (pAway) setAway(false); return; }
-      if (pBusy) { pSchedule(400); return; }
-      const now = performance.now();
-      if (!pWaved) { if (Math.abs(window.scrollY - py0) > 48) pWake(); return; }
-      const t = queue.current();                                                 // each bread, once, when the reader stops on it
-      if (t) {
-        if (now - pLastScroll > 220) pRecommend(t); else pSchedule(240);
-        return;
-      }
-      const fr = document.querySelector('.site-footer')?.getBoundingClientRect();
-      if (!pBye && fr && fr.top < window.innerHeight - Math.min(fr.height * 0.7, 90)) {
-        if (now - pLastScroll > 220) pGoodbye(); else pSchedule(240);
-        return;
-      }
-      if (pAway) {
-        const awayFor = now - pAwaySince;
-        if ((pSection !== 'menu' && pSection !== null) || awayFor > (pSection === 'menu' ? 22000 : 12000)) {
-          setAway(false);                                                        // home again
-          peekTl?.kill();
-          peekTl = gsap.timeline().to(PK.move, { y: -9, duration: 0.18, delay: 0.2 }).to(PK.move, { y: -5, duration: 0.24 });
-          return;
-        }
-        pSchedule(1000);
-      }
-    }
-    offs.push(on('section', (id) => { pSection = id; pSchedule(160); }));
-    offs.push(() => { clearTimeout(pT); html.classList.remove('peek-away'); });
-
-    const onScrollPk = () => {
-      const now = performance.now(), y = window.scrollY;
-      const v = (y - lastY) / Math.max(8, now - lastT); // px per ms
-      lastY = y; lastT = now;
-      pLastScroll = now;
-      if (!phone() || reduce()) return;
-      scrollV = clamp(scrollV * 0.5 + v * 0.5, -3, 3);
-      pkick();
-      if (!pWaved && !pBusy && Math.abs(y - py0) > 48) pWake();
-      else pSchedule(260);
-    };
-    window.addEventListener('touchstart', onTouch, { passive: true });
-    window.addEventListener('touchmove', onTouch, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
-    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
-    window.addEventListener('scroll', onScrollPk, { passive: true });
-    offs.push(() => {
-      window.removeEventListener('touchstart', onTouch);
-      window.removeEventListener('touchmove', onTouch);
-      window.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('touchcancel', onTouchEnd);
-      window.removeEventListener('scroll', onScrollPk);
-      cancelAnimationFrame(praf);
-    });
-
-    // section reactions (GSAP on the outer group, so they compose with the finger-follow tilt)
-    gsap.set(PK.move, { y: -5, svgOrigin: '60 80' });
-    let peekTl: gsap.core.Timeline | null = null;
-    const pReacted = new Set<string>();
-    offs.push(on('section', (id) => {
-      if (!phone() || reduce() || pBusy || pAway) return;
-      const key = id ?? 'top';
-      if (id === 'menu' || pReacted.has(key)) return;
-      pReacted.add(key);
-      peekTl?.kill();
-      peekSvg.dataset.peek = 'neutral';
-      const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' }, onComplete: () => { peekSvg.dataset.peek = 'neutral'; } });
-      if (id === 'menu') {
-        // looks down at the food and nods twice
-        fy = window.innerHeight; fx = window.innerWidth / 2; pkick();
-        tl.to(PK.move, { rotation: 7, y: -2, duration: 0.18 }).to(PK.move, { rotation: 0, y: -5, duration: 0.18 })
-          .to(PK.move, { rotation: 7, y: -2, duration: 0.18 }).to(PK.move, { rotation: 0, y: -5, duration: 0.22 });
-        releaseT = later(() => { fx = null; fy = null; pkick(); }, 900);
-      } else if (id === 'story') {
-        // sways side to side, like climbing along the line
-        tl.to(PK.move, { x: -5, rotation: -6, duration: 0.2 }).to(PK.move, { x: 5, rotation: 6, duration: 0.3 })
-          .to(PK.move, { x: -3, rotation: -3, duration: 0.24 }).to(PK.move, { x: 0, rotation: 0, duration: 0.22 });
-      } else if (id === 'media') {
-        // wink and a camera flash
-        tl.call(() => { peekSvg.dataset.peek = 'media'; }).to(PK.move, { y: -7, duration: 0.16 }).to(PK.move, { y: -5, duration: 0.2 }).to({}, { duration: 0.7 });
-      } else if (id === null) {
-        tl.to(PK.move, { y: -8, duration: 0.18 }).to(PK.move, { y: -5, duration: 0.24 });
-      }
-      peekTl = tl;
-    }));
-    offs.push(() => { peekTl?.kill(); gsap.killTweensOf(PK.move); });
-  }
 
   if (!wrap || !svg || !inner) return () => { offs.forEach((f) => f()); timers.forEach((t) => clearTimeout(t)); };
 
@@ -275,6 +75,34 @@ export function initGuide(): () => void {
   const reacted = new Set<string>();
 
   const setPose = (p: Pose) => { pose = p; svg.dataset.pose = p; kick(); };
+
+  /* phones: no room to hang below the header, so his home is the header rule itself — he leans on
+     it, head and mittens over the edge, where the little peek used to be (the rest of him is behind
+     the page). Same element, same scenes as on larger screens. */
+  const phone = () => !mq.wide.matches;
+  const body = part('body');
+  const LEDGE_LIFT = -67;
+  const lineY = () => { const l = inner.querySelector('.nav-line')?.getBoundingClientRect(); return l ? l.top + l.height / 2 : inner.getBoundingClientRect().bottom; };
+  const scale = () => Math.min(wrap.offsetWidth / 120, wrap.offsetHeight / 112);
+  const phoneClip = () => {
+    const y = (lineY() - wrap.getBoundingClientRect().top + 0.5).toFixed(1);
+    wrap.style.clipPath = `polygon(-900px -900px, 1100px -900px, 1100px ${y}px, -900px ${y}px)`;
+  };
+  const toPhoneHome = () => {
+    gsap.set(wrap, { x: 0, y: 0, scale: 1 });
+    measure();
+    gsap.set(wrap, { x: xFor(null) });
+    gsap.set(body, { y: LEDGE_LIFT });
+    setPose('ledge');
+    measure();
+    phoneClip();
+    mode = 'follow';
+  };
+  const syncPhoneClass = () => html.classList.toggle('rig-phone', phone() && !reduce());
+  // scroll watching (phones): the eyes drift with the page and he leans with it a little
+  let scrollV = 0, sLastY = window.scrollY, sLastT = performance.now();
+  // small section reactions (phones), added on top of whatever he's following
+  const bob = { lean: 0, head: 0 };
   const measure = () => {
     const x = Number(gsap.getProperty(wrap, 'x')) || 0;
     const r = wrap.getBoundingClientRect();
@@ -285,6 +113,10 @@ export function initGuide(): () => void {
   /** x (px, relative to header-inner) that centers the guide under a nav item, or the perch spot. */
   const xFor = (id: string | null): number => {
     const ir = inner.getBoundingClientRect();
+    if (phone()) {
+      const slot = inner.querySelector<HTMLElement>('.peek')?.getBoundingClientRect();
+      if (slot && slot.width) return slot.left + slot.width / 2 - ir.left - base.w / 2;
+    }
     if (id) {
       const link = inner.querySelector<HTMLElement>(`[data-nav="${id}"]`);
       if (link) { const r = link.getBoundingClientRect(); return r.left + r.width / 2 - ir.left - base.w / 2; }
@@ -331,6 +163,7 @@ export function initGuide(): () => void {
   /** Settle under the active section (or perch when space is needed). */
   const settle = () => {
     if (away()) return;
+    if (phone()) { toPhoneHome(); return; }
     if (perched) {
       travelTo(xFor(null), () => { setPose('tuck'); mode = 'perch'; });
       return;
@@ -378,7 +211,10 @@ export function initGuide(): () => void {
       tex = look.ex; tey = look.ey; thead = look.head; tlean = look.lean;
     } else if ((mode === 'follow' || mode === 'perch') && px !== null && py !== null && (followOK || glance)) {
       const cx = base.left + xNow() + base.w / 2;
-      const cy = base.top + base.h * 0.55 + (pose === 'tuck' ? -base.h * 0.62 : 0);
+      const k0 = scale();
+      const cy = pose === 'ledge'
+        ? base.top + (base.h - 112 * k0) / 2 + (62.4 + LEDGE_LIFT) * k0          // his eyes, just over the rule
+        : base.top + base.h * 0.55 + (pose === 'tuck' ? -base.h * 0.62 : 0);
       const dx = px - cx, dy = py - cy;
       const dist = Math.hypot(dx, dy);
       tex = clamp(dx / 480, -1, 1) * 2.4;
@@ -392,6 +228,12 @@ export function initGuide(): () => void {
       tex = pt.ex; tey = pt.ey; thead = pt.head; tlean = pt.lean;
     }
 
+    if (!scene && phone()) {
+      scrollV *= Math.exp(-dt / 0.28);
+      tey = clamp(tey + clamp(scrollV * 1.6, -1.8, 1.8), -1.8, 1.8);
+      tlean += clamp(scrollV * 2.5, -4, 4) + bob.lean;
+      thead += bob.head;
+    }
     const k = (tau: number) => 1 - Math.exp(-dt / tau);
     // a scene's GSAP timelines already ease their values, so the loop follows them closely
     cur.ex += (tex - cur.ex) * k(scene ? 0.04 : 0.08);
@@ -425,7 +267,7 @@ export function initGuide(): () => void {
       Math.abs(tex - cur.ex) > 0.01 || Math.abs(tey - cur.ey) > 0.01 || Math.abs(thead - cur.head) > 0.02 ||
       Math.abs(tlean - cur.lean) > 0.01 || Math.abs(cur.vL) > 0.02 || Math.abs(cur.vR) > 0.02 ||
       Math.abs(cur.legL) > 0.02 || Math.abs(cur.legR) > 0.02;
-    raf = unsettled || mode === 'travel' || (scene && sceneLive) ? requestAnimationFrame(tick) : 0;
+    raf = unsettled || mode === 'travel' || (scene && sceneLive) || Math.abs(scrollV) > 0.01 ? requestAnimationFrame(tick) : 0;
     wrap.dataset.animationActive = raf ? 'true' : 'false';
     wrap.dataset.mode = mode;
   };
@@ -447,16 +289,26 @@ export function initGuide(): () => void {
   const onLeave = () => { px = null; py = null; kick(); };
   const onDoc = (e: MouseEvent) => { if (!e.relatedTarget) onLeave(); };
   const onVis = () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; onLeave(); } };
-  // tablets (touch, ≥768): the whole rig follows the finger while it touches or drags, then lets go
+  // touch screens: he follows the finger while it touches or drags (even mid-scroll), then lets go
   let touchT = 0;
   const onTouchT = (e: TouchEvent) => {
     const tt = e.touches[0];
-    if (!tt || !mq.wide.matches || mq.fine.matches || reduce()) return;
+    if (!tt || mq.fine.matches || reduce()) return;
     px = tt.clientX; py = tt.clientY; glance = true;
     clearTimeout(touchT);
     kick();
   };
   const onTouchEndT = () => { clearTimeout(touchT); touchT = later(() => { glance = false; px = null; py = null; kick(); }, 700); };
+  const onScrollWatch = () => {
+    const now = performance.now(), y = window.scrollY;
+    const v = (y - sLastY) / Math.max(8, now - sLastT);
+    sLastY = y; sLastT = now;
+    if (!phone() || reduce() || mode === 'scene') return;
+    scrollV = clamp(scrollV * 0.5 + v * 0.5, -3, 3);
+    kick();
+  };
+  window.addEventListener('scroll', onScrollWatch, { passive: true });
+  offs.push(() => window.removeEventListener('scroll', onScrollWatch));
   window.addEventListener('pointermove', onMove, { passive: true });
   window.addEventListener('touchstart', onTouchT, { passive: true });
   window.addEventListener('touchmove', onTouchT, { passive: true });
@@ -479,7 +331,7 @@ export function initGuide(): () => void {
   /* blink: one slow blink every 7–11 s while following, never in reduced motion */
   const blinkLoop = () => {
     later(() => {
-      if (!reduce() && !document.hidden && mode === 'follow' && mq.fine.matches) {
+      if (!reduce() && !document.hidden && mode === 'follow' && (mq.fine.matches || phone())) {
         svg.classList.add('is-blinking');
         later(() => svg.classList.remove('is-blinking'), 160);
       }
@@ -495,6 +347,21 @@ export function initGuide(): () => void {
     director?.onSection(id);
     if (hoverId || away()) return;
     clearTimeout(arriveT);
+    if (phone()) {
+      if (!id || reacted.has(id) || reduce()) return;
+      if (id === 'story') {                                              // a sway, as if along the line
+        reacted.add(id);
+        reactTl?.kill();
+        reactTl = gsap.timeline({ onUpdate: kick })
+          .to(bob, { lean: -6, duration: 0.2, ease: 'sine.inOut' }).to(bob, { lean: 6, duration: 0.3, ease: 'sine.inOut' })
+          .to(bob, { lean: -3, duration: 0.24, ease: 'sine.inOut' }).to(bob, { lean: 0, duration: 0.22, ease: 'sine.inOut' });
+      } else if (id === 'media') {                                       // a wink for the photos
+        reacted.add(id);
+        svg.classList.add('is-winking');
+        later(() => svg.classList.remove('is-winking'), 700);
+      }
+      return;
+    }
     if (perched) { settle(); return; }
     // short arrival reaction once the section has held for 300 ms
     travelTo(xFor(id), () => {
@@ -523,7 +390,7 @@ export function initGuide(): () => void {
   /* ---------------- perch (tuck) conditions ---------------- */
   const hangZone = () => { const r = wrap.getBoundingClientRect(); return { top: r.top, bottom: r.bottom + 4, left: r.left - 8, right: r.right + 8 }; };
   const updatePerch = () => {
-    const next = mq.short.matches || focusBlocked;
+    const next = !phone() && (mq.short.matches || focusBlocked);
     if (next === perched || away()) return;
     perched = next;
     html.classList.toggle('guide-perched', perched);
@@ -548,9 +415,12 @@ export function initGuide(): () => void {
 
   /* ---------------- layout changes ---------------- */
   const onResize = () => {
+    syncPhoneClass();
     if (away()) director?.reset();
     travelTween?.kill();
     stopClimb();
+    if (phone()) { if (!away()) toPhoneHome(); kick(); return; }
+    if (pose === 'ledge' || pose === 'ledgeWave') { gsap.set(body, { clearProps: 'transform' }); wrap.style.clipPath = ''; setPose('neutral'); mode = 'follow'; }
     measure();
     gsap.set(wrap, { x: perched ? xFor(null) : xFor(hoverId ?? activeId) });
     measure();
@@ -562,11 +432,15 @@ export function initGuide(): () => void {
   document.fonts?.ready.then(onResize);
   offs.push(() => window.removeEventListener('resize', onResizeDebounced));
 
-  // initial placement: climb in from the left end of the line (skipped for reduced motion)
+  // initial placement: climb in from the left end of the line (skipped for reduced motion);
+  // on phones he is simply already there, leaning on the header rule
+  syncPhoneClass();
   measure();
-  perched = mq.short.matches;
+  perched = !phone() && mq.short.matches;
   html.classList.toggle('guide-perched', perched);
-  if (!reduce() && !perched && mq.wide.matches && window.scrollY < 40) {
+  if (phone()) {
+    toPhoneHome();
+  } else if (!reduce() && !perched && mq.wide.matches && window.scrollY < 40) {
     gsap.set(wrap, { x: -base.w - 24 });
     measure();
     introUntil = performance.now() + 1700;
@@ -593,10 +467,12 @@ export function initGuide(): () => void {
     },
     setPose: (p) => setPose(p as Pose),
     homeX: () => xFor(activeId),
+    homeKind: () => (phone() ? 'ledge' : 'hang'),
     goHome: () => {
       sceneLive = false;
       delete svg.dataset.scene;
-      gsap.set(P.lean.parentNode as SVGGElement, { clearProps: 'transform' });
+      gsap.set(body, { clearProps: 'transform' });
+      if (phone()) { toPhoneHome(); kick(); return; }
       gsap.set(wrap, { x: xFor(activeId), y: 0, scale: 1 });
       measure();
       const p = holdPoseFor(activeId);
@@ -604,11 +480,11 @@ export function initGuide(): () => void {
       mode = p === 'neutral' ? 'follow' : 'react';
       kick();
     },
-    lineY: () => { const l = inner.querySelector('.nav-line')?.getBoundingClientRect(); return l ? l.top + l.height / 2 : inner.getBoundingClientRect().bottom; },
+    lineY,
     ready: () => !perched && !hoverId && mode !== 'travel' && mode !== 'scene' && performance.now() > introUntil
   };
-  director = createDirector(rig, () => mq.wide.matches && !mq.short.matches && !reduce());
-  const onReduce = () => { if (reduce()) director?.reset(); };
+  director = createDirector(rig, () => !mq.short.matches && !reduce());
+  const onReduce = () => { syncPhoneClass(); if (reduce()) director?.reset(); else onResize(); };
   mq.reduce.addEventListener('change', onReduce);
   offs.push(() => mq.reduce.removeEventListener('change', onReduce));
 
@@ -620,7 +496,8 @@ export function initGuide(): () => void {
     cancelAnimationFrame(raf);
     travelTween?.kill();
     reactTl?.kill();
-    gsap.killTweensOf([wrap, P.flash]);
-    html.classList.remove('guide-perched');
+    gsap.killTweensOf([wrap, P.flash, bob]);
+    html.classList.remove('guide-perched', 'rig-phone');
+    wrap.style.clipPath = '';
   };
 }

@@ -80,8 +80,11 @@ html.sheet-open .peek-svg, html[data-section='visit'] .peek-svg { transform: tra
 /* the header shelf takes the night tone while the dark chapter is under it */
 html.shelf-dark .shelf { background: linear-gradient(to bottom, rgba(23, 19, 15, .96) 0%, rgba(23, 19, 15, .84) 38%, rgba(23, 19, 15, 0) 100%); }
 
-/* over the dark chapter the hanging guide is drawn in chalk (same rig, flipped tokens) */
-html.shelf-dark .site-header .guide { --g800: #E8DFD0; --guide-fill: #17130F; --guide-eye: #F4EFE6; --guide-ink: #E8DFD0; }
+/* over the dark chapter the hanging guide is drawn in chalk (same rig, flipped tokens); on phones he
+   sits in the (paper) header itself, so he stays in pencil there */
+@media (min-width: 768px) {
+  html.shelf-dark .site-header .guide { --g800: #E8DFD0; --guide-fill: #17130F; --guide-eye: #F4EFE6; --guide-ink: #E8DFD0; }
+}
 
 /* ---- mascot scenes (src/motion/mascot.ts) ---- */
 /* wave: hanging by the left hand, waving with the right */
@@ -111,3 +114,11 @@ html.peek-away .peek-svg { transform: translateY(100%); }
 .site-header .guide.is-chalk { --g800: #E8DFD0; --guide-fill: #17130F; --guide-eye: #F4EFE6; --guide-ink: #E8DFD0; }
 /* phone goodbye: the peek comes back up over the header rule even inside Visit */
 html.peek-bye .peek-svg { transform: none; }
+
+/* phones with motion: the real croissant replaces the little peek (which stays for no-JS / reduced
+   motion), and the Visit section's static croissant steps aside because he walks there himself */
+@media (max-width: 767.98px) {
+  html.rig-phone .site-header .guide { display: block; }
+  html.rig-phone .peek svg { visibility: hidden; }
+  html.rig-phone .visit-guide { display: none; }
+}

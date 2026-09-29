@@ -29,6 +29,13 @@
 
 Evidence: `qa/mobile/mobile.json`, `qa/mobile-peek-states.jpg`, `qa/mobile-sketch-toggle.jpg` (run with `node scripts/qa-mobile.mjs`).
 
+## Same effects on phones and tablets (added on request)
+
+- **Pinned menu everywhere.** Phones and tablets now get the pinned menu too, with the same draw → graphite → photo → eraser hand-off and the same eased scrub. The intro and index scroll away first, then only the picture stage pins (phones: count, square picture, name in one column; tablets: picture left, text right). Very short screens (a phone on its side, under 560 px tall) keep the scrolling version. The pinned stage carries its own paper so the multiply-blended pictures never show white boxes.
+- **The real croissant on phones.** The small header peek is replaced by the same rig as on desktop. His home on phones is the header rule: he leans on it, head and mittens over the edge, where the peek used to be. From there he plays every scene: the wave (then ducks behind the rule), presenting each bread, the map walk and the footer goodbye, and he rises back over the rule to come home. His eyes follow your finger and watch the page scroll, he sways at Story and winks at Media (once each). The Visit section's static croissant steps aside, since he walks there himself. No-JS and reduced motion keep the little static peek.
+- **Smoother touch.** Scroll-linked drawings (hero drift, Story line and notes, map route) now ease after the finger on touch screens instead of tracking every jitter; desktop keeps Lenis.
+- **Measured** with `scripts/qa-perf.mjs` (whole page, steady scroll, CPU throttled 4×): no frame over 33 ms on desktop or phone, 95th percentile about 18 ms (`qa/perf/perf-cpu4.json`).
+
 ## The croissant mascot's scroll scenes (added on request)
 
 The existing hanging character is the only mascot; it is the same element moving between places (transforms and a clip-path only, no second copy, no layout shift). New arm poses were added to the existing pencil rig in the same stroke style: a waving arm and an outstretched presenting arm.
