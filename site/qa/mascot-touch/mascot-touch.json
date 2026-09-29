@@ -1,0 +1,144 @@
+{
+  "errors": [],
+  "tablet": [
+    {
+      "name": "wave",
+      "vis": "visible",
+      "pose": "wave",
+      "scene": "live",
+      "box": [
+        121,
+        65,
+        84
+      ]
+    },
+    {
+      "name": "away",
+      "vis": "hidden",
+      "pose": "neutral",
+      "scene": "idle",
+      "box": [
+        121,
+        65,
+        84
+      ]
+    },
+    {
+      "name": "scene",
+      "found": "menu-garlic-cream-cheese"
+    },
+    {
+      "name": "scene-a",
+      "vis": "visible",
+      "pose": "present",
+      "scene": "live",
+      "box": [
+        417,
+        181,
+        99
+      ]
+    },
+    {
+      "name": "scene-b",
+      "vis": "visible",
+      "pose": "present",
+      "scene": "live",
+      "box": [
+        388,
+        346,
+        99
+      ]
+    },
+    {
+      "name": "follows-bread",
+      "before": [
+        -4.427215576171875,
+        232.50811767578125
+      ],
+      "after": [
+        -4.427215576171875,
+        232.50811767578125
+      ]
+    },
+    {
+      "name": "scene-c",
+      "vis": "visible",
+      "pose": "present",
+      "scene": "live",
+      "box": [
+        388,
+        316,
+        99
+      ]
+    },
+    {
+      "name": "hidden",
+      "vis": "hidden",
+      "pose": "neutral",
+      "scene": "idle",
+      "box": [
+        495,
+        65,
+        84
+      ]
+    },
+    {
+      "name": "peek",
+      "vis": "visible",
+      "pose": "neutral",
+      "scene": "live",
+      "box": [
+        544,
+        -1,
+        84
+      ]
+    },
+    {
+      "name": "home",
+      "vis": "visible",
+      "pose": "neutral",
+      "scene": null,
+      "box": [
+        544,
+        65,
+        84
+      ]
+    }
+  ],
+  "phone": [
+    {
+      "name": "wave",
+      "away": false,
+      "peek": "neutral",
+      "t": "none"
+    },
+    {
+      "name": "ducked",
+      "away": true,
+      "peek": "neutral",
+      "t": "matrix(1, 0, 0, 1, 0, 38)"
+    },
+    {
+      "name": "scene",
+      "found": "menu-garlic-cream-cheese"
+    },
+    {
+      "name": "points",
+      "away": false,
+      "peek": "neutral",
+      "t": "none"
+    },
+    {
+      "name": "wink",
+      "away": false,
+      "peek": "wink",
+      "t": "none"
+    },
+    {
+      "name": "after",
+      "away": false,
+      "peek": "neutral",
+      "t": "none"
+    }
+  ]
+}

@@ -52,6 +52,13 @@ export type MenuItem = {
   img: string;
   /** Reserved for real owner data. Not rendered while undefined. */
   status?: 'today' | 'sold-out' | 'preorder';
+  /**
+   * Approved spot where the croissant mascot stands to recommend this bread: its feet, in % of the
+   * photo frame (x across, y down). Worked out from the traced outline (src/generated/silhouettes.ts)
+   * so he stands on the bread's own table line, just left of it, without covering the bread, its
+   * name, the Sketch button or the Concept image label. Only breads get a spot (no drinks).
+   */
+  mascotSpot?: { x: number; y: number };
 };
 
 export const menuIntro = {
@@ -63,15 +70,15 @@ export const menuIntro = {
 };
 
 export const menuItems: MenuItem[] = [
-  { id: 'salt-bread', tier: 'B', name: 'Salt bread', img: 'salt-bread',
+  { id: 'salt-bread', tier: 'B', name: 'Salt bread', img: 'salt-bread', mascotSpot: { x: 17.8, y: 66.8 },
     alt: 'Concept image of salt bread: a glossy golden rolled bun with a few flakes of coarse salt, on plain paper.' },
-  { id: 'garlic-cream-cheese', tier: 'B', name: 'Garlic cream cheese bread', img: 'garlic-cc',
+  { id: 'garlic-cream-cheese', tier: 'B', name: 'Garlic cream cheese bread', img: 'garlic-cc', mascotSpot: { x: 13.2, y: 73.9 },
     alt: 'Concept image of garlic cream cheese bread: a round bun cut into six wedges with cream cheese between them, flecked with green herbs.' },
-  { id: 'cranberry-cream-cheese', tier: 'B', name: 'Cranberry cream cheese bread', img: 'cranberry-cc',
+  { id: 'cranberry-cream-cheese', tier: 'B', name: 'Cranberry cream cheese bread', img: 'cranberry-cc', mascotSpot: { x: 10.6, y: 68.7 },
     alt: 'Concept image of cranberry cream cheese bread: an oval loaf with red cranberries, cut in half to show a white cream cheese center.' },
   { id: 'twisted-doughnut', tier: 'B', name: 'Cream-filled twisted doughnut', img: 'twist-doughnut',
     alt: 'Concept image of a cream-filled twisted doughnut: a long sugar-dusted twist split along the top and filled with white cream.' },
-  { id: 'croissant-sandwich', tier: 'B', name: 'Croissant sandwich', img: 'croissant-sandwich',
+  { id: 'croissant-sandwich', tier: 'B', name: 'Croissant sandwich', img: 'croissant-sandwich', mascotSpot: { x: 10.2, y: 69.9 },
     alt: 'Concept image of a croissant sandwich: a sliced croissant with a layer of green lettuce and sliced cheese.' },
   { id: 'sesame-latte', tier: 'B', name: 'Oat black sesame latte', img: 'sesame-latte',
     alt: 'Concept image of an oat black sesame latte: a white cup of pale gray foam with a latte-art heart and a few black sesame seeds.' }

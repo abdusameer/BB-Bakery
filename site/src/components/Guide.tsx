@@ -11,7 +11,7 @@ const EYE = { fill: 'var(--guide-eye, #1E1C19)' } as const;
 const ROLL =
   'M27.6 70.2 C 26.8 64.4, 30.6 59.4, 36.8 57.6 C 41.8 50.6, 50.6 46.4, 60 46.4 C 69.4 46.4, 78.2 50.6, 83.2 57.6 C 89.4 59.4, 93.2 64.4, 92.4 70.2 C 91.8 74.8, 87.4 78, 80.2 78.8 C 67 80.6, 53 80.6, 39.8 78.8 C 32.6 78, 28.2 74.8, 27.6 70.2 Z';
 
-function Mitten({ x, y, part }: { x: number; y: number; part: string }) {
+function Mitten({ x, y, part }: { x: number; y: number; part?: string }) {
   return (
     <g data-part={part}>
       <path style={FILL} d={`M${x - 3.4} ${y + 2.2} C ${x - 4} ${y - 1.6}, ${x - 2.4} ${y - 4}, ${x} ${y - 4} C ${x + 2.4} ${y - 4}, ${x + 4} ${y - 1.6}, ${x + 3.4} ${y + 2.2} C ${x + 2} ${y + 3.6}, ${x - 2} ${y + 3.6}, ${x - 3.4} ${y + 2.2} Z`} />
@@ -105,6 +105,17 @@ export function GuideSVG({ idSuffix = 'g', pose = 'neutral' }: { idSuffix?: stri
               <g data-part="front-down-l">
                 <path d="M33.4 72 C 29 78, 26.4 85, 24.6 92" />
                 <Fist x={24} y={94.4} fx={22.4} fy={99.4} />
+              </g>
+              {/* wave: the right hand lets go of the line and waves (rotated about the shoulder by guide.ts) */}
+              <g data-part="front-wave-r">
+                <path d="M88.8 62.6 C 93.6 59.6, 97.4 54.8, 99.4 48.6" />
+                <Mitten x={100} y={45.2} />
+                <path data-part="wave-ticks" strokeWidth={0.9} d="M104.6 41.8 C 106.4 43.6, 106.6 46.2, 105.6 48.4 M107.8 40.2 C 110.2 43, 110.4 46.8, 108.8 49.8" />
+              </g>
+              {/* present: standing beside a pastry, the right arm held out toward it, palm up */}
+              <g data-part="front-present-r">
+                <path d="M89.8 66.8 C 97.4 66.4, 104.4 64, 110.2 60.2" />
+                <g transform="rotate(74 112.8 58.8)"><Mitten x={112.8} y={58.8} /></g>
               </g>
               <g data-part="front-camera">
                 <path d="M84 75 C 86.6 78.6, 87.6 81.6, 87.4 84" />

@@ -1,0 +1,516 @@
+import { gsap } from 'gsap';
+import { menuItems } from '../content';
+import { silhouettes } from '../generated/silhouettes';
+
+/*
+  The croissant mascot's scroll scenes (tablet and desktop rig). It is the same hanging guide
+  element from the header, moved with transforms only: it never duplicates or teleports.
+
+    hang → wake → wave → exit ········ moveToPastry → recommend → hideBehindPastry ········ returnHome → hang
+           (first scroll)   (behind the     (beside an approved bread,            (behind the    (peeks down from behind
+                            header line)     stepping out from behind it)          bread)         the line, then lowers in)
+
+  The page is the scenery: he hangs from the pencil nav line and pulls himself up behind it,
+  hides behind the bread in the menu photo (a clip-path hole traced from that photo), and
+  comes back by peeking down from behind the line. Each of the wave and the recommendation
+  plays once per visit; between scenes he is simply away (hidden), so scrolling doesn't keep
+  him moving. Positions come only from the approved spots in content.ts (random = which one).
+*/
+
+export type Pt = [number, number];
+export type Look = { ex: number; ey: number; head: number; lean: number; legs: number };
+
+/** What the rig controller (guide.ts) lends to the scenes. */
+export type Rig = {
+  wrap: HTMLElement;
+  svg: SVGSVGElement;
+  part: (name: string) => SVGGElement;
+  /** eye / head / lean / leg targets the rig's loop follows while a scene runs */
+  look: Look;
+  /** 'live': a scene drives the rig; 'idle': the mascot is away (hidden), the loop may rest */
+  scene: (state: 'live' | 'idle') => void;
+  setPose: (pose: string) => void;
+  /** x on the nav line under the current section */
+  homeX: () => number;
+  /** hand control back to the rig at home (pose, mode, pointer follow for the current section) */
+  goHome: () => void;
+  /** viewport y of the pencil nav line */
+  lineY: () => number;
+  /** hanging at home and free (not travelling, hovered, perched or in the opening climb-in) */
+  ready: () => boolean;
+};
+
+/* ---------------------------------------------------------------------------
+   Approved pastry spots
+   --------------------------------------------------------------------------- */
+
+export type Spot = {
+  index: number;
+  item: HTMLElement;
+  fig: HTMLElement;
+  frame: HTMLElement;
+  at: Pt;                 // feet position, % of the photo frame
+  center: Pt;             // traced pastry center, %
+  box: [number, number, number, number];
+  outline: Pt[];          // traced pastry outline, %
+};
+
+export function findSpots(): Spot[] {
+  const out: Spot[] = [];
+  document.querySelectorAll<HTMLElement>('#menu .menu-item').forEach((item, index) => {
+    const m = menuItems[index];
+    const sil = m && silhouettes[m.img];
+    const fig = item.querySelector<HTMLElement>('.sketch');
+    const frame = item.querySelector<HTMLElement>('.sketch-frame');
+    if (!m?.mascotSpot || !sil || !fig || !frame) return;
+    out.push({ index, item, fig, frame, at: [m.mascotSpot.x, m.mascotSpot.y], center: sil.center, box: sil.box, outline: sil.outline });
+  });
+  return out;
+}
+
+const cssNum = (el: HTMLElement, k: string) => parseFloat(el.style.getPropertyValue(k));
+export const toVp = (r: DOMRect, p: Pt): Pt => [r.left + (r.width * p[0]) / 100, r.top + (r.height * p[1]) / 100];
+export const headerBottom = () => document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 72;
+
+/** The photograph has fully drawn in and nothing is erasing or replacing it. */
+export const resolved = (s: Spot) =>
+  !(cssNum(s.fig, '--ep') < 125) && !(cssNum(s.fig, '--xo') > -25) && !s.item.hasAttribute('data-inactive') && !s.fig.classList.contains('is-sketch');
+
+/** The whole pastry (with room above it) is on screen, clear of the header. */
+export function inView(s: Spot, margin = 16) {
+  const r = s.frame.getBoundingClientRect();
+  const top = toVp(r, [0, s.box[1]])[1];
+  const bottom = toVp(r, [0, s.box[3]])[1];
+  return top > headerBottom() + margin && bottom < window.innerHeight - margin;
+}
+
+const pinnedIndex = () => Number(document.querySelector('#menu .menu-index a[aria-current="true"]')?.getAttribute('data-index') ?? 0);
+/** Already scrolled past (flow layout) or already erased (pinned layout). */
+function isPast(s: Spot) {
+  if (s.item.closest('.is-pinned')) {
+    const cur = pinnedIndex();
+    return s.index < cur || (s.index === cur && cssNum(s.fig, '--xo') > -25);
+  }
+  return toVp(s.frame.getBoundingClientRect(), [0, s.box[3]])[1] < headerBottom();
+}
+
+/** Random choice between the approved spots still ahead of the reader (re-picked once passed). */
+export function createSpotPicker() {
+  const spots = findSpots();
+  let target: Spot | null = null;
+  return {
+    spots,
+    target(): Spot | null {
+      if (!target || isPast(target)) {
+        const ahead = spots.filter((s) => !isPast(s));
+        target = ahead.length ? ahead[Math.floor(Math.random() * ahead.length)] : null;
+      }
+      return target;
+    }
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   Geometry
+   --------------------------------------------------------------------------- */
+
+export function inside(poly: Pt[], x: number, y: number) {
+  let c = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i], [xj, yj] = poly[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+  }
+  return c;
+}
+const px = (n: number) => `${n.toFixed(1)}px`;
+/** Everything visible except inside `hole` (even-odd polygon, element-local px). */
+const holeClip = (hole: Pt[]) => {
+  const o = [[-900, -900], [1100, -900], [1100, 1100], [-900, 1100], [-900, -900]];
+  const pts = [...o, ...hole, hole[0], [-900, -900]].map(([x, y]) => `${px(x)} ${px(y)}`);
+  return `polygon(evenodd, ${pts.join(', ')})`;
+};
+/** Everything below local y. */
+const belowClip = (y: number) => `polygon(-900px ${px(y)}, 1100px ${px(y)}, 1100px 1100px, -900px 1100px)`;
+
+/* ---------------------------------------------------------------------------
+   The director (tablet + desktop rig)
+   --------------------------------------------------------------------------- */
+
+type Phase = 'home' | 'busy' | 'away' | 'pastry' | 'hidden';
+type Path = { H: Pt; P: Pt; L: Pt };
+type Clip = { kind: 'none' } | { kind: 'line'; offset: number } | { kind: 'pastry'; spot: Spot };
+
+// Rig geometry (viewBox 0 0 120 112): feet at (60, 101), hands on the line at y 9.2.
+const FEET: Pt = [60, 101];
+const HAND_Y = 9.2;
+const FIG_H = 54.6;                 // roll top to feet, rig units
+const EYE_Y = 62.4;
+const SHOULDER_WAVE = '88.8 62.6';
+const SHOULDER_PRESENT = '89.8 66.8';
+const ARM_DOWN = 40;                // clockwise from the drawn pose: the arm hangs at his side
+
+export function createDirector(rig: Rig, enabled: () => boolean) {
+  const { wrap, svg, look } = rig;
+  const body = rig.part('body');
+  const waveArm = rig.part('front-wave-r');
+  const ticks = rig.part('wave-ticks');
+  const present = rig.part('front-present-r');
+  const picker = createSpotPicker();
+
+  let phase: Phase = 'home';
+  let waved = false;
+  let sceneDone = false;
+  let attempts = 0;
+  let tl: gsap.core.Timeline | null = null;
+  let clip: Clip = { kind: 'none' };
+  // at a pastry: feet position in % of its photo frame, hop height (px), the path, and whether he is behind it
+  let at: { spot: Spot; pf: { x: number; y: number }; hop: { v: number }; path: Path; behind: boolean; hiding: boolean } | null = null;
+  let base: Pt = [0, 0];
+  let section: string | null = null;
+  let awaySince = 0, lastScroll = 0, checkT = 0, ticking = false, idlePeeked = false;
+  const y0 = window.scrollY;
+  const timers = new Set<number>();
+  const later = (fn: () => void, ms: number) => { const id = window.setTimeout(() => { timers.delete(id); fn(); }, ms); timers.add(id); };
+
+  /* ---- geometry of the element ---- */
+  const unit = () => Math.min(wrap.offsetWidth / 120, wrap.offsetHeight / 112);   // px per rig unit at scale 1
+  const feetLocal = (): Pt => {
+    const k = unit();
+    return [(wrap.offsetWidth - 120 * k) / 2 + FEET[0] * k, (wrap.offsetHeight - 112 * k) / 2 + FEET[1] * k];
+  };
+  const origin = () => { const [fx, fy] = feetLocal(); return `${fx}px ${fy}px`; };
+  /** Untransformed top-left of the element in the viewport (the header is fixed, so it's stable). */
+  const measureBase = () => {
+    const r = wrap.getBoundingClientRect();
+    const x = Number(gsap.getProperty(wrap, 'x')) || 0, y = Number(gsap.getProperty(wrap, 'y')) || 0;
+    const s = Number(gsap.getProperty(wrap, 'scale')) || 1;
+    const [fx, fy] = feetLocal();
+    base = [r.left - x - fx * (1 - s), r.top - y - fy * (1 - s)];
+  };
+  const placeFeet = ([vx, vy]: Pt) => {
+    const [fx, fy] = feetLocal();
+    gsap.set(wrap, { x: vx - base[0] - fx, y: vy - base[1] - fy });
+  };
+  /** y offset that hangs him upside down by the feet, hooked just behind the line. */
+  const hookY = () => { const k = unit(); const [, fy] = feetLocal(); return -(fy - (wrap.offsetHeight - 112 * k) / 2 - HAND_Y * k) - 2; };
+
+  /* ---- per-frame: follow the pastry (it may scroll) and keep the occluder in place ---- */
+  const applyClip = () => {
+    // the bread only hides him while he is behind it (in front of it, it must never cut him)
+    if (clip.kind === 'none' || (clip.kind === 'pastry' && at && !at.behind)) { wrap.style.clipPath = ''; return; }
+    const r = wrap.getBoundingClientRect();
+    const s = Number(gsap.getProperty(wrap, 'scale')) || 1;
+    if (clip.kind === 'line') { wrap.style.clipPath = belowClip((rig.lineY() + clip.offset - r.top) / s); return; }
+    const fr = clip.spot.frame.getBoundingClientRect();
+    wrap.style.clipPath = holeClip(clip.spot.outline.map((p) => { const [vx, vy] = toVp(fr, p); return [(vx - r.left) / s, (vy - r.top) / s] as Pt; }));
+  };
+  const frame = () => {
+    if (at) {
+      const [vx, vy] = toVp(at.spot.frame.getBoundingClientRect(), [at.pf.x, at.pf.y]);
+      placeFeet([vx, vy - at.hop.v]);
+      // the reader moved on (scrolled, erased, toggled to the sketch): leave at once, behind the bread
+      if (phase === 'pastry' && !at.hiding && (!resolved(at.spot) || !inView(at.spot, 0))) hideBehindPastry(true);
+    }
+    applyClip();
+  };
+  const startTicker = () => { if (!ticking) { ticking = true; gsap.ticker.add(frame); } };
+  const stopTicker = () => { if (ticking) { ticking = false; gsap.ticker.remove(frame); } };
+
+  const blink = () => { svg.classList.add('is-blinking'); later(() => svg.classList.remove('is-blinking'), 160); };
+  const wink = () => { svg.classList.add('is-winking'); later(() => svg.classList.remove('is-winking'), 460); };
+  const play = (next: gsap.core.Timeline) => { tl?.kill(); tl = next; return next; };
+  const setLook = (v: Partial<Look>) => Object.assign(look, { ex: 0, ey: 0, head: 0, lean: 0, legs: 0 }, v);
+
+  /** Out of sight, parked at home size; the rig's loop can rest. */
+  const park = (next: Phase) => {
+    gsap.set(wrap, { autoAlpha: 0, scale: 1, y: 0 });
+    gsap.set(svg, { rotation: 0 });
+    gsap.set(body, { y: 0, rotation: 0 });
+    gsap.set([waveArm, present], { rotation: 0 });
+    gsap.set(ticks, { opacity: 0 });
+    svg.classList.remove('is-winking');
+    rig.setPose('neutral');
+    setLook({});
+    at = null;
+    clip = { kind: 'none' };
+    applyClip();
+    stopTicker();
+    rig.scene('idle');
+    phase = next;
+    awaySince = performance.now();
+    schedule(1000);
+  };
+
+  /* =======================  the states  ======================= */
+
+  /** STATE 1: at home on the nav line; the rig's own loop (pointer follow, nav travel) is in charge. */
+  function hang() {
+    tl = null;
+    clip = { kind: 'none' };
+    applyClip();
+    stopTicker();
+    gsap.set(wrap, { autoAlpha: 1, y: 0, scale: 1 });
+    gsap.set(svg, { rotation: 0 });
+    rig.goHome();
+    phase = 'home';
+  }
+
+  /** STATE 2: notices the scroll, looks down at the page, waves, then (STATE 3) leaves. */
+  function wake() {
+    phase = 'busy';
+    waved = true;
+    rig.scene('live');
+    const r = wrap.getBoundingClientRect();
+    const toward = r.left + r.width / 2 < window.innerWidth / 2 ? 1 : -1;
+    play(gsap.timeline({ onComplete: () => exit() }))
+      .to(body, { y: -2.6, duration: 0.12, ease: 'power2.out' }, 0)               // a small start: someone's here
+      .to(body, { y: 0, duration: 0.26, ease: 'power2.in' }, 0.12)
+      .to(look, { ex: 1.6 * toward, ey: 1.8, head: 5 * toward, duration: 0.3, ease: 'power2.out' }, 0.04)
+      .call(blink, [], 0.32)
+      .add(wave(), 0.5)
+      .call(() => rig.setPose('neutral'))                                          // grabs the line again
+      .to(look, { ex: 0.4 * toward, ey: 0.6, head: 0, lean: 0, duration: 0.24 }, '+=0.02')
+      .to({}, { duration: 0.16 });
+  }
+
+  /** Lets go with the right hand and waves (about 1.2 s). */
+  function wave() {
+    return gsap.timeline()
+      .call(() => rig.setPose('wave'))
+      .fromTo(waveArm, { rotation: ARM_DOWN, svgOrigin: SHOULDER_WAVE }, { rotation: -14, duration: 0.26, ease: 'power2.out', immediateRender: false }) // raises it
+      .to(ticks, { opacity: 0.85, duration: 0.1 }, 0.14)
+      .to(waveArm, { rotation: 14, duration: 0.19, ease: 'sine.inOut', repeat: 4, yoyo: true })
+      .to(look, { lean: -2.2, duration: 0.19, ease: 'sine.inOut', repeat: 4, yoyo: true }, '<')
+      .to(ticks, { opacity: 0, duration: 0.12 }, '>-0.12')
+      .to(waveArm, { rotation: ARM_DOWN, duration: 0.16, ease: 'power2.in' });
+  }
+
+  /** STATE 3: pulls himself up and slips behind the header's border. */
+  function exit(then?: () => void) {
+    phase = 'busy';
+    rig.scene('live');
+    measureBase();
+    clip = { kind: 'line', offset: -4 };
+    startTicker();
+    const h = wrap.offsetHeight;
+    play(gsap.timeline({ onComplete: () => { park('away'); then?.(); } }))
+      .to(look, { ex: 0, ey: -1.4, head: 0, lean: 0, duration: 0.2 }, 0)          // looks up at the line
+      .to(body, { y: -15, duration: 0.3, ease: 'power2.inOut' }, 0.06)            // pull-up
+      .to(look, { legs: 14, duration: 0.3, ease: 'power2.inOut' }, 0.06)          // knees out
+      .to(wrap, { y: -(h + 18), duration: 0.42, ease: 'power2.in' }, 0.3);        // up and over, behind the line
+  }
+
+  /** Walk the feet to a point in a few small hops (a pencil character doesn't glide). */
+  function walk(t: gsap.core.Timeline, a: NonNullable<typeof at>, to: Pt, dur: number, hops: number, pos?: number | string) {
+    t.to(a.pf, { x: to[0], y: to[1], duration: dur, ease: 'power1.inOut' }, pos);
+    t.to(a.hop, { v: 7, duration: dur / (hops * 2), ease: 'sine.out', yoyo: true, repeat: hops * 2 - 1 }, '<');
+    return t;
+  }
+
+  /** STATE 4a: peeks over the top of an approved bread, walks around its end and stands beside it. */
+  function moveToPastry(spot: Spot) {
+    attempts++;
+    phase = 'pastry';
+    rig.scene('live');
+    gsap.set(wrap, { scale: 1, transformOrigin: origin() });
+    measureBase();
+    const fr = spot.frame.getBoundingClientRect();
+    const s = gsap.utils.clamp(0.8, 1.7, (0.105 * fr.height) / (FIG_H * unit()));
+    const path = pathFor(spot, s, fr);
+    at = { spot, pf: { x: path.H[0], y: path.H[1] }, hop: { v: 0 }, path, behind: true, hiding: false };
+    rig.setPose('present');
+    gsap.set(present, { rotation: ARM_DOWN, svgOrigin: SHOULDER_PRESENT });
+    gsap.set(body, { y: 0, rotation: 0 });
+    gsap.set(svg, { rotation: 0 });
+    setLook({});
+    gsap.set(wrap, { scale: s });
+    clip = { kind: 'pastry', spot };
+    startTicker();
+    frame();
+    gsap.set(wrap, { autoAlpha: 1 });
+    const a = at;
+    const t = play(gsap.timeline({ onComplete: () => recommend() }))
+      .to(a.pf, { x: path.P[0], y: path.P[1], duration: 0.45, ease: 'power2.out' })            // eyes come up over the bread
+      .to(look, { ex: -1.6, ey: 0.6, head: -5, duration: 0.3, ease: 'power2.out' }, 0.2)       // …and find you
+      .call(blink, [], 0.62)
+      .to(body, { rotation: -5, svgOrigin: `${FEET[0]} ${FEET[1]}`, duration: 0.2 }, 0.8)       // turns to go round
+      .to(look, { ex: -2.2, ey: 0.2, head: -3, duration: 0.2 }, 0.8);
+    walk(t, a, path.L, 0.5, 2, 0.85)                                                            // behind the bread's end…
+      .call(() => { a.behind = false; })                                                        // …and out in the open
+      .to(body, { rotation: 0, duration: 0.2 }, '>');
+    walk(t, a, spot.at, 0.46, 2, '<')                                                           // forward to his spot
+      .to(look, { ex: 1.4, ey: 0.4, head: 2, duration: 0.25 }, '<0.2')
+      .to(body, { y: 1.6, duration: 0.08, ease: 'power2.out' })                                 // lands
+      .to(body, { y: 0, duration: 0.14, ease: 'power2.inOut' });
+  }
+
+  /** STATE 4b: leans toward the bread, presents it, nods, winks at you (about 2.4 s). No words. */
+  function recommend() {
+    sceneDone = true;
+    play(gsap.timeline({ onComplete: () => hideBehindPastry() }))
+      .to(present, { rotation: 0, duration: 0.34, ease: 'back.out(1.7)' }, 0)                       // "this one"
+      .to(body, { rotation: 4, svgOrigin: `${FEET[0]} ${FEET[1]}`, duration: 0.42, ease: 'power2.out' }, 0)
+      .to(look, { ex: 2.4, ey: -0.9, head: 4, duration: 0.3, ease: 'power2.out' }, 0.05)           // looks at it
+      .to(present, { rotation: -7, duration: 0.16, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0.7)
+      .to(look, { ex: 0.3, ey: 0.4, head: 0, duration: 0.24, ease: 'power2.inOut' }, 1.05)        // back to you
+      .to(look, { head: 6.5, duration: 0.13, ease: 'sine.inOut', yoyo: true, repeat: 3 }, 1.35)    // two nods
+      .call(wink, [], 1.95)
+      .to({}, { duration: 0.5 }, 1.95);
+  }
+
+  /** STATE 5: walks back round the bread and ducks down behind it (clipped by its outline), no fade. */
+  function hideBehindPastry(fast = false) {
+    if (!at) return;
+    const a = at;
+    a.hiding = true;
+    const k = fast ? 0.55 : 1;
+    const t = play(gsap.timeline({ onComplete: () => park('hidden') }))
+      .to(present, { rotation: ARM_DOWN, duration: 0.2 * k, ease: 'power2.in' }, 0)
+      .to(look, { ex: -2, ey: -1, head: -2, duration: 0.2 * k }, 0);
+    if (!a.behind) {
+      t.to(body, { rotation: -5, svgOrigin: `${FEET[0]} ${FEET[1]}`, duration: 0.2 * k }, 0);
+      walk(t, a, a.path.L, 0.46 * k, 2, 0.1 * k)                                                 // back round the end…
+        .call(() => { a.behind = true; })
+        .to(body, { rotation: 5, duration: 0.2 * k }, '>')
+        .to(look, { ex: 2.2, ey: -0.6, duration: 0.2 * k }, '<');
+      walk(t, a, a.path.P, 0.4 * k, 1, '<');                                                     // …behind it…
+    }
+    t.to(a.pf, { x: a.path.H[0], y: a.path.H[1], duration: 0.26 * k, ease: 'power2.in' }, '>');  // …and ducks down
+  }
+
+  /**
+   * The route round an approved bread, in % of its frame: H hidden behind it (whole figure inside the
+   * traced outline), P just risen so his eyes clear its top edge, L clear of its left end.
+   */
+  function pathFor(spot: Spot, s: number, fr: DOMRect): Path {
+    const u = unit() * s;
+    const ex = (v: number) => ((v * u) / fr.width) * 100, ey = (v: number) => ((v * u) / fr.height) * 100;
+    const [bx0, , bx1, by1] = spot.box;
+    const x = bx0 + (bx1 - bx0) * 0.36;
+    let top = spot.center[1];
+    for (let y = 0; y < 100; y += 0.5) if (inside(spot.outline, x, y)) { top = y; break; }
+    const P: Pt = [x, top + ey(FEET[1] - EYE_Y - 3)];
+    const probes: Pt[] = [];
+    for (const gx of [-38, -12, 12, 40]) for (const gy of [-58, -29, 0]) probes.push([ex(gx), ey(gy)]);
+    let H: Pt = [x, Math.min(by1, P[1] + ey(40))];
+    for (let dy = 10; dy <= 70; dy += 3) {
+      const c: Pt = [x, P[1] + ey(dy)];
+      if (probes.every(([dx, dyy]) => inside(spot.outline, c[0] + dx, c[1] + dyy))) { H = c; break; }
+    }
+    const L: Pt = [Math.max(ex(40), bx0 - ex(38 + 8)), P[1] + ey(12)];
+    return { H, P, L };
+  }
+
+  /** Occasional peek: hangs upside down by his feet from behind the line and looks around. */
+  function peek(then: () => void) {
+    phase = 'busy';
+    rig.scene('live');
+    rig.setPose('neutral');
+    gsap.set(wrap, { x: rig.homeX(), y: 0, scale: 1, transformOrigin: origin() });
+    const hy = hookY();
+    const up = hy - 104 * unit();
+    gsap.set(svg, { rotation: 180, transformOrigin: origin() });
+    gsap.set(wrap, { y: up, autoAlpha: 1 });
+    setLook({});
+    clip = { kind: 'line', offset: 1.2 };
+    startTicker();
+    applyClip();
+    play(gsap.timeline({ onComplete: then }))
+      .to(wrap, { y: hy, duration: 0.6, ease: 'power3.out' })                   // head first, upside down
+      .to(svg, { rotation: 186, duration: 0.3, ease: 'sine.out' }, 0.32)        // swings a little from his feet
+      .to(svg, { rotation: 177, duration: 0.45, ease: 'sine.inOut' })
+      .to(svg, { rotation: 180, duration: 0.35, ease: 'sine.inOut' })
+      .to(look, { ex: -2.2, ey: -1, duration: 0.22 }, 0.45)                     // looks one way…
+      .to(look, { ex: 2.2, duration: 0.3 }, 0.95)                               // …and the other
+      .call(blink, [], 1.35)
+      .to(look, { ex: 0, ey: 0, duration: 0.2 }, 1.45)
+      .to(wrap, { y: up, duration: 0.34, ease: 'power2.in' }, 1.62)
+      .set(wrap, { autoAlpha: 0 })
+      .set(svg, { rotation: 0 });
+  }
+
+  /** STATE 6: a peek, then he lowers himself from behind the line back into his hang. */
+  function returnHome() {
+    peek(() => {
+      const h = wrap.offsetHeight;
+      rig.setPose('neutral');
+      gsap.set(wrap, { x: rig.homeX(), y: -(h + 18), scale: 1, autoAlpha: 1 });
+      setLook({ ey: 1.2, legs: 12 });
+      clip = { kind: 'line', offset: -4 };
+      play(gsap.timeline({ onComplete: hang }))
+        .to(wrap, { y: 0, duration: 0.62, ease: 'power3.out' })
+        .to(look, { legs: 0, duration: 0.5, ease: 'power2.out' }, 0.2)
+        .to(look, { lean: 3, duration: 0.2, ease: 'sine.out' }, 0.45)          // a little swing on arrival
+        .to(look, { lean: 0, duration: 0.5, ease: 'sine.inOut' })
+        .to(look, { ex: 0.2, ey: 0.5, duration: 0.3 }, 0.55);
+    });
+  }
+
+  /* =======================  when things happen  ======================= */
+
+  const moved = () => Math.abs(window.scrollY - y0) > 48;
+  /** The picked bread is drawn and on screen: 'go' once the reader has paused, 'wait' while still scrolling. */
+  const readiness = (): { spot: Spot; go: boolean } | null => {
+    const t = picker.target();
+    if (!t || !resolved(t) || !inView(t)) return null;
+    return { spot: t, go: performance.now() - lastScroll > 220 };
+  };
+
+  function consider() {
+    if (!enabled()) { if (phase === 'away' || phase === 'hidden') hang(); return; }
+    const now = performance.now();
+    if (phase === 'home') {
+      if (!rig.ready()) { if (!waved || !sceneDone) schedule(400); return; }
+      if (!waved && moved()) { wake(); return; }
+      if (waved && !sceneDone && attempts < 3 && section === 'menu') {
+        const r = readiness();
+        if (r?.go) exit(() => moveToPastry(r.spot));
+        else if (r) schedule(240);
+      }
+      return;
+    }
+    if (phase !== 'away' && phase !== 'hidden') return;
+    if (!sceneDone && attempts < 3) {
+      const r = readiness();
+      if (r?.go) { moveToPastry(r.spot); return; }
+      if (r) { schedule(240); return; }
+    }
+    const away = now - awaySince;
+    if (phase === 'hidden' && (section !== 'menu' || away > 9000)) { returnHome(); return; }
+    if (phase === 'away' && ((section !== 'menu' && section !== null) || away > (section === 'menu' ? 22000 : 12000))) { returnHome(); return; }
+    if (phase === 'away' && !idlePeeked && away > 5000 && now - lastScroll > 5000) {
+      idlePeeked = true;
+      peek(() => park('away'));
+      return;
+    }
+    schedule(1000);
+  }
+  function schedule(ms: number) { clearTimeout(checkT); checkT = window.setTimeout(consider, ms); }
+
+  const onScroll = () => {
+    lastScroll = performance.now();
+    if (phase === 'home' && !waved && enabled() && moved() && rig.ready()) wake();
+    schedule(260);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  gsap.set(wrap, { transformOrigin: origin() });
+
+  return {
+    home: () => phase === 'home',
+    onSection(id: string | null) { section = id; schedule(160); },
+    /** break off whatever is running and hang at home (reduced motion, breakpoint change) */
+    reset() { tl?.kill(); if (phase !== 'home') hang(); },
+    destroy() {
+      window.removeEventListener('scroll', onScroll);
+      clearTimeout(checkT);
+      timers.forEach((t) => clearTimeout(t));
+      tl?.kill();
+      stopTicker();
+      wrap.style.clipPath = '';
+      gsap.set(wrap, { autoAlpha: 1, y: 0, scale: 1 });
+      gsap.set(svg, { rotation: 0 });
+      gsap.set(body, { y: 0, rotation: 0 });
+      svg.classList.remove('is-winking');
+    }
+  };
+}

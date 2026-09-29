@@ -82,3 +82,22 @@ html.shelf-dark .shelf { background: linear-gradient(to bottom, rgba(23, 19, 15,
 
 /* over the dark chapter the hanging guide is drawn in chalk (same rig, flipped tokens) */
 html.shelf-dark .site-header .guide { --g800: #E8DFD0; --guide-fill: #17130F; --guide-eye: #F4EFE6; --guide-ink: #E8DFD0; }
+
+/* ---- mascot scenes (src/motion/mascot.ts) ---- */
+/* wave: hanging by the left hand, waving with the right */
+.guide-svg[data-pose='wave'] [data-part='arm-r-grip'], .guide-svg[data-pose='wave'] [data-part='hand-r-grip'] { opacity: 0; }
+.guide-svg[data-pose='wave'] [data-part='front-wave-r'] { opacity: 1; }
+.guide-svg [data-part='wave-ticks'] { opacity: 0; }
+/* present: standing on the page beside a pastry (no hands on the line) */
+.guide-svg[data-pose='present'] [data-part$='-grip'] { opacity: 0; }
+.guide-svg[data-pose='present'] [data-part='front-down-l'], .guide-svg[data-pose='present'] [data-part='front-present-r'] { opacity: 1; }
+/* a wink at the viewer */
+.guide-svg.is-winking [data-part='eye-r'] { opacity: 0; }
+.guide-svg.is-winking [data-part='wink'] { opacity: 1; }
+/* while a scene drives the body with GSAP, no CSS transition may smooth it */
+.guide-svg[data-scene] [data-part='body'] { transition: none; }
+.guide-svg[data-scene] [data-part] { transition-duration: 90ms; }
+/* phone scenes: ducks behind the header rule after waving; winks after recommending a bread */
+html.peek-away .peek-svg { transform: translateY(100%); }
+.peek-svg[data-peek='wink'] [data-part='peek-wink'] { opacity: 1; }
+.peek-svg[data-peek='wink'] [data-part='peek-eye-r'] { opacity: 0; }

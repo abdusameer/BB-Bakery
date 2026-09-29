@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview --port 4174 --strictPort",
     "lint": "oxlint",
-    "deploy:pages": "PAGES_BASE=/BB-Bakery/ npm run build && node scripts/publish-root.mjs"
+    "deploy:pages": "PAGES_BASE=/BB-Bakery/ npm run build && node scripts/publish-root.mjs",
+    "silhouettes": "node scripts/build-silhouettes.mjs"
   },
   "dependencies": {
     "gsap": "^3.15.0",

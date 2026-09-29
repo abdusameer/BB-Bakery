@@ -29,6 +29,25 @@
 
 Evidence: `qa/mobile/mobile.json`, `qa/mobile-peek-states.jpg`, `qa/mobile-sketch-toggle.jpg` (run with `node scripts/qa-mobile.mjs`).
 
+## The croissant mascot's scroll scenes (added on request)
+
+The existing hanging character is the only mascot; it is the same element moving between places (transforms and a clip-path only, no second copy, no layout shift). New arm poses were added to the existing pencil rig in the same stroke style: a waving arm and an outstretched presenting arm.
+
+| State | Desktop / tablet | Phone (simplified) |
+| --- | --- | --- |
+| Hang | Starts exactly where it always hung, under the nav line | Peeks over the header rule |
+| Wake + wave | On the first real scroll (48 px): a small start, looks down at the page, lets go with one hand and waves (~1.2 s) | The peek rises and waves a mitten |
+| Exit | Pulls himself up and slips behind the header border (clipped at the line) | Ducks behind the header rule |
+| Recommend | When you pause on one approved bread in the menu: his eyes come up over its top edge (hidden behind it), he walks round its end, stands beside it, leans in, presents it with an open hand, looks back at you, nods twice and winks (~2.4 s). No words | Pops back up, looks and points at the bread, nods twice, winks |
+| Disappear | Walks back round and ducks down behind the bread (clipped by the bread's traced outline), not a fade | Stays home |
+| Return home | On the next section (or after a pause): hangs upside down by his feet from behind the line and looks around, then lowers himself back into his hang | Pops back up if still away |
+
+- **Approved spots only.** Salt bread, garlic cream cheese bread, cranberry cream cheese bread and croissant sandwich have a fixed spot (`mascotSpot` in `content.ts`), computed from each bread's traced outline so he stands on its table line without covering it. "Random" picks one of these that is still ahead of the reader. Drinks and the diagonal twisted doughnut are excluded.
+- **Once per visit.** The wave and the recommendation each play once. If the reader scrolls on mid-scene (or toggles Sketch), he leaves at once, behind the bread. Arrival reactions on the nav line now play once per section, and the phone peek's section reactions once each. While away, hover and section travel stand down.
+- **An occasional peek.** If the reader lingers while he's away, he peeks upside down from behind the line once.
+- **Never in the way.** Verified at every state for all four breads: no overlap with the nav, index rail, bread name, note, count, Sketch button or Concept image label (`qa/mascot/mascot.json`).
+- **Reduced motion:** no scenes; he stays home, still. Short viewports (perched) also skip the scenes.
+
 ## Verification (evidence in `qa/`)
 
 | Check | Result |

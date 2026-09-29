@@ -3,21 +3,21 @@
   "peekFollow": {
     "left": {
       "eyes": "translate(-2.40 1.80)",
-      "body": "rotate(-9.58 60 80)",
+      "body": "rotate(-9.49 60 80)",
       "move": "matrix(1,0,0,1,0,-5)",
       "peek": "neutral",
       "active": "true"
     },
     "right": {
-      "eyes": "translate(0.84 1.41)",
-      "body": "rotate(1.85 60 80)",
-      "move": "matrix(1,0,0,1,0,-5)",
+      "eyes": "translate(-1.70 1.80)",
+      "body": "rotate(-6.97 60 80)",
+      "move": "matrix(1,0,0,1,0,-9)",
       "peek": "neutral",
       "active": "true"
     },
     "released": {
-      "eyes": "translate(0.00 0.00)",
-      "body": "rotate(0.05 60 80)",
+      "eyes": "translate(-0.00 0.00)",
+      "body": "rotate(-0.11 60 80)",
       "move": "matrix(1,0,0,1,0,-5)",
       "peek": "neutral",
       "active": "true"
@@ -25,15 +25,15 @@
   },
   "peekScroll": {
     "whileScrolling": {
-      "eyes": "translate(-0.74 1.46)",
-      "body": "rotate(0.38 60 80)",
-      "move": "matrix(0.99885,0.04789,-0.04789,0.99885,3.9002,-6.6049)",
+      "eyes": "translate(-0.00 1.73)",
+      "body": "rotate(2.14 60 80)",
+      "move": "matrix(1,0,0,1,0,-5)",
       "peek": "neutral",
       "active": "true"
     },
     "settled": {
-      "eyes": "translate(-0.00 0.03)",
-      "body": "rotate(-0.07 60 80)",
+      "eyes": "translate(-0.00 0.01)",
+      "body": "rotate(0.06 60 80)",
       "move": "matrix(1,0,0,1,0,-5)",
       "peek": "neutral",
       "active": "true"
@@ -41,22 +41,22 @@
   },
   "peekReactions": {
     "menu": {
-      "eyes": "translate(-1.03 1.74)",
-      "body": "rotate(-2.22 60 80)",
-      "move": "matrix(0.99399,0.10948,-0.10948,0.99399,9.119,-8.3943)",
+      "eyes": "translate(-0.00 0.37)",
+      "body": "rotate(0.47 60 80)",
+      "move": "matrix(1,0,0,1,0,-5)",
       "peek": "neutral",
       "active": "true"
     },
     "media": {
-      "eyes": "translate(-0.00 0.90)",
+      "eyes": "translate(-0.00 0.89)",
       "body": "rotate(1.45 60 80)",
-      "move": "matrix(1,0,0,1,0,-5.0741)",
-      "peek": "media",
+      "move": "matrix(1,0,0,1,0,-5)",
+      "peek": "neutral",
       "active": "true"
     },
     "after": {
       "eyes": "translate(-0.00 0.01)",
-      "body": "rotate(0.03 60 80)",
+      "body": "rotate(0.02 60 80)",
       "move": "matrix(1,0,0,1,0,-5)",
       "peek": "neutral",
       "active": "false"
@@ -79,18 +79,18 @@
   "tablet": {
     "fingerRight": {
       "eyes": "translate(2.40 1.60)",
-      "roll": "rotate(6.53 60 64)",
-      "lean": "rotate(1.88 60 9)"
+      "roll": "rotate(6.51 60 64)",
+      "lean": "rotate(1.86 60 9)"
     },
     "fingerLeft": {
-      "eyes": "translate(-0.61 1.60)",
-      "roll": "rotate(-1.13 60 64)",
-      "lean": "rotate(0.01 60 9)"
+      "eyes": "translate(1.60 1.80)",
+      "roll": "rotate(5.00 60 64)",
+      "lean": "rotate(2.12 60 9)"
     },
     "released": {
-      "eyes": "translate(-0.00 0.00)",
-      "roll": "rotate(-0.02 60 64)",
-      "lean": "rotate(-0.04 60 9)"
+      "eyes": "translate(0.01 -1.35)",
+      "roll": "rotate(0.00 60 64)",
+      "lean": "rotate(-0.01 60 9)"
     }
   }
 }
