@@ -1,6 +1,6 @@
-# BB Bakery and Cafe — "The Bakery Sketchbook" (unofficial concept)
+# BB Bakery & Cafe — "The Bakery Sketchbook" (unofficial concept)
 
-> **Unofficial private concept.** Not commissioned, reviewed, or approved by BB Bakery and Cafe. The site ships with `noindex, nofollow` and an "Unofficial website concept" footer notice. Every generated image is labeled "Concept image".
+> **Unofficial private concept.** Not commissioned, reviewed, or approved by BB Bakery & Cafe. The site ships with `noindex, nofollow` and an "Unofficial website concept" footer notice. Every generated image is labeled "Concept image".
 
 | Folder | What |
 | --- | --- |

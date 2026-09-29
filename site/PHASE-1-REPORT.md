@@ -1,6 +1,6 @@
 # Phase 1 — Implementation Report
 
-**Project:** The Bakery Sketchbook, an unofficial concept site for BB Bakery and Cafe (not commissioned, not affiliated, not published).
+**Project:** The Bakery Sketchbook, an unofficial concept site for BB Bakery & Cafe (not commissioned, not affiliated, not published).
 **Location:** `~/Documents/bbs-bakery/site` · **Spec:** `~/Documents/bbs-bakery/phase-0/`
 **Stack:** React 19 + Vite 8 + TypeScript 6 · GSAP 3.15 + ScrollTrigger · Lenis 1.3 (desktop fine pointer only) · build-time prerender · sharp image pipeline.
 
@@ -8,7 +8,7 @@
 
 | Area | What it does |
 | --- | --- |
-| **Opening** | Paper page, typeset "BB Bakery and Cafe" H1 (BB / Bakery / and Cafe), lead line, hours, **See the menu** / **Plan a visit**, all in the first viewport at every tested size. The hero loaf draws itself as authored SVG strokes, then graphite hatches in, then an eraser sweep reveals the photograph with steam curls. It takes about 1.5 s, starts right after hydration, and any input fast-forwards it. The loaf is scaled up (`scale: 1.28`) per your request |
+| **Opening** | Paper page, typeset "BB Bakery & Cafe" H1 (BB / Bakery / & Cafe), lead line, hours, **See the menu** / **Plan a visit**, all in the first viewport at every tested size. The hero loaf draws itself as authored SVG strokes, then graphite hatches in, then an eraser sweep reveals the photograph with steam curls. It takes about 1.5 s, starts right after hydration, and any input fast-forwards it. The loaf is scaled up (`scale: 1.28`) per your request |
 | **Menu** | "Sample selection" of six customer-mentioned items. **Desktop (≥1024, fine pointer):** one pinned stage (6 × 140 vh) with a numbered index rail (clickable, `aria-current`), and each item scrubs outline → graphite → photo → drawn arrow and underline, then a pencil-drawn eraser wipes the product off the paper (left to right) before the next item draws in. Only one item's picture, text and "Concept image" label are ever visible. **Tablet/touch/mobile:** no pin; each item scrubs as it crosses the viewport. No prices, no cart. `status` slots exist for future Today / Sold out / Preorder, and the "Owner to confirm" end note is shown |
 | **Story** | Notebook margin with a pencil line that draws as you read, pen notes with arrows, the verified description (paraphrased), a dashed "The people behind the bread" block reserved for the owners, and a labeled concept sketch |
 | **Media** | Editorial contact sheet with crop marks that draw in: Murals (large, "mentioned by customers · to confirm"), Bread and Coffee (labeled concept images), and Patio, Packaging, Interior, Storefront (empty "Owner photo" frames at final aspect ratios) |
@@ -93,7 +93,7 @@ The existing hanging character is the only mascot; it is the same element moving
 
 ## Needs owner confirmation (see `phase-0/PHASE-0-OWNER-CONFIRMATION.md`)
 
-The canonical name (the site now uses "BB Bakery and Cafe", as you asked on 2026-09-29; the Yelp listing reads "BB's Bakery") · hours (other listings disagree) · phone · official social accounts · whether to show prices and live sold-out/preorder states · Korean product names · the owners' story · permission to use the logo and mural photos · real product, interior, patio, storefront and packaging photos · the exact map pin/entrance.
+The canonical name (the site now uses "BB Bakery & Cafe", as you asked on 2026-09-29; the Yelp listing reads "BB's Bakery") · hours (other listings disagree) · phone · official social accounts · whether to show prices and live sold-out/preorder states · Korean product names · the owners' story · permission to use the logo and mural photos · real product, interior, patio, storefront and packaging photos · the exact map pin/entrance.
 
 ## Independent review rounds
 

@@ -12,7 +12,7 @@ export type Tier = 'A' | 'B' | 'owner' | 'ui';
 
 export const business = {
   tier: 'A' as Tier,
-  name: 'BB Bakery and Cafe',
+  name: 'BB Bakery & Cafe',
   category: 'Bakery · Coffee & Tea',
   street: '3130 W Olympic Blvd, Suite 100',
   cityLine: 'Los Angeles, CA 90006',
@@ -23,7 +23,7 @@ export const business = {
   hoursRange: '8:00 AM – 7:00 PM',
   services: ['Takeout available', 'Wheelchair accessible'],
   description:
-    'BB Bakery and Cafe specializes in premium, handcrafted bread, baked fresh daily with high-quality ingredients, with the aim of an exceptional and authentic taste.'
+    'BB Bakery & Cafe specializes in premium, handcrafted bread, baked fresh daily with high-quality ingredients, with the aim of an exceptional and authentic taste.'
 };
 
 const destination = encodeURIComponent(`${business.street}, ${business.cityLine}`.replace('’', "'"));
@@ -120,14 +120,14 @@ export const media = {
 
 export const visit = {
   eyebrow: 'Visit',
-  title: 'Visit BB Bakery and Cafe',
+  title: 'Visit BB Bakery & Cafe',
   mapCaption: 'Pencil sketch, not to scale.',
   futureContact: 'Phone · social links: to be added'
 };
 
 export const footer = {
   notice: 'Unofficial website concept.',
-  noticeBody: 'Not affiliated with, commissioned by, or approved by BB Bakery and Cafe.',
-  mediaNote: 'Images marked “Concept image” were generated for this mockup and do not show BB Bakery and Cafe’s actual products or shop.',
+  noticeBody: 'Not affiliated with, commissioned by, or approved by BB Bakery & Cafe.',
+  mediaNote: 'Images marked “Concept image” were generated for this mockup and do not show BB Bakery & Cafe’s actual products or shop.',
   credits: 'Icons: Solar icon set (CC BY 4.0). Fonts: Young Serif, Hanken Grotesk, Nanum Pen Script (SIL OFL).'
 };
