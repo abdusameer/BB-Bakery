@@ -33,6 +33,9 @@ const state = () => p.evaluate(() => {
   const fig = rs.length ? { l: Math.min(...rs.map((r) => r.left)), t: Math.min(...rs.map((r) => r.top)), r: Math.max(...rs.map((r) => r.right)), b: Math.max(...rs.map((r) => r.bottom)) } : null;
   // a line clip hides everything above the nav line (he is behind the header border there)
   if (fig && g.style.clipPath.startsWith('polygon(-900px')) { const l = document.querySelector('.nav-line').getBoundingClientRect(); fig.t = Math.max(fig.t, l.top + l.height / 2 + 1); }
+  // on the footer ledge everything below its top edge is behind the footer
+  if (fig && (svg.dataset.pose || '').startsWith('ledge')) fig.b = Math.min(fig.b, document.querySelector('.site-footer').getBoundingClientRect().top);
+  if (fig && fig.b <= fig.t) return { visibility: cs.visibility, pose: svg.dataset.pose, scene: svg.dataset.scene ?? null, fig: null, overlaps: [], winking: false, chalk: g.classList.contains('is-chalk') };
   const hit = (sel) => [...document.querySelectorAll(sel)].filter((el) => {
     const r = el.getBoundingClientRect(); if (!r.width || getComputedStyle(el).visibility === 'hidden' || +getComputedStyle(el).opacity === 0) return false;
     return fig && r.left < fig.r && r.right > fig.l && r.top < fig.b && r.bottom > fig.t;
@@ -40,11 +43,13 @@ const state = () => p.evaluate(() => {
   const active = document.querySelector('#menu .menu-item:not([data-inactive])');
   return {
     winking: svg.classList.contains('is-winking'),
+    chalk: g.classList.contains('is-chalk'),
     visibility: cs.visibility, pose: svg.dataset.pose, scene: svg.dataset.scene ?? null, clip: g.style.clipPath ? g.style.clipPath.slice(0, 22) : '',
     transform: g.style.transform, fig: fig && Object.fromEntries(Object.entries(fig).map(([k, v]) => [k, Math.round(v)])),
     overlaps: fig && cs.visibility !== 'hidden' ? [
       ...hit('.primary-nav a, .header-directions, .wordmark'),
       ...hit('.menu-index a'),
+      ...hit('.visit-map .map-addr, .visit-map .map-label, .visit-map figcaption span, .visit-actions .btn, .visit-facts h3, .visit-facts address, .visit-facts li, .future-contact, .site-footer p'),
       ...(active ? [...active.querySelectorAll('.menu-item-text h3, .menu-item-note, .menu-count, .sketch-toggle, .chip')].filter((el) => { const r = el.getBoundingClientRect(); return fig && r.left < fig.r && r.right > fig.l && r.top < fig.b && r.bottom > fig.t && getComputedStyle(el).visibility !== 'hidden'; }).map((el) => el.className || el.tagName) : [])
     ] : []
   };
@@ -94,6 +99,35 @@ await snap('13-peek-down', 900);
 await snap('14-look', 500);
 await snap('15-lower', 1000);
 await snap('16-home', 1400);
+
+// Visit: walks the dotted route to the shop pin (chalk), presents it, glances at Get directions, walks back out
+await p.evaluate(() => { const m = document.querySelector('.visit-map svg'); const r = m.getBoundingClientRect(); window.scrollTo({ top: r.top + scrollY - (innerHeight * 0.44 - r.height / 2), behavior: 'instant' }); });
+await wait(700);
+await p.evaluate(() => window.scrollBy({ top: 1, behavior: 'instant' }));
+{
+  let appeared = false; const t0 = Date.now();
+  while (Date.now() - t0 < 4000) { const s = await state(); if (s.visibility !== 'hidden' && s.pose === 'present') { appeared = true; break; } await wait(80); }
+  log.push({ name: 'map-scene', appeared });
+  await snap('18-map-walk', 900);
+  await snap('19-map-pin', 1500);
+  await snap('20-map-glance', 900);
+  await snap('21-map-leave', 900);
+  await snap('22-map-gone', 1400);
+}
+// footer: climbs up behind its top edge, hands on the ledge, waves, stays
+await p.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+{
+  let appeared = false; const t0 = Date.now();
+  while (Date.now() - t0 < 5000) { const s = await state(); if (s.visibility !== 'hidden' && (s.pose || '').startsWith('ledge')) { appeared = true; break; } await wait(80); }
+  log.push({ name: 'footer-scene', appeared });
+  await snap('23-ledge-rise', 300);
+  await snap('24-ledge-wave', 1500);
+  await snap('25-ledge-rest', 1600);
+  await snap('26-ledge-still', 1500);
+}
+await p.evaluate(() => window.scrollBy({ top: -160, behavior: 'instant' }));
+await snap('27-ledge-sink', 250);
+await snap('28-home-again', 4200);
 
 // each bread is presented once per visit: back to the first bread, nothing happens
 await p.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), pin.start + pin.len * (0.68 / 6));

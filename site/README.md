@@ -38,8 +38,8 @@ npm run preview      # http://127.0.0.1:4174 — serves dist/ exactly as built
 | `node scripts/qa-interactions.mjs --base http://127.0.0.1:4174` | Guide follow and reactions, anchor-jump accuracy, reverse scroll, live resize, keyboard, mobile sheet |
 | `node scripts/qa-menu.mjs --base http://127.0.0.1:4174` | Pinned menu: one item at a time at each hold, mid-erase and next start; eraser visible while wiping; reverse scroll |
 | `node scripts/qa-mobile.mjs --base http://127.0.0.1:4174` | Touch: peek finger-follow, scroll watching, section reactions, Sketch toggle and press-and-hold, tablet finger-follow |
-| `node scripts/qa-mascot.mjs` | Mascot scenes, desktop: wave → exit behind the line → presents each of the five breads (wink on the last) → hides behind each → peek and return home; overlap check against nav, index, item text, Sketch button and label throughout |
-| `node scripts/qa-mascot-touch.mjs` | Mascot scenes on tablet (flow menu, every bread; he stays with the bread while the page scrolls) and phone (header peek: wave, duck, point at each bread, wink on the last) |
+| `node scripts/qa-mascot.mjs` | Mascot scenes, desktop: wave → exit behind the line → presents each of the five breads (wink on the last) → hides behind each → peek and return home → walks the Visit map route to the pin → waves goodbye over the footer edge; overlap check against nav, index, item text, Sketch button, labels, map labels, buttons and footer text throughout |
+| `node scripts/qa-mascot-touch.mjs` | Mascot scenes on tablet (every bread, he stays with the bread while the page scrolls; map walk; footer goodbye) and phone (header peek: wave, duck, point at each bread, wink on the last, goodbye at the footer) |
 
 The QA scripts drive the locally installed Google Chrome via `puppeteer-core` (dev dependency; no browser download).
 

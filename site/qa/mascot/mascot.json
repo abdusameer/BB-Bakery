@@ -3,6 +3,7 @@
     {
       "name": "01-hang",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": null,
@@ -19,6 +20,7 @@
     {
       "name": "02-wake",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
@@ -26,7 +28,7 @@
       "transform": "translate(248.672px, 0px)",
       "fig": {
         "l": 271,
-        "t": 73,
+        "t": 72,
         "r": 329,
         "b": 149
       },
@@ -35,13 +37,14 @@
     {
       "name": "03-wave",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "wave",
       "scene": "live",
       "clip": "",
       "transform": "translate(248.672px, 0px)",
       "fig": {
-        "l": 272,
+        "l": 273,
         "t": 73,
         "r": 347,
         "b": 150
@@ -50,23 +53,18 @@
     },
     {
       "name": "04-exit",
-      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
-      "clip": "polygon(-900px 33.2px,",
-      "transform": "translate3d(248.672px, -29.2881px, 0px)",
-      "fig": {
-        "l": 272,
-        "t": 72,
-        "r": 328,
-        "b": 107
-      },
-      "overlaps": []
+      "fig": null,
+      "overlaps": [],
+      "winking": false,
+      "chalk": false
     },
     {
       "name": "05-away",
       "winking": false,
+      "chalk": false,
       "visibility": "hidden",
       "pose": "neutral",
       "scene": "idle",
@@ -89,7 +87,7 @@
       "poses": [
         "present"
       ],
-      "ms": 5307
+      "ms": 5375
     },
     {
       "name": "bread-1",
@@ -100,7 +98,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4788
+      "ms": 4764
     },
     {
       "name": "bread-2",
@@ -111,7 +109,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4831
+      "ms": 4784
     },
     {
       "name": "bread-3",
@@ -122,7 +120,7 @@
       "poses": [
         "present"
       ],
-      "ms": 4782
+      "ms": 4751
     },
     {
       "name": "bread-4",
@@ -133,11 +131,12 @@
       "poses": [
         "present"
       ],
-      "ms": 5168
+      "ms": 5073
     },
     {
       "name": "12-after-breads",
       "winking": false,
+      "chalk": false,
       "visibility": "hidden",
       "pose": "neutral",
       "scene": "idle",
@@ -154,6 +153,7 @@
     {
       "name": "13-peek-down",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
@@ -170,6 +170,7 @@
     {
       "name": "14-look",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
@@ -186,6 +187,7 @@
     {
       "name": "15-lower",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
@@ -202,6 +204,7 @@
     {
       "name": "16-home",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": null,
@@ -216,15 +219,211 @@
       "overlaps": []
     },
     {
+      "name": "map-scene",
+      "appeared": true
+    },
+    {
+      "name": "18-map-walk",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "present",
+      "scene": "live",
+      "clip": "polygon(-15.6px -900px",
+      "transform": "translate(773.651px, 429.02px) scale(1.3528, 1.3528)",
+      "fig": {
+        "l": 781,
+        "t": 514,
+        "r": 895,
+        "b": 579
+      },
+      "overlaps": []
+    },
+    {
+      "name": "19-map-pin",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "present",
+      "scene": "live",
+      "clip": "polygon(-176.9px -900p",
+      "transform": "translate(991.922px, 292.394px) scale(1.3528, 1.3528)",
+      "fig": {
+        "l": 999,
+        "t": 374,
+        "r": 1114,
+        "b": 443
+      },
+      "overlaps": []
+    },
+    {
+      "name": "20-map-glance",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "present",
+      "scene": "live",
+      "clip": "polygon(-176.9px -900p",
+      "transform": "translate(991.922px, 292.394px) scale(1.3528, 1.3528)",
+      "fig": {
+        "l": 999,
+        "t": 378,
+        "r": 1114,
+        "b": 443
+      },
+      "overlaps": []
+    },
+    {
+      "name": "21-map-leave",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "present",
+      "scene": "live",
+      "clip": "polygon(-66px -900px, ",
+      "transform": "translate(841.78px, 367.279px) scale(1.3528, 1.3528)",
+      "fig": {
+        "l": 847,
+        "t": 449,
+        "r": 960,
+        "b": 518
+      },
+      "overlaps": []
+    },
+    {
+      "name": "22-map-gone",
+      "winking": false,
+      "chalk": false,
+      "visibility": "hidden",
+      "pose": "neutral",
+      "scene": "idle",
+      "clip": "",
+      "transform": "translate(616.182px, 0px)",
+      "fig": {
+        "l": 640,
+        "t": 73,
+        "r": 696,
+        "b": 150
+      },
+      "overlaps": []
+    },
+    {
+      "name": "footer-scene",
+      "appeared": true
+    },
+    {
+      "name": "23-ledge-rise",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "ledge",
+      "scene": "live",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(1144.26px, 764.413px) scale(1.5, 1.5)",
+      "fig": {
+        "l": 1154,
+        "t": 758,
+        "r": 1238,
+        "b": 795
+      },
+      "overlaps": []
+    },
+    {
+      "name": "24-ledge-wave",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "ledgeWave",
+      "scene": "live",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "fig": {
+        "l": 1155,
+        "t": 748,
+        "r": 1265,
+        "b": 795
+      },
+      "overlaps": []
+    },
+    {
+      "name": "25-ledge-rest",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "ledge",
+      "scene": "idle",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "fig": {
+        "l": 1156,
+        "t": 755,
+        "r": 1241,
+        "b": 795
+      },
+      "overlaps": []
+    },
+    {
+      "name": "26-ledge-still",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "ledge",
+      "scene": "idle",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(1144.26px, 763.035px) scale(1.5, 1.5)",
+      "fig": {
+        "l": 1156,
+        "t": 755,
+        "r": 1241,
+        "b": 795
+      },
+      "overlaps": []
+    },
+    {
+      "name": "27-ledge-sink",
+      "winking": false,
+      "chalk": true,
+      "visibility": "visible",
+      "pose": "ledge",
+      "scene": "idle",
+      "clip": "polygon(-900px -900px,",
+      "transform": "translate(1144.26px, 946.795px) scale(1.5, 1.5)",
+      "fig": {
+        "l": 1156,
+        "t": 939,
+        "r": 1241,
+        "b": 955
+      },
+      "overlaps": []
+    },
+    {
+      "name": "28-home-again",
+      "winking": false,
+      "chalk": false,
+      "visibility": "visible",
+      "pose": "neutral",
+      "scene": "live",
+      "clip": "polygon(-900px 4px, 11",
+      "transform": "translate3d(1145.84px, -0.0868px, 0px)",
+      "fig": {
+        "l": 1169,
+        "t": 73,
+        "r": 1225,
+        "b": 150
+      },
+      "overlaps": []
+    },
+    {
       "name": "17-menu-again",
       "winking": false,
+      "chalk": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": null,
       "clip": "",
       "transform": "translate(934.82px, 0px)",
       "fig": {
-        "l": 959,
+        "l": 958,
         "t": 73,
         "r": 1014,
         "b": 150

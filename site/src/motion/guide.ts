@@ -132,6 +132,34 @@ export function initGuide(): () => void {
         .call(() => { peekSvg.dataset.peek = 'neutral'; }, [], 1.95)
         .to({}, { duration: 0.2 });
     };
+    /* goodbye at the footer: whichever croissant is on screen waves (the Visit one, else the peek) */
+    let pBye = false;
+    const pGoodbye = () => {
+      pBye = true; pBusy = true;
+      peekTl?.kill();
+      const vg = document.querySelector<SVGSVGElement>('.visit-guide .guide-svg');
+      const vr = vg?.getBoundingClientRect();
+      if (vg && vr && vr.width > 0 && vr.bottom > headerBottomPx() && vr.top < window.innerHeight) {
+        const arm = vg.querySelector('[data-part="front-wave-r"]');
+        const pose = vg.dataset.pose ?? 'visit-static';
+        peekTl = gsap.timeline({ onComplete: () => { vg.dataset.pose = pose; pBusy = false; } })
+          .call(() => { vg.dataset.pose = 'wave'; })
+          .fromTo(arm, { rotation: 40, svgOrigin: '88.8 62.6' }, { rotation: -14, duration: 0.26, ease: 'power2.out', immediateRender: false })
+          .to(arm, { rotation: 14, duration: 0.19, ease: 'sine.inOut', repeat: 4, yoyo: true })
+          .to(arm, { rotation: 40, duration: 0.16, ease: 'power2.in' });
+        return;
+      }
+      html.classList.add('peek-bye');                                            // back up over the rule
+      peekTl = gsap.timeline({ delay: 0.25, onComplete: () => { html.classList.remove('peek-bye'); pBusy = false; } })
+        .to(PK.move, { y: -9, duration: 0.2, ease: 'power2.out' })
+        .to(hand.r, { x: 3, y: -15, rotation: -24, svgOrigin: '87 71', duration: 0.22, ease: 'power2.out' }, 0.1)
+        .to(hand.r, { rotation: 24, duration: 0.18, ease: 'sine.inOut', repeat: 4, yoyo: true })
+        .to(hand.r, { x: 0, y: 0, rotation: 0, duration: 0.18, ease: 'power2.in' })
+        .to(PK.move, { y: -5, duration: 0.2 }, '<')
+        .to({}, { duration: 0.9 });
+    };
+    const headerBottomPx = () => document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 60;
+
     function pConsider() {
       if (!phone() || reduce()) { if (pAway) setAway(false); return; }
       if (pBusy) { pSchedule(400); return; }
@@ -140,6 +168,11 @@ export function initGuide(): () => void {
       const t = queue.current();                                                 // each bread, once, when the reader stops on it
       if (t) {
         if (now - pLastScroll > 220) pRecommend(t); else pSchedule(240);
+        return;
+      }
+      const fr = document.querySelector('.site-footer')?.getBoundingClientRect();
+      if (!pBye && fr && fr.top < window.innerHeight - Math.min(fr.height * 0.7, 90)) {
+        if (now - pLastScroll > 220) pGoodbye(); else pSchedule(240);
         return;
       }
       if (pAway) {

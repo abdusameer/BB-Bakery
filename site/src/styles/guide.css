@@ -101,3 +101,13 @@ html.shelf-dark .site-header .guide { --g800: #E8DFD0; --guide-fill: #17130F; --
 html.peek-away .peek-svg { transform: translateY(100%); }
 .peek-svg[data-peek='wink'] [data-part='peek-wink'] { opacity: 1; }
 .peek-svg[data-peek='wink'] [data-part='peek-eye-r'] { opacity: 0; }
+/* ledge (footer goodbye): peeking over the footer's top edge, mittens resting on it; the body is
+   raised by mascot.ts and everything below the edge is clipped away */
+.guide-svg[data-pose^='ledge'] [data-part^='arm-'], .guide-svg[data-pose^='ledge'] [data-part$='-grip'] { opacity: 0; }
+.guide-svg[data-pose^='ledge'] [data-part='hand-l-sit'], .guide-svg[data-pose^='ledge'] [data-part='hand-r-sit'] { opacity: 1; }
+.guide-svg[data-pose='ledgeWave'] [data-part='hand-r-sit'] { opacity: 0; }
+.guide-svg[data-pose='ledgeWave'] [data-part='front-wave-r'] { opacity: 1; }
+/* on the dark "after hours" chapter (map walk, footer) he is drawn in chalk */
+.site-header .guide.is-chalk { --g800: #E8DFD0; --guide-fill: #17130F; --guide-eye: #F4EFE6; --guide-ink: #E8DFD0; }
+/* phone goodbye: the peek comes back up over the header rule even inside Visit */
+html.peek-bye .peek-svg { transform: none; }

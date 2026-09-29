@@ -64,6 +64,14 @@ async function page(w, h) {
   await p.evaluate(() => { const el = document.getElementById('story'); window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 100, behavior: 'instant' }); });
   await snap('peek', 900);
   await snap('home', 2800);
+  // Visit map walk and the footer goodbye
+  await p.evaluate(() => { const m = document.querySelector('.visit-map svg'); const r = m.getBoundingClientRect(); window.scrollTo({ top: r.top + scrollY - (innerHeight * 0.4 - r.height / 2), behavior: 'instant' }); });
+  { let ok = false; const t0 = Date.now(); while (Date.now() - t0 < 5000) { const s = await g(); if (s.vis !== 'hidden' && s.pose === 'present') { ok = true; break; } await wait(80); } log.push({ name: 'map-scene', ok }); }
+  await snap('map', 2300);
+  await wait(3500);
+  await p.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+  { let ok = false; const t0 = Date.now(); while (Date.now() - t0 < 6000) { const s = await g(); if (s.vis !== 'hidden' && (s.pose || '').startsWith('ledge')) { ok = true; break; } await wait(80); } log.push({ name: 'footer-scene', ok }); }
+  await snap('ledge', 1900);
   R.tablet = log;
   await p.close();
 }
@@ -95,6 +103,20 @@ async function page(w, h) {
     seen.push(rec);
   }
   log.push({ name: 'breads', seen });
+  // footer goodbye: the Visit croissant waves if it is on screen, otherwise the header peek pops up and waves
+  await p.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+  {
+    const rec = { peekBye: false, visitWave: false };
+    const t0 = Date.now();
+    while (Date.now() - t0 < 3000) {
+      const s = await p.evaluate(() => ({ bye: document.documentElement.classList.contains('peek-bye'), vg: document.querySelector('.visit-guide .guide-svg')?.dataset.pose }));
+      if (s.bye) rec.peekBye = true;
+      if (s.vg === 'wave') rec.visitWave = true;
+      if (rec.peekBye && !rec.shot) { await p.screenshot({ path: path.join(OUT, 'phone-bye.png'), clip: await clip() }); rec.shot = true; }
+      await wait(90);
+    }
+    log.push({ name: 'goodbye', ...rec });
+  }
   R.phone = log;
   await p.close();
 }

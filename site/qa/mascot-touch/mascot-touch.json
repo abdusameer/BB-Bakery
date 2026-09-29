@@ -72,12 +72,12 @@
     },
     {
       "name": "peek",
-      "vis": "visible",
+      "vis": "hidden",
       "pose": "neutral",
-      "scene": "live",
+      "scene": "idle",
       "box": [
-        544,
-        -1,
+        141,
+        65,
         84
       ]
     },
@@ -85,11 +85,41 @@
       "name": "home",
       "vis": "visible",
       "pose": "neutral",
-      "scene": null,
+      "scene": "live",
       "box": [
         544,
         65,
         84
+      ]
+    },
+    {
+      "name": "map-scene",
+      "ok": true
+    },
+    {
+      "name": "map",
+      "vis": "visible",
+      "pose": "present",
+      "scene": "live",
+      "box": [
+        514,
+        369,
+        80
+      ]
+    },
+    {
+      "name": "footer-scene",
+      "ok": true
+    },
+    {
+      "name": "ledge",
+      "vis": "visible",
+      "pose": "ledgeWave",
+      "scene": "live",
+      "box": [
+        583,
+        862,
+        109
       ]
     }
   ],
@@ -140,6 +170,12 @@
           "winked": true
         }
       ]
+    },
+    {
+      "name": "goodbye",
+      "peekBye": true,
+      "visitWave": false,
+      "shot": true
     }
   ]
 }
