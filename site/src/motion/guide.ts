@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { on } from '../lib/bus';
-import { createDirector, createSpotPicker, inView, resolved, toVp } from './mascot';
+import { createDirector, createSpotQueue, toVp } from './mascot';
 import type { Look, Rig } from './mascot';
 
 /*
@@ -96,9 +96,9 @@ export function initGuide(): () => void {
     /* phone scenes (the simple version of mascot.ts): waves on the first scroll and ducks behind the
        header rule; later pops up to point at an approved bread, nods and winks; then stays home. */
     const hand = { l: pp('peek-hand-l'), r: pp('peek-hand-r') };
-    const picker = createSpotPicker();
+    const queue = createSpotQueue();
     const py0 = window.scrollY;
-    let pWaved = false, pDone = false, pAway = false, pBusy = false, pAwaySince = 0, pLastScroll = 0, pSection: string | null = null, pT = 0;
+    let pWaved = false, pAway = false, pBusy = false, pAwaySince = 0, pLastScroll = 0, pSection: string | null = null, pT = 0;
     const setAway = (v: boolean) => { pAway = v; html.classList.toggle('peek-away', v); if (v) pAwaySince = performance.now(); };
     const pSchedule = (ms: number) => { clearTimeout(pT); pT = window.setTimeout(pConsider, ms); };
     const pWake = () => {
@@ -113,8 +113,11 @@ export function initGuide(): () => void {
         .to(PK.move, { y: -5, duration: 0.2 }, '<')
         .to({}, { duration: 0.1 });
     };
-    const pRecommend = (t: NonNullable<ReturnType<typeof picker.target>>) => {
-      pDone = true; pBusy = true;
+    const pRecommend = (t: NonNullable<ReturnType<typeof queue.current>>) => {
+      const first = queue.count() === 0;
+      queue.tried(t); queue.done(t);
+      const last = queue.isLast(t);
+      pBusy = true;
       peekTl?.kill();
       setAway(false);                                                            // pops back up
       const [cx, cy] = toVp(t.frame.getBoundingClientRect(), t.center);
@@ -123,8 +126,8 @@ export function initGuide(): () => void {
       peekTl = gsap.timeline({ delay: 0.24, onComplete: () => { peekSvg.dataset.peek = 'neutral'; fx = null; fy = null; pkick(); pBusy = false; } })
         .call(() => { fx = cx; fy = cy; pkick(); })                              // leans and looks at the bread
         .to(h, { x: 4 * dir, y: -9, rotation: 40 * dir, svgOrigin: left ? '33 71' : '87 71', duration: 0.3, ease: 'back.out(1.6)' }, 0.12) // points at it
-        .to(PK.move, { rotation: 7, y: -2, duration: 0.15, ease: 'sine.inOut', yoyo: true, repeat: 3 }, 0.7) // two nods
-        .call(() => { peekSvg.dataset.peek = 'wink'; fx = null; fy = null; pkick(); }, [], 1.4)          // and a wink at you
+        .to(PK.move, { rotation: 7, y: -2, duration: 0.15, ease: 'sine.inOut', yoyo: true, repeat: first ? 3 : 1 }, 0.7) // nods
+        .call(() => { fx = null; fy = null; pkick(); if (last) peekSvg.dataset.peek = 'wink'; }, [], 1.4)             // the wink is for the last bread
         .to(h, { x: 0, y: 0, rotation: 0, duration: 0.24, ease: 'power2.inOut' }, 1.55)
         .call(() => { peekSvg.dataset.peek = 'neutral'; }, [], 1.95)
         .to({}, { duration: 0.2 });
@@ -134,12 +137,10 @@ export function initGuide(): () => void {
       if (pBusy) { pSchedule(400); return; }
       const now = performance.now();
       if (!pWaved) { if (Math.abs(window.scrollY - py0) > 48) pWake(); return; }
-      if (!pDone) {
-        const t = picker.target();
-        if (t && resolved(t) && inView(t)) {
-          if (now - pLastScroll > 220) pRecommend(t); else pSchedule(240);   // wait for the reader to pause
-          return;
-        }
+      const t = queue.current();                                                 // each bread, once, when the reader stops on it
+      if (t) {
+        if (now - pLastScroll > 220) pRecommend(t); else pSchedule(240);
+        return;
       }
       if (pAway) {
         const awayFor = now - pAwaySince;

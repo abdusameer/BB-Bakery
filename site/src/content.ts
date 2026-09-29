@@ -56,7 +56,7 @@ export type MenuItem = {
    * Approved spot where the croissant mascot stands to recommend this bread: its feet, in % of the
    * photo frame (x across, y down). Worked out from the traced outline (src/generated/silhouettes.ts)
    * so he stands on the bread's own table line, just left of it, without covering the bread, its
-   * name, the Sketch button or the Concept image label. Only breads get a spot (no drinks).
+   * name, the Sketch button or the Concept image label. Every bread has one; the drink does not.
    */
   mascotSpot?: { x: number; y: number };
 };
@@ -76,7 +76,7 @@ export const menuItems: MenuItem[] = [
     alt: 'Concept image of garlic cream cheese bread: a round bun cut into six wedges with cream cheese between them, flecked with green herbs.' },
   { id: 'cranberry-cream-cheese', tier: 'B', name: 'Cranberry cream cheese bread', img: 'cranberry-cc', mascotSpot: { x: 10.6, y: 68.7 },
     alt: 'Concept image of cranberry cream cheese bread: an oval loaf with red cranberries, cut in half to show a white cream cheese center.' },
-  { id: 'twisted-doughnut', tier: 'B', name: 'Cream-filled twisted doughnut', img: 'twist-doughnut',
+  { id: 'twisted-doughnut', tier: 'B', name: 'Cream-filled twisted doughnut', img: 'twist-doughnut', mascotSpot: { x: 37, y: 75.6 },
     alt: 'Concept image of a cream-filled twisted doughnut: a long sugar-dusted twist split along the top and filled with white cream.' },
   { id: 'croissant-sandwich', tier: 'B', name: 'Croissant sandwich', img: 'croissant-sandwich', mascotSpot: { x: 10.2, y: 69.9 },
     alt: 'Concept image of a croissant sandwich: a sliced croissant with a layer of green lettuce and sliced cheese.' },

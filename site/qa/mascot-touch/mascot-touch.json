@@ -24,51 +24,39 @@
       ]
     },
     {
-      "name": "scene",
-      "found": "menu-garlic-cream-cheese"
-    },
-    {
-      "name": "scene-a",
-      "vis": "visible",
-      "pose": "present",
-      "scene": "live",
-      "box": [
-        417,
-        181,
-        99
-      ]
-    },
-    {
-      "name": "scene-b",
-      "vis": "visible",
-      "pose": "present",
-      "scene": "live",
-      "box": [
-        388,
-        346,
-        99
-      ]
-    },
-    {
       "name": "follows-bread",
       "before": [
-        -4.427215576171875,
-        232.50811767578125
+        11,
+        202
       ],
       "after": [
-        -4.427215576171875,
-        232.50811767578125
+        11,
+        202
       ]
     },
     {
-      "name": "scene-c",
-      "vis": "visible",
-      "pose": "present",
-      "scene": "live",
-      "box": [
-        388,
-        316,
-        99
+      "name": "breads",
+      "shown": [
+        {
+          "id": "menu-salt-bread",
+          "appeared": true
+        },
+        {
+          "id": "menu-garlic-cream-cheese",
+          "appeared": true
+        },
+        {
+          "id": "menu-cranberry-cream-cheese",
+          "appeared": true
+        },
+        {
+          "id": "menu-twisted-doughnut",
+          "appeared": true
+        },
+        {
+          "id": "menu-croissant-sandwich",
+          "appeared": true
+        }
       ]
     },
     {
@@ -77,7 +65,7 @@
       "pose": "neutral",
       "scene": "idle",
       "box": [
-        495,
+        141,
         65,
         84
       ]
@@ -119,26 +107,39 @@
       "t": "matrix(1, 0, 0, 1, 0, 38)"
     },
     {
-      "name": "scene",
-      "found": "menu-garlic-cream-cheese"
-    },
-    {
-      "name": "points",
-      "away": false,
-      "peek": "neutral",
-      "t": "none"
-    },
-    {
-      "name": "wink",
-      "away": false,
-      "peek": "wink",
-      "t": "none"
-    },
-    {
-      "name": "after",
-      "away": false,
-      "peek": "neutral",
-      "t": "none"
+      "name": "breads",
+      "seen": [
+        {
+          "id": "menu-salt-bread",
+          "popped": true,
+          "pointed": true,
+          "winked": false
+        },
+        {
+          "id": "menu-garlic-cream-cheese",
+          "popped": true,
+          "pointed": true,
+          "winked": false
+        },
+        {
+          "id": "menu-cranberry-cream-cheese",
+          "popped": true,
+          "pointed": true,
+          "winked": false
+        },
+        {
+          "id": "menu-twisted-doughnut",
+          "popped": true,
+          "pointed": true,
+          "winked": false
+        },
+        {
+          "id": "menu-croissant-sandwich",
+          "popped": true,
+          "pointed": true,
+          "winked": true
+        }
+      ]
     }
   ]
 }

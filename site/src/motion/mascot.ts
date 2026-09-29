@@ -6,15 +6,15 @@ import { silhouettes } from '../generated/silhouettes';
   The croissant mascot's scroll scenes (tablet and desktop rig). It is the same hanging guide
   element from the header, moved with transforms only: it never duplicates or teleports.
 
-    hang → wake → wave → exit ········ moveToPastry → recommend → hideBehindPastry ········ returnHome → hang
-           (first scroll)   (behind the     (beside an approved bread,            (behind the    (peeks down from behind
-                            header line)     stepping out from behind it)          bread)         the line, then lowers in)
+    hang → wake → wave → exit ··· [ moveToPastry → recommend → hideBehindPastry ] × each bread ··· returnHome → hang
+           (first scroll)   (behind the    (peeks over it, walks round, presents it,  (behind    (peeks down from behind
+                            header line)    nods; the wink is saved for the last one)   it)        the line, then lowers in)
 
   The page is the scenery: he hangs from the pencil nav line and pulls himself up behind it,
-  hides behind the bread in the menu photo (a clip-path hole traced from that photo), and
-  comes back by peeking down from behind the line. Each of the wave and the recommendation
-  plays once per visit; between scenes he is simply away (hidden), so scrolling doesn't keep
-  him moving. Positions come only from the approved spots in content.ts (random = which one).
+  hides behind each bread in the menu photos (a clip-path hole traced from that photo), and
+  comes back by peeking down from behind the line. The wave plays once per visit and each bread
+  is presented once, when the reader pauses on it; between scenes he is simply away (hidden),
+  so scrolling doesn't keep him moving. Positions come only from the approved spots in content.ts.
 */
 
 export type Pt = [number, number];
@@ -94,19 +94,26 @@ function isPast(s: Spot) {
   return toVp(s.frame.getBoundingClientRect(), [0, s.box[3]])[1] < headerBottom();
 }
 
-/** Random choice between the approved spots still ahead of the reader (re-picked once passed). */
-export function createSpotPicker() {
+/** The breads in menu order, each presented once per visit, when the reader stops on it. */
+export function createSpotQueue() {
   const spots = findSpots();
-  let target: Spot | null = null;
+  const done = new Set<number>();
+  const tries = new Map<number, number>();
+  const offCenter = (s: Spot) => { const r = s.frame.getBoundingClientRect(); return Math.abs(r.top + r.height / 2 - window.innerHeight / 2); };
   return {
     spots,
-    target(): Spot | null {
-      if (!target || isPast(target)) {
-        const ahead = spots.filter((s) => !isPast(s));
-        target = ahead.length ? ahead[Math.floor(Math.random() * ahead.length)] : null;
-      }
-      return target;
-    }
+    /** the bread on screen now (drawn in, fully in view) still waiting to be presented */
+    current(): Spot | null {
+      const ready = spots.filter((s) => !done.has(s.index) && (tries.get(s.index) ?? 0) < 2 && resolved(s) && inView(s));
+      return ready.sort((a, b) => offCenter(a) - offCenter(b))[0] ?? null;
+    },
+    tried(s: Spot) { tries.set(s.index, (tries.get(s.index) ?? 0) + 1); },
+    done(s: Spot) { done.add(s.index); },
+    count: () => done.size,
+    /** no bread after this one is still waiting further down the menu */
+    isLast: (s: Spot) => !spots.some((o) => o.index > s.index && !done.has(o.index) && !isPast(o)),
+    /** some bread is still waiting further down (or on screen) */
+    anyAhead: () => spots.some((o) => !done.has(o.index) && (tries.get(o.index) ?? 0) < 2 && !isPast(o))
   };
 }
 
@@ -155,12 +162,10 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
   const waveArm = rig.part('front-wave-r');
   const ticks = rig.part('wave-ticks');
   const present = rig.part('front-present-r');
-  const picker = createSpotPicker();
+  const queue = createSpotQueue();
 
   let phase: Phase = 'home';
   let waved = false;
-  let sceneDone = false;
-  let attempts = 0;
   let tl: gsap.core.Timeline | null = null;
   let clip: Clip = { kind: 'none' };
   // at a pastry: feet position in % of its photo frame, hop height (px), the path, and whether he is behind it
@@ -309,7 +314,8 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
 
   /** STATE 4a: peeks over the top of an approved bread, walks around its end and stands beside it. */
   function moveToPastry(spot: Spot) {
-    attempts++;
+    queue.tried(spot);
+    const first = queue.count() === 0;                                    // the first bread gets the full hello
     phase = 'pastry';
     rig.scene('live');
     gsap.set(wrap, { scale: 1, transformOrigin: origin() });
@@ -329,13 +335,14 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
     frame();
     gsap.set(wrap, { autoAlpha: 1 });
     const a = at;
-    const t = play(gsap.timeline({ onComplete: () => recommend() }))
+    const go = first ? 0.8 : 0.55;
+    const t = play(gsap.timeline({ onComplete: () => recommend(spot, first) }))
       .to(a.pf, { x: path.P[0], y: path.P[1], duration: 0.45, ease: 'power2.out' })            // eyes come up over the bread
-      .to(look, { ex: -1.6, ey: 0.6, head: -5, duration: 0.3, ease: 'power2.out' }, 0.2)       // …and find you
-      .call(blink, [], 0.62)
-      .to(body, { rotation: -5, svgOrigin: `${FEET[0]} ${FEET[1]}`, duration: 0.2 }, 0.8)       // turns to go round
-      .to(look, { ex: -2.2, ey: 0.2, head: -3, duration: 0.2 }, 0.8);
-    walk(t, a, path.L, 0.5, 2, 0.85)                                                            // behind the bread's end…
+      .to(look, { ex: -1.6, ey: 0.6, head: -5, duration: 0.3, ease: 'power2.out' }, 0.2);      // …and find you
+    if (first) t.call(blink, [], 0.62);
+    t.to(body, { rotation: -5, svgOrigin: `${FEET[0]} ${FEET[1]}`, duration: 0.2 }, go)         // turns to go round
+      .to(look, { ex: -2.2, ey: 0.2, head: -3, duration: 0.2 }, go);
+    walk(t, a, path.L, 0.5, 2, go + 0.05)                                                       // behind the bread's end…
       .call(() => { a.behind = false; })                                                        // …and out in the open
       .to(body, { rotation: 0, duration: 0.2 }, '>');
     walk(t, a, spot.at, 0.46, 2, '<')                                                           // forward to his spot
@@ -344,18 +351,24 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
       .to(body, { y: 0, duration: 0.14, ease: 'power2.inOut' });
   }
 
-  /** STATE 4b: leans toward the bread, presents it, nods, winks at you (about 2.4 s). No words. */
-  function recommend() {
-    sceneDone = true;
-    play(gsap.timeline({ onComplete: () => hideBehindPastry() }))
+  /**
+   * STATE 4b: leans toward the bread, presents it with an open hand, looks back at you and nods
+   * (two nods for the first bread, one after that). The wink is saved for the last bread. No words.
+   */
+  function recommend(spot: Spot, first: boolean) {
+    queue.done(spot);
+    const last = queue.isLast(spot);
+    const nods = first ? 2 : 1;
+    const t = play(gsap.timeline({ onComplete: () => hideBehindPastry() }))
       .to(present, { rotation: 0, duration: 0.34, ease: 'back.out(1.7)' }, 0)                       // "this one"
       .to(body, { rotation: 4, svgOrigin: `${FEET[0]} ${FEET[1]}`, duration: 0.42, ease: 'power2.out' }, 0)
       .to(look, { ex: 2.4, ey: -0.9, head: 4, duration: 0.3, ease: 'power2.out' }, 0.05)           // looks at it
-      .to(present, { rotation: -7, duration: 0.16, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0.7)
-      .to(look, { ex: 0.3, ey: 0.4, head: 0, duration: 0.24, ease: 'power2.inOut' }, 1.05)        // back to you
-      .to(look, { head: 6.5, duration: 0.13, ease: 'sine.inOut', yoyo: true, repeat: 3 }, 1.35)    // two nods
-      .call(wink, [], 1.95)
-      .to({}, { duration: 0.5 }, 1.95);
+      .to(present, { rotation: -7, duration: 0.16, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0.62)
+      .to(look, { ex: 0.3, ey: 0.4, head: 0, duration: 0.24, ease: 'power2.inOut' }, 0.95)         // back to you
+      .to(look, { head: 6.5, duration: 0.13, ease: 'sine.inOut', yoyo: true, repeat: nods * 2 - 1 }, 1.22);
+    const end = 1.22 + nods * 0.26;
+    if (last) t.call(wink, [], end + 0.08).to({}, { duration: 0.55 }, end + 0.08);
+    else t.to({}, { duration: 0.3 }, end);
   }
 
   /** STATE 5: walks back round the bread and ducks down behind it (clipped by its outline), no fade. */
@@ -451,18 +464,17 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
   const moved = () => Math.abs(window.scrollY - y0) > 48;
   /** The picked bread is drawn and on screen: 'go' once the reader has paused, 'wait' while still scrolling. */
   const readiness = (): { spot: Spot; go: boolean } | null => {
-    const t = picker.target();
-    if (!t || !resolved(t) || !inView(t)) return null;
-    return { spot: t, go: performance.now() - lastScroll > 220 };
+    const t = queue.current();
+    return t ? { spot: t, go: performance.now() - lastScroll > 220 } : null;
   };
 
   function consider() {
     if (!enabled()) { if (phase === 'away' || phase === 'hidden') hang(); return; }
     const now = performance.now();
     if (phase === 'home') {
-      if (!rig.ready()) { if (!waved || !sceneDone) schedule(400); return; }
+      if (!rig.ready()) { if (!waved || queue.anyAhead()) schedule(400); return; }
       if (!waved && moved()) { wake(); return; }
-      if (waved && !sceneDone && attempts < 3 && section === 'menu') {
+      if (waved && section === 'menu') {
         const r = readiness();
         if (r?.go) exit(() => moveToPastry(r.spot));
         else if (r) schedule(240);
@@ -470,13 +482,12 @@ export function createDirector(rig: Rig, enabled: () => boolean) {
       return;
     }
     if (phase !== 'away' && phase !== 'hidden') return;
-    if (!sceneDone && attempts < 3) {
-      const r = readiness();
-      if (r?.go) { moveToPastry(r.spot); return; }
-      if (r) { schedule(240); return; }
-    }
+    const r = readiness();
+    if (r?.go) { moveToPastry(r.spot); return; }
+    if (r) { schedule(240); return; }
     const away = now - awaySince;
-    if (phase === 'hidden' && (section !== 'menu' || away > 9000)) { returnHome(); return; }
+    // after a bread: stay behind the breads while more are coming, home once the menu is done or left
+    if (phase === 'hidden' && (section !== 'menu' || (!queue.anyAhead() && away > 1200) || away > 30000)) { returnHome(); return; }
     if (phase === 'away' && ((section !== 'menu' && section !== null) || away > (section === 'menu' ? 22000 : 12000))) { returnHome(); return; }
     if (phase === 'away' && !idlePeeked && away > 5000 && now - lastScroll > 5000) {
       idlePeeked = true;

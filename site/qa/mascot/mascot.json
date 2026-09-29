@@ -2,6 +2,7 @@
   "log": [
     {
       "name": "01-hang",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": null,
@@ -17,6 +18,7 @@
     },
     {
       "name": "02-wake",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
@@ -32,13 +34,14 @@
     },
     {
       "name": "03-wave",
+      "winking": false,
       "visibility": "visible",
       "pose": "wave",
       "scene": "live",
       "clip": "",
       "transform": "translate(248.672px, 0px)",
       "fig": {
-        "l": 273,
+        "l": 272,
         "t": 73,
         "r": 347,
         "b": 150
@@ -47,21 +50,23 @@
     },
     {
       "name": "04-exit",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
-      "clip": "polygon(-900px 45px, 1",
-      "transform": "translate3d(248.672px, -41.1311px, 0px)",
+      "clip": "polygon(-900px 33.2px,",
+      "transform": "translate3d(248.672px, -29.2881px, 0px)",
       "fig": {
         "l": 272,
         "t": 72,
         "r": 328,
-        "b": 95
+        "b": 107
       },
       "overlaps": []
     },
     {
       "name": "05-away",
+      "winking": false,
       "visibility": "hidden",
       "pose": "neutral",
       "scene": "idle",
@@ -76,123 +81,86 @@
       "overlaps": []
     },
     {
-      "name": "scene-item",
-      "found": 1
+      "name": "bread-0",
+      "bread": 0,
+      "appeared": true,
+      "winked": false,
+      "overlaps": [],
+      "poses": [
+        "present"
+      ],
+      "ms": 5307
     },
     {
-      "name": "06-peek-out",
-      "visibility": "visible",
-      "pose": "present",
-      "scene": "live",
-      "clip": "polygon(evenodd, -900p",
-      "transform": "translate(685.513px, 279.853px) scale(1.4359, 1.4359)",
-      "fig": {
-        "l": 690,
-        "t": 359,
-        "r": 810,
-        "b": 429
-      },
-      "overlaps": []
+      "name": "bread-1",
+      "bread": 1,
+      "appeared": true,
+      "winked": false,
+      "overlaps": [],
+      "poses": [
+        "present"
+      ],
+      "ms": 4788
     },
     {
-      "name": "07-beside",
-      "visibility": "visible",
-      "pose": "present",
-      "scene": "live",
-      "clip": "",
-      "transform": "translate(530.431px, 457.775px) scale(1.4359, 1.4359)",
-      "fig": {
-        "l": 535,
-        "t": 540,
-        "r": 655,
-        "b": 607
-      },
-      "overlaps": []
+      "name": "bread-2",
+      "bread": 2,
+      "appeared": true,
+      "winked": false,
+      "overlaps": [],
+      "poses": [
+        "present"
+      ],
+      "ms": 4831
     },
     {
-      "name": "08-present",
-      "visibility": "visible",
-      "pose": "present",
-      "scene": "live",
-      "clip": "",
-      "transform": "translate(535.865px, 532.998px) scale(1.4359, 1.4359)",
-      "fig": {
-        "l": 540,
-        "t": 610,
-        "r": 662,
-        "b": 684
-      },
-      "overlaps": []
+      "name": "bread-3",
+      "bread": 3,
+      "appeared": true,
+      "winked": false,
+      "overlaps": [],
+      "poses": [
+        "present"
+      ],
+      "ms": 4782
     },
     {
-      "name": "09-nod",
-      "visibility": "visible",
-      "pose": "present",
-      "scene": "live",
-      "clip": "",
-      "transform": "translate(535.865px, 532.998px) scale(1.4359, 1.4359)",
-      "fig": {
-        "l": 540,
-        "t": 611,
-        "r": 662,
-        "b": 684
-      },
-      "overlaps": []
+      "name": "bread-4",
+      "bread": 4,
+      "appeared": true,
+      "winked": true,
+      "overlaps": [],
+      "poses": [
+        "present"
+      ],
+      "ms": 5168
     },
     {
-      "name": "10-wink",
-      "visibility": "visible",
-      "pose": "present",
-      "scene": "live",
-      "clip": "",
-      "transform": "translate(535.865px, 532.998px) scale(1.4359, 1.4359)",
-      "fig": {
-        "l": 540,
-        "t": 615,
-        "r": 660,
-        "b": 683
-      },
-      "overlaps": []
-    },
-    {
-      "name": "11-hiding",
+      "name": "12-after-breads",
+      "winking": false,
       "visibility": "hidden",
       "pose": "neutral",
       "scene": "idle",
       "clip": "",
-      "transform": "translate(685.513px, 0px)",
+      "transform": "translate(691.063px, 0px)",
       "fig": {
-        "l": 704,
-        "t": 102,
-        "r": 786,
-        "b": 150
-      },
-      "overlaps": []
-    },
-    {
-      "name": "12-hidden",
-      "visibility": "hidden",
-      "pose": "neutral",
-      "scene": "idle",
-      "clip": "",
-      "transform": "translate(685.513px, 0px)",
-      "fig": {
-        "l": 709,
+        "l": 715,
         "t": 73,
-        "r": 765,
+        "r": 770,
         "b": 150
       },
       "overlaps": []
     },
     {
       "name": "13-peek-down",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
       "clip": "polygon(-900px 89.8px,",
       "transform": "translate(1005.05px, -80.6857px)",
       "fig": {
-        "l": 1024,
+        "l": 1025,
         "t": 72,
         "r": 1083,
         "b": 147
@@ -201,6 +169,7 @@
     },
     {
       "name": "14-look",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
@@ -216,6 +185,7 @@
     },
     {
       "name": "15-lower",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": "live",
@@ -231,6 +201,7 @@
     },
     {
       "name": "16-home",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": null,
@@ -246,15 +217,16 @@
     },
     {
       "name": "17-menu-again",
+      "winking": false,
       "visibility": "visible",
       "pose": "neutral",
       "scene": null,
       "clip": "",
       "transform": "translate(934.82px, 0px)",
       "fig": {
-        "l": 960,
+        "l": 959,
         "t": 73,
-        "r": 1015,
+        "r": 1014,
         "b": 150
       },
       "overlaps": []

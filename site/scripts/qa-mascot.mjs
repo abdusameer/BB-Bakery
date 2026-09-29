@@ -1,8 +1,7 @@
 /*
   Mascot scene QA (desktop pinned menu): wave on first scroll → exit behind the nav line →
-  recommendation beside an approved bread → hides behind it → returns home on the next section.
-    node scripts/qa-mascot.mjs [--base http://127.0.0.1:4174] [--out qa/mascot] [--pick 0..0.99] [--width 1440 --height 900]
-  --pick fixes Math.random so the approved spot is repeatable (0 = first spot still ahead).
+  presents every bread in turn (wink only on the last) → hides behind each → returns home on the next section.
+    node scripts/qa-mascot.mjs [--base http://127.0.0.1:4174] [--out qa/mascot] [--width 1440 --height 900]
   Checks that the visible figure never overlaps the item text, index rail, Sketch button, chip or nav.
 */
 import puppeteer from 'puppeteer-core';
@@ -20,7 +19,6 @@ const p = await browser.newPage();
 const errors = [];
 p.on('pageerror', (e) => errors.push(String(e)));
 p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-if (args.pick) await p.evaluateOnNewDocument((v) => { Math.random = () => v; }, Number(args.pick));
 await p.setViewport({ width: W, height: H });
 await p.goto(BASE + '/', { waitUntil: 'networkidle0' });
 await wait(2600);
@@ -41,6 +39,7 @@ const state = () => p.evaluate(() => {
   }).map((el) => el.className || el.tagName);
   const active = document.querySelector('#menu .menu-item:not([data-inactive])');
   return {
+    winking: svg.classList.contains('is-winking'),
     visibility: cs.visibility, pose: svg.dataset.pose, scene: svg.dataset.scene ?? null, clip: g.style.clipPath ? g.style.clipPath.slice(0, 22) : '',
     transform: g.style.transform, fig: fig && Object.fromEntries(Object.entries(fig).map(([k, v]) => [k, Math.round(v)])),
     overlaps: fig && cs.visibility !== 'hidden' ? [
@@ -62,27 +61,32 @@ await snap('03-wave', 600);
 await snap('04-exit', 1250);
 await snap('05-away', 900);
 
-// STATE 4: settle on the approved spot the director picked
+// STATE 4/5: every bread, in menu order — he presents each one once when the reader stops on it
 const pin = await p.evaluate(() => { const sp = document.querySelector('#menu .pin-spacer'); const h = document.querySelector('.site-header').offsetHeight; return { start: sp.getBoundingClientRect().top + scrollY - h, len: sp.offsetHeight - sp.firstElementChild.offsetHeight }; });
-const spots = [0, 1, 2, 4];      // approved items (salt, garlic, cranberry, croissant sandwich)
-let found = null;
-for (const i of spots) {
+const breads = [0, 1, 2, 3, 4];
+const scenes = [];
+for (const i of breads) {
   await p.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), pin.start + pin.len * ((i + 0.68) / 6));
-  await wait(900);
-  const s = await state();
-  if (s.visibility !== 'hidden') { found = i; break; }
-  await wait(600);
-  const s2 = await state();
-  if (s2.visibility !== 'hidden') { found = i; break; }
+  let appeared = false;
+  const t0 = Date.now();
+  while (Date.now() - t0 < 3000) { if ((await state()).visibility !== 'hidden') { appeared = true; break; } await wait(80); }
+  const rec = { bread: i, appeared, winked: false, overlaps: new Set(), poses: new Set(), ms: 0 };
+  const t1 = Date.now();
+  let shotTaken = false;
+  while (appeared && Date.now() - t1 < 9000) {
+    const s = await state();
+    if (s.visibility === 'hidden') break;
+    s.overlaps.forEach((o) => rec.overlaps.add(o));
+    rec.poses.add(s.pose);
+    if (s.winking) rec.winked = true;
+    if (!shotTaken && Date.now() - t1 > 2250) { await shot(`bread-${i}-present`); shotTaken = true; }
+    await wait(100);
+  }
+  rec.ms = Date.now() - t1;
+  scenes.push({ ...rec, overlaps: [...rec.overlaps], poses: [...rec.poses] });
+  log.push({ name: `bread-${i}`, ...scenes.at(-1) });
 }
-log.push({ name: 'scene-item', found });
-await snap('06-peek-out', 0);
-await snap('07-beside', 700);
-await snap('08-present', 700);
-await snap('09-nod', 700);
-await snap('10-wink', 600);
-await snap('11-hiding', 900);
-await snap('12-hidden', 900);
+await snap('12-after-breads', 1500);
 
 // STATE 6: next section → peeks down from behind the line, lowers in, hangs
 await p.evaluate(() => { const el = document.getElementById('story'); window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 120, behavior: 'instant' }); });
@@ -91,11 +95,9 @@ await snap('14-look', 500);
 await snap('15-lower', 1000);
 await snap('16-home', 1400);
 
-// the wave and the scene are once per visit: back to the menu spot, nothing happens
-if (found !== null) {
-  await p.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), pin.start + pin.len * ((found + 0.68) / 6));
-  await snap('17-menu-again', 1800);
-}
+// each bread is presented once per visit: back to the first bread, nothing happens
+await p.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), pin.start + pin.len * (0.68 / 6));
+await snap('17-menu-again', 2200);
 await browser.close();
 await fs.writeFile(path.join(OUT, 'mascot.json'), JSON.stringify({ log, errors }, null, 2));
 for (const l of log) console.log(l.name.padEnd(14), JSON.stringify(l).slice(0, 260));
