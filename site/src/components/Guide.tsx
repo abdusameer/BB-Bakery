@@ -63,6 +63,8 @@ export function GuideSVG({ idSuffix = 'g', pose = 'neutral' }: { idSuffix?: stri
               </g>
             </g>
             <g data-part="roll">
+              {/* touch target for the blush: his round body (a little larger than the drawing) */}
+              <ellipse data-part="hit" cx="60" cy="63.5" rx="35" ry="21" fill="transparent" stroke="none" />
               <path strokeWidth={1.7} style={FILL} d={ROLL} />
               <g strokeWidth={1.05} opacity={0.85}>
                 <path d="M36.8 57.6 C 40.6 62.4, 41.4 70.6, 39 78.6" />
@@ -91,6 +93,12 @@ export function GuideSVG({ idSuffix = 'g', pose = 'neutral' }: { idSuffix?: stri
                 </g>
                 <path data-part="wink" strokeWidth={1.1} d="M62.6 62.6 C 63.6 61.6, 65.4 61.6, 66.4 62.6" />
                 <path strokeWidth={1} d="M59 67.8 C 60 68.6, 61.2 68.6, 62.2 67.8" />
+                {/* blush: rosy cheeks with a few pencil strokes (shown while .is-blushing) */}
+                <g data-part="blush">
+                  <ellipse className="blush-fill" cx="51.2" cy="66.6" rx="3.5" ry="1.9" />
+                  <ellipse className="blush-fill" cx="69.8" cy="66.6" rx="3.5" ry="1.9" />
+                  <path className="blush-lines" d="M49.1 67.7 l1.3 -2.3 M50.9 68 l1.3 -2.3 M52.7 67.7 l1.1 -2 M67.7 67.7 l1.3 -2.3 M69.5 68 l1.3 -2.3 M71.3 67.7 l1.1 -2" />
+                </g>
               </g>
             </g>
             <g strokeWidth={1.45}>

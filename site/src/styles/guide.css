@@ -122,3 +122,12 @@ html.peek-bye .peek-svg { transform: none; }
   html.rig-phone .peek svg { visibility: hidden; }
   html.rig-phone .visit-guide { display: none; }
 }
+
+/* touch him and he blushes (motion/guide.ts): rosy cheeks, pencil strokes over them */
+.guide-svg [data-part='blush'] { opacity: 0; transition: opacity 220ms ease; }
+.guide-svg.is-blushing [data-part='blush'] { opacity: 1; }
+.guide-svg .blush-fill { fill: #EEA29C; stroke: none; opacity: .78; }
+.guide-svg .blush-lines { fill: none; stroke: #C9665F; stroke-width: .7; stroke-linecap: round; }
+/* only his round body takes the pointer; the rest of him stays click-through */
+.site-header .guide [data-part='hit'] { pointer-events: all; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+@media (prefers-reduced-motion: reduce) { .guide-svg [data-part='blush'] { transition: none; } }

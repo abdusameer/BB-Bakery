@@ -3,8 +3,8 @@
     "left": {
       "pose": "neutral",
       "eyes": "translate(-1.60 1.60)",
-      "roll": "rotate(-4.05 60 64)",
-      "lean": "rotate(-1.26 60 9)",
+      "roll": "rotate(-4.01 60 64)",
+      "lean": "rotate(-1.22 60 9)",
       "active": "true",
       "mode": "follow",
       "x": 349
@@ -12,8 +12,8 @@
     "right": {
       "pose": "neutral",
       "eyes": "translate(2.40 0.15)",
-      "roll": "rotate(8.65 60 64)",
-      "lean": "rotate(3.20 60 9)",
+      "roll": "rotate(8.51 60 64)",
+      "lean": "rotate(3.06 60 9)",
       "active": "true",
       "mode": "follow",
       "x": 349
@@ -32,26 +32,26 @@
     "menu": {
       "pose": "menu",
       "eyes": "translate(1.20 1.60)",
-      "roll": "rotate(3.98 60 64)",
-      "lean": "rotate(-3.03 60 9)",
+      "roll": "rotate(3.97 60 64)",
+      "lean": "rotate(-2.99 60 9)",
       "active": "true",
       "mode": "react",
       "x": 935
     },
     "story": {
       "pose": "storyA",
-      "eyes": "translate(2.39 -0.38)",
-      "roll": "rotate(4.22 60 64)",
-      "lean": "rotate(-0.69 60 9)",
+      "eyes": "translate(2.38 -0.37)",
+      "roll": "rotate(4.10 60 64)",
+      "lean": "rotate(-1.02 60 9)",
       "active": "true",
       "mode": "travel",
-      "x": 1004
+      "x": 1002
     },
     "media": {
       "pose": "media",
       "eyes": "translate(1.00 0.40)",
       "roll": "rotate(3.02 60 64)",
-      "lean": "rotate(-2.59 60 9)",
+      "lean": "rotate(-2.58 60 9)",
       "active": "true",
       "mode": "react",
       "x": 1077
@@ -59,8 +59,8 @@
     "visit": {
       "pose": "visitRight",
       "eyes": "translate(2.40 0.40)",
-      "roll": "rotate(5.98 60 64)",
-      "lean": "rotate(-2.73 60 9)",
+      "roll": "rotate(5.97 60 64)",
+      "lean": "rotate(-2.71 60 9)",
       "active": "true",
       "mode": "react",
       "x": 1146
@@ -68,9 +68,9 @@
   },
   "afterHover": {
     "pose": "neutral",
-    "eyes": "translate(1.51 1.58)",
-    "roll": "rotate(3.84 60 64)",
-    "lean": "rotate(0.52 60 9)",
+    "eyes": "translate(1.51 1.57)",
+    "roll": "rotate(3.86 60 64)",
+    "lean": "rotate(0.57 60 9)",
     "active": "true",
     "mode": "follow",
     "x": 349

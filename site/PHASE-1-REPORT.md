@@ -56,6 +56,7 @@ The existing hanging character is the only mascot; it is the same element moving
 - **An occasional peek.** If the reader lingers while he's away, he peeks upside down from behind the line once.
 - **Never in the way.** Verified throughout the bread, map and footer scenes (also against the map labels, Get directions buttons, map caption and footer text): no overlap with the nav, index rail, bread name, note, count, Sketch button or Concept image label (`qa/mascot/mascot.json`).
 - **Reduced motion:** no scenes; he stays home, still. Short viewports (perched) also skip the scenes.
+- **Touch him and he blushes.** A tap (phones, tablets) or the cursor touching him (desktop) brings up rosy cheeks with a few pencil strokes; he glances down and away shyly, then carries on after about 1.7 s. Only his round body is touchable, so nothing around him becomes harder to click. He stays decorative (`aria-hidden`).
 
 ## Verification (evidence in `qa/`)
 

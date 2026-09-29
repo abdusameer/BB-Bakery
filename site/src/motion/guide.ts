@@ -103,6 +103,8 @@ export function initGuide(): () => void {
   let scrollV = 0, sLastY = window.scrollY, sLastT = performance.now();
   // small section reactions (phones), added on top of whatever he's following
   const bob = { lean: 0, head: 0 };
+  // touched: he blushes and, for a moment, looks down and away (shy), then carries on
+  let blushUntil = 0, shyDir = 1;
   const measure = () => {
     const x = Number(gsap.getProperty(wrap, 'x')) || 0;
     const r = wrap.getBoundingClientRect();
@@ -228,6 +230,9 @@ export function initGuide(): () => void {
       tex = pt.ex; tey = pt.ey; thead = pt.head; tlean = pt.lean;
     }
 
+    if (!scene && performance.now() < blushUntil) {
+      tex = -1.8 * shyDir; tey = 1.7; thead = -7 * shyDir; tlean = 2.5 * shyDir;
+    }
     if (!scene && phone()) {
       scrollV *= Math.exp(-dt / 0.28);
       tey = clamp(tey + clamp(scrollV * 1.6, -1.8, 1.8), -1.8, 1.8);
@@ -267,7 +272,7 @@ export function initGuide(): () => void {
       Math.abs(tex - cur.ex) > 0.01 || Math.abs(tey - cur.ey) > 0.01 || Math.abs(thead - cur.head) > 0.02 ||
       Math.abs(tlean - cur.lean) > 0.01 || Math.abs(cur.vL) > 0.02 || Math.abs(cur.vR) > 0.02 ||
       Math.abs(cur.legL) > 0.02 || Math.abs(cur.legR) > 0.02;
-    raf = unsettled || mode === 'travel' || (scene && sceneLive) || Math.abs(scrollV) > 0.01 ? requestAnimationFrame(tick) : 0;
+    raf = unsettled || mode === 'travel' || (scene && sceneLive) || Math.abs(scrollV) > 0.01 || performance.now() < blushUntil ? requestAnimationFrame(tick) : 0;
     wrap.dataset.animationActive = raf ? 'true' : 'false';
     wrap.dataset.mode = mode;
   };
@@ -327,6 +332,24 @@ export function initGuide(): () => void {
     window.removeEventListener('blur', onLeave);
     document.removeEventListener('visibilitychange', onVis);
   });
+
+  /* touch: a tap (phones, tablets) or the cursor touching him (desktop) makes him blush */
+  const hit = svg.querySelector('[data-part="hit"]');
+  const blush = () => {
+    const now = performance.now();
+    if (now < blushUntil + 700) return;                          // one blush at a time, with a breath between
+    blushUntil = now + 1700;
+    const r = wrap.getBoundingClientRect();
+    shyDir = px !== null && px < r.left + r.width / 2 ? -1 : 1;   // looks away from whoever touched him
+    svg.classList.add('is-blushing');
+    later(() => svg.classList.remove('is-blushing'), 1700);
+    kick();
+  };
+  const onHitEnter = (e: PointerEvent) => { if (e.pointerType === 'mouse') blush(); };
+  const onHitDown = () => blush();
+  hit?.addEventListener('pointerenter', onHitEnter as EventListener);
+  hit?.addEventListener('pointerdown', onHitDown);
+  offs.push(() => { hit?.removeEventListener('pointerenter', onHitEnter as EventListener); hit?.removeEventListener('pointerdown', onHitDown); svg.classList.remove('is-blushing'); });
 
   /* blink: one slow blink every 7–11 s while following, never in reduced motion */
   const blinkLoop = () => {

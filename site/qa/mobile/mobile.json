@@ -75,16 +75,16 @@
   "tablet": {
     "fingerRight": {
       "eyes": "translate(2.40 1.60)",
-      "roll": "rotate(6.53 60 64)",
-      "lean": "rotate(1.88 60 9)"
+      "roll": "rotate(6.80 60 64)",
+      "lean": "rotate(1.96 60 9)"
     },
     "fingerLeft": {
       "eyes": "translate(1.60 1.80)",
       "roll": "rotate(5.00 60 64)",
-      "lean": "rotate(2.09 60 9)"
+      "lean": "rotate(2.18 60 9)"
     },
     "released": {
-      "eyes": "translate(0.03 -1.27)",
+      "eyes": "translate(0.02 -1.32)",
       "roll": "rotate(0.00 60 64)",
       "lean": "rotate(-0.01 60 9)"
     }
